@@ -1,0 +1,24 @@
+{
+  "app": {
+    "name": "Sigo",
+    "tagline": "Keep going, your way.",
+    "disclaimer": "Sigo is not medical advice. Talk to your doctor before starting a new exercise program."
+  },
+  "tabs": {
+    "today": "Today",
+    "pain": "Pain",
+    "profile": "Profile"
+  },
+  "today": {
+    "title": "Today",
+    "placeholder": "Your workout for today will show up here. Coming soon!"
+  },
+  "pain": {
+    "title": "Pain",
+    "placeholder": "Here you will tell us where it hurts, so we can protect that area."
+  },
+  "profile": {
+    "title": "Profile",
+    "placeholder": "Here you will change your details, your equipment and your language."
+  }
+}

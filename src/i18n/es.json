@@ -1,0 +1,24 @@
+{
+  "app": {
+    "name": "Sigo",
+    "tagline": "Sigo, a mi ritmo.",
+    "disclaimer": "Sigo no es consejo médico. Habla con tu doctor antes de empezar un nuevo programa de ejercicio."
+  },
+  "tabs": {
+    "today": "Hoy",
+    "pain": "Dolor",
+    "profile": "Perfil"
+  },
+  "today": {
+    "title": "Hoy",
+    "placeholder": "Aquí vas a ver tu rutina de hoy. ¡Muy pronto!"
+  },
+  "pain": {
+    "title": "Dolor",
+    "placeholder": "Aquí vas a poder decirnos dónde te duele, para cuidar esa zona."
+  },
+  "profile": {
+    "title": "Perfil",
+    "placeholder": "Aquí vas a poder cambiar tus datos, tu equipo y tu idioma."
+  }
+}
