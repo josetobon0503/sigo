@@ -84,8 +84,8 @@ describe('findSwap: candidates', () => {
     );
     expect(result).toEqual({
       type: 'swap',
-      exercise: get('supported-hip-extension'),
-      reasonKey: 'swap.reason.gentlerVersion',
+      exercise: get('seated-glute-squeeze'),
+      reasonKey: 'swap.reason.seatedVersion',
     });
   });
 

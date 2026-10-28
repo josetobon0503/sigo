@@ -10,10 +10,13 @@ import type {
   PlannedItem,
   UserProfile,
   WorkoutLog,
+  WorkoutSection,
 } from './types';
 
 const WARMUP_COUNT = 2;
 const COOLDOWN_COUNT = 1;
+const MIN_SECONDS = 15 * 60;
+const MAX_SETS = 3;
 
 // FNV-1a: a stable tie-breaker so the same date always gives the same workout.
 function hash(text: string): number {
@@ -124,15 +127,42 @@ export function generateWorkout(
   if (mobility.length === 0) skipped.add('mobility');
   main.forEach((e) => skipped.delete(e.pattern));
 
+  const plan = (section: WorkoutSection) => (e: Exercise) => ({
+    exerciseId: e.id,
+    section,
+    dosage: e.dosage,
+  });
   const items: PlannedItem[] = [
-    ...warmup.map((e) => ({ exerciseId: e.id, section: 'warmup' as const })),
-    ...main.map((e) => ({ exerciseId: e.id, section: 'main' as const })),
-    ...cooldown.map((e) => ({ exerciseId: e.id, section: 'cooldown' as const })),
+    ...warmup.map(plan('warmup')),
+    ...main.map(plan('main')),
+    ...cooldown.map(plan('cooldown')),
   ];
-  const estimatedSec = [...warmup, ...main, ...cooldown].reduce(
-    (total, e) => total + estimateSeconds(e.dosage),
-    0,
-  );
+  fillToMinimum(items, ctx);
 
-  return { date: dayOf(date), items, skippedPatterns: [...skipped], estimatedSec };
+  return { date: dayOf(date), items, skippedPatterns: [...skipped], estimatedSec: total(items) };
+}
+
+function total(items: PlannedItem[]): number {
+  return items.reduce((sum, item) => sum + estimateSeconds(item.dosage), 0);
+}
+
+// A workout under 15 minutes first gets one more set on each main exercise (up to 3 sets),
+// round by round, and then extra safe mobility exercises at the end.
+function fillToMinimum(items: PlannedItem[], ctx: Context): void {
+  let grew = true;
+  while (grew && total(items) < MIN_SECONDS) {
+    grew = false;
+    for (const item of items) {
+      if (total(items) >= MIN_SECONDS) return;
+      if (item.section !== 'main' || item.dosage.sets >= MAX_SETS) continue;
+      item.dosage = { ...item.dosage, sets: item.dosage.sets + 1 };
+      grew = true;
+    }
+  }
+  while (total(items) < MIN_SECONDS) {
+    const [extra] = rankCandidates('mobility', ctx);
+    if (!extra) return;
+    ctx.usedToday.add(extra.id);
+    items.push({ exerciseId: extra.id, section: 'cooldown', dosage: extra.dosage });
+  }
 }

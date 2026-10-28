@@ -1,5 +1,6 @@
 // Exercise library. No floor exercises in the MVP.
 // `loads` lists every joint the exercise really loads: never remove an area to make a test pass.
+// Standing on one leg (even briefly, even with support) loads that leg's ankle, foot, knee and hip.
 // NEEDS PROFESSIONAL REVIEW: every exercise stays reviewedByProfessional: false until a licensed
 // physical therapist approves it.
 
@@ -398,12 +399,46 @@ export const exercises: Exercise[] = [
     reviewedByProfessional: false,
   },
   {
+    id: 'seated-glute-squeeze',
+    name: { es: 'Apretar los glúteos sentado', en: 'Seated glute squeeze' },
+    pattern: 'hinge',
+    position: 'seated',
+    level: 1,
+    loads: ['hip'],
+    equipment: ['chair'],
+    dosage: { kind: 'time', sets: 2, seconds: 20 },
+    purpose: {
+      es: 'Despierta los glúteos, que te ayudan a pararte y caminar, sin mover la espalda.',
+      en: 'Wakes up your glutes, which help you stand and walk, without moving your back.',
+    },
+    steps: {
+      es: [
+        'Siéntate derecho, con los pies en el piso.',
+        'Aprieta los glúteos y cuenta hasta 5.',
+        'Suelta despacio y descansa un momento.',
+        'Repite mientras corre el tiempo.',
+      ],
+      en: [
+        'Sit up tall with your feet flat on the floor.',
+        'Squeeze your glutes and count to 5.',
+        'Relax slowly and rest a moment.',
+        'Repeat until the time is up.',
+      ],
+    },
+    mistakes: {
+      es: ['Aguantar la respiración.', 'Empujar con los pies o levantarte de la silla.'],
+      en: ['Holding your breath.', 'Pushing with your feet or lifting off the chair.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+  {
     id: 'supported-hip-extension',
     name: { es: 'Pierna hacia atrás con apoyo', en: 'Supported hip extension' },
     pattern: 'hinge',
     position: 'standing_supported',
     level: 1,
-    loads: ['hip'],
+    loads: ['hip', 'knee', 'ankle', 'foot', 'lower_back'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
     purpose: {
@@ -425,8 +460,8 @@ export const exercises: Exercise[] = [
       ],
     },
     mistakes: {
-      es: ['Arquear la espalda para subir más la pierna.', 'Inclinarte hacia adelante.'],
-      en: ['Arching your back to lift the leg higher.', 'Leaning forward.'],
+      es: ['No arquees la espalda para subir más la pierna.', 'Inclinarte hacia adelante.'],
+      en: ["Don't arch your back to lift the leg higher.", 'Leaning forward.'],
     },
     video: {},
     reviewedByProfessional: false,
@@ -437,7 +472,7 @@ export const exercises: Exercise[] = [
     pattern: 'hinge',
     position: 'standing_supported',
     level: 2,
-    loads: ['hip'],
+    loads: ['hip', 'knee', 'ankle', 'foot'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
     purpose: {
@@ -738,6 +773,40 @@ export const exercises: Exercise[] = [
     reviewedByProfessional: false,
   },
   {
+    id: 'seated-bottle-row',
+    name: { es: 'Remo con botellas sentado', en: 'Seated bottle row' },
+    pattern: 'upper_pull',
+    position: 'seated',
+    level: 2,
+    loads: ['shoulder', 'elbow', 'upper_back'],
+    equipment: ['chair', 'bottles'],
+    dosage: { kind: 'reps', sets: 2, reps: 10 },
+    purpose: {
+      es: 'Fortalece la espalda alta y los brazos para cargar bolsas y estar más derecho.',
+      en: 'Strengthens your upper back and arms for carrying bags and standing up straighter.',
+    },
+    steps: {
+      es: [
+        'Siéntate en la orilla de la silla con una botella en cada mano.',
+        'Inclínate un poco hacia adelante, con la espalda recta y los brazos colgando.',
+        'Sube las botellas hacia la cintura, llevando los codos atrás.',
+        'Bájalas despacio.',
+      ],
+      en: [
+        'Sit at the front of the chair with a bottle in each hand.',
+        'Lean forward a little, back straight, arms hanging down.',
+        'Lift the bottles toward your waist, bringing your elbows back.',
+        'Lower them slowly.',
+      ],
+    },
+    mistakes: {
+      es: ['Redondear la espalda.', 'Subir los hombros hacia las orejas.'],
+      en: ['Rounding your back.', 'Shrugging your shoulders up to your ears.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+  {
     id: 'seated-towel-pull-down',
     name: { es: 'Bajar la toalla sentado', en: 'Seated towel pull-down' },
     pattern: 'upper_pull',
@@ -881,7 +950,7 @@ export const exercises: Exercise[] = [
     pattern: 'core',
     position: 'standing_supported',
     level: 3,
-    loads: ['hip'],
+    loads: ['hip', 'knee', 'ankle', 'foot'],
     equipment: ['chair'],
     dosage: { kind: 'time', sets: 2, seconds: 30 },
     purpose: {
@@ -925,13 +994,13 @@ export const exercises: Exercise[] = [
     steps: {
       es: [
         'Párate frente a la pared, a dos pasos de distancia.',
-        'Apoya los antebrazos en la pared.',
+        'Apoya los antebrazos en la pared, no las manos, con los codos a la altura de los hombros.',
         'Mantén el cuerpo recto de la cabeza a los talones.',
         'Respira con calma mientras aguantas.',
       ],
       en: [
         'Stand facing a wall, two steps away.',
-        'Rest your forearms on the wall.',
+        'Rest your forearms on the wall, not your hands, elbows at shoulder height.',
         'Keep your body straight from head to heels.',
         'Breathe calmly while you hold.',
       ],
@@ -1087,7 +1156,7 @@ export const exercises: Exercise[] = [
     pattern: 'balance',
     position: 'standing_supported',
     level: 4,
-    loads: ['ankle', 'foot'],
+    loads: ['ankle', 'foot', 'knee', 'hip'],
     equipment: ['wall'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
     purpose: {
@@ -1194,7 +1263,7 @@ export const exercises: Exercise[] = [
     pattern: 'calf',
     position: 'standing_supported',
     level: 4,
-    loads: ['ankle', 'foot'],
+    loads: ['ankle', 'foot', 'knee', 'hip'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
     purpose: {

@@ -108,6 +108,7 @@ export type WorkoutSection = 'warmup' | 'main' | 'cooldown';
 export interface PlannedItem {
   exerciseId: string;
   section: WorkoutSection;
+  dosage: Dosage; // the exercise dosage, with extra sets if the workout was too short
 }
 
 export interface GeneratedWorkout {

@@ -270,6 +270,45 @@ describe('generateWorkout: determinism', () => {
   });
 });
 
+describe('generateWorkout: minimum duration', () => {
+  const squat = fakeExercise({ id: 'squat', dosage: { kind: 'reps', sets: 2, reps: 10 } });
+  const mobility = (n: number) =>
+    Array.from({ length: n }, (_, i) =>
+      fakeExercise({
+        id: `mob-${i}`,
+        pattern: 'mobility',
+        dosage: { kind: 'reps', sets: 1, reps: 10 },
+      }),
+    );
+
+  it('adds sets to main exercises first, up to 3', () => {
+    const workout = generateWorkout(makeProfile(), [squat, ...mobility(3)], [], DATE);
+    const main = workout.items.filter((i) => i.section === 'main');
+    expect(main.map((i) => i.dosage.sets)).toEqual([3]);
+    expect(workout.items).toHaveLength(4); // no mobility left to add
+  });
+
+  it('then adds safe mobility exercises at the end', () => {
+    const library = [
+      squat,
+      ...mobility(12),
+      fakeExercise({ id: 'mob-hurts', pattern: 'mobility', loads: ['knee'] }),
+    ];
+    const profile = makeProfile({ painAreas: [pain('knee', 3)] });
+    const workout = generateWorkout(profile, library, [], DATE);
+    expect(workout.estimatedSec).toBeGreaterThanOrEqual(15 * 60);
+    expect(workout.items.at(-1)?.section).toBe('cooldown');
+    expect(workout.items.map((i) => i.exerciseId)).not.toContain('mob-hurts');
+  });
+
+  it('keeps the normal dosage when the workout is already long enough', () => {
+    const workout = generateWorkout(makeProfile(), exercises, [], DATE);
+    for (const item of workout.items) {
+      expect(item.dosage).toEqual(exerciseOf(item.exerciseId).dosage);
+    }
+  });
+});
+
 describe('generateWorkout: edge cases', () => {
   it('when every area is blocked, only exercises that load nothing remain', () => {
     const profile = makeProfile({ painAreas: ALL_AREAS.map((area) => pain(area, 4)) });
@@ -322,6 +361,19 @@ describe('generateWorkout: personas', () => {
       expect(allExercises(workout).map((e) => e.pattern)).not.toContain('squat');
       expect(workout.skippedPatterns).toContain('squat');
     }
+  });
+
+  it.each(WEEK)('Roberto gets at least 15 minutes on %s, never more than 3 sets', (date) => {
+    const workout = generateWorkout(roberto, exercises, [], date);
+    expect(workout.estimatedSec).toBeGreaterThanOrEqual(15 * 60);
+    for (const item of workout.items) {
+      const e = exerciseOf(item.exerciseId);
+      expect(item.dosage.sets).toBeGreaterThanOrEqual(e.dosage.sets);
+      expect(item.dosage.sets).toBeLessThanOrEqual(Math.max(3, e.dosage.sets));
+      expect(e.loads.filter((area) => blockedAreas(roberto).has(area))).toEqual([]);
+    }
+    const ids = workout.items.map((i) => i.exerciseId);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it('Roberto skips upper body to protect his shoulder', () => {

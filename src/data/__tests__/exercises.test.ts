@@ -14,6 +14,16 @@ const COVERAGE_EXCEPTIONS: Partial<Record<Pattern, BodyArea[]>> = {
   calf: ['ankle', 'foot'], // heel raises work through the ankle and the ball of the foot
 };
 
+// Standing on one leg, even briefly and with support, loads that leg's ankle, foot, knee and hip.
+const SINGLE_LEG = [
+  'supported-single-leg-stand',
+  'supported-hip-extension',
+  'supported-hip-abduction',
+  'supported-standing-march',
+  'supported-heel-to-toe-walk',
+  'supported-single-leg-heel-raise',
+];
+
 const KEBAB = /^[a-z]+(-[a-z]+)*$/;
 
 function texts(): string[] {
@@ -89,6 +99,25 @@ describe('exercise library', () => {
     for (const pattern of ALL_PATTERNS) {
       expect(exercises.some((e) => e.pattern === pattern && e.level === 1)).toBe(true);
     }
+  });
+
+  it.each(SINGLE_LEG)('%s loads the standing leg', (id) => {
+    const e = exercises.find((x) => x.id === id)!;
+    expect(e.loads).toEqual(expect.arrayContaining(['ankle', 'foot', 'knee', 'hip']));
+  });
+
+  it('supported hip extension loads the lower back and warns about arching', () => {
+    const e = exercises.find((x) => x.id === 'supported-hip-extension')!;
+    expect(e.loads).toContain('lower_back');
+    expect(e.mistakes.es[0]).toMatch(/^No arquees la espalda/);
+    expect(e.mistakes.en[0]).toMatch(/^Don't arch your back/);
+  });
+
+  it('wall plank is on the forearms and says so', () => {
+    const e = exercises.find((x) => x.id === 'wall-plank')!;
+    expect(e.loads).not.toContain('wrist');
+    expect(e.steps.es.join(' ')).toMatch(/antebrazos.*no las manos/);
+    expect(e.steps.en.join(' ')).toMatch(/forearms.*not your hands/);
   });
 
   it('keeps neck mobility to a short range, never full circles', () => {
