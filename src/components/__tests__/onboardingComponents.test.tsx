@@ -1,6 +1,7 @@
-import { render, screen, userEvent, within } from '@testing-library/react-native';
+import { fireEvent, render, screen, userEvent, within } from '@testing-library/react-native';
 import type { TFunction } from 'i18next';
-import { StyleSheet } from 'react-native';
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import { Platform, StyleSheet } from 'react-native';
 
 import i18n, { setLanguage } from '@/i18n';
 import { sizes } from '@/theme/tokens';
@@ -8,7 +9,7 @@ import { sizes } from '@/theme/tokens';
 import { BodyMap } from '../BodyMap';
 import { FacesScale } from '../FacesScale';
 import { ONBOARDING_TOTAL_STEPS, OnboardingStep } from '../OnboardingStep';
-import { ReminderEditor, formatTime, shiftTime } from '../ReminderEditor';
+import { ReminderEditor, formatTime } from '../ReminderEditor';
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ back: jest.fn(), push: jest.fn() }) }));
 
@@ -91,33 +92,73 @@ describe('BodyMap', () => {
 
 describe('ReminderEditor', () => {
   const t = i18n.t.bind(i18n) as TFunction;
+  const value = { enabled: true, hour: 9, minute: 0, days: [1] };
+  const editor = (onChange = jest.fn(), v = value) => (
+    <ReminderEditor
+      value={v}
+      onChange={onChange}
+      enableLabel="Recordatorio"
+      timeLabel="Hora"
+      daysLabel="Días"
+    />
+  );
 
-  it('formats a 12-hour time', () => {
-    expect(formatTime(9, 0, t)).toBe('9:00 a. m.');
-    expect(formatTime(0, 15, t)).toBe('12:15 a. m.');
-    expect(formatTime(18, 45, t)).toBe('6:45 p. m.');
+  it('formats the time in 12 or 24 hours', () => {
+    expect(formatTime(9, 0, t, false)).toBe('9:00 a. m.');
+    expect(formatTime(0, 15, t, false)).toBe('12:15 a. m.');
+    expect(formatTime(18, 45, t, false)).toBe('6:45 p. m.');
+    expect(formatTime(9, 5, t, true)).toBe('09:05');
+    expect(formatTime(18, 45, t, true)).toBe('18:45');
   });
 
-  it('wraps around midnight', () => {
-    expect(shiftTime(23, 30, 60)).toEqual({ hour: 0, minute: 30 });
-    expect(shiftTime(0, 0, -15)).toEqual({ hour: 23, minute: 45 });
+  it('on iOS shows the native wheel in 5-minute steps, with the time written above', async () => {
+    await render(editor());
+    const picker = screen.getByTestId('time-picker');
+    expect(picker.props.mode).toBe('time');
+    expect(picker.props.display).toBe('spinner');
+    expect(picker.props.minuteInterval).toBe(5);
+    expect(picker.props.accessibilityLabel).toBe('Hora');
+    expect(screen.getByTestId('reminder-time')).toHaveTextContent(/^(9:00 a\. m\.|09:00)$/);
   });
 
-  it('changes the time with buttons, no gestures', async () => {
+  it('saves the time picked on the wheel', async () => {
+    const onChange = jest.fn();
+    await render(editor(onChange));
+    fireEvent(
+      screen.getByTestId('time-picker'),
+      'onChange',
+      { type: 'set' },
+      new Date(2000, 0, 1, 18, 35),
+    );
+    expect(onChange).toHaveBeenCalledWith({ ...value, hour: 18, minute: 35 });
+  });
+
+  it('ignores a dismissed picker', async () => {
+    const onChange = jest.fn();
+    await render(editor(onChange));
+    fireEvent(screen.getByTestId('time-picker'), 'onChange', { type: 'dismissed' }, undefined);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('on Android opens the native time dialog from a big button', async () => {
+    const user = userEvent.setup();
+    jest.replaceProperty(Platform, 'OS', 'android');
+    try {
+      await render(editor());
+      expect(screen.queryByTestId('time-picker')).toBeNull();
+      await user.press(screen.getByRole('button', { name: 'Cambiar la hora' }));
+      expect(DateTimePickerAndroid.open).toHaveBeenCalledWith(
+        expect.objectContaining({ mode: 'time', is24Hour: expect.any(Boolean) }),
+      );
+    } finally {
+      jest.restoreAllMocks();
+    }
+  });
+
+  it('toggles days and the reminder switch', async () => {
     const onChange = jest.fn();
     const user = userEvent.setup();
-    const value = { enabled: true, hour: 9, minute: 0, days: [1] };
-    await render(
-      <ReminderEditor
-        value={value}
-        onChange={onChange}
-        enableLabel="Recordatorio"
-        timeLabel="Hora"
-        daysLabel="Días"
-      />,
-    );
-    await user.press(screen.getByRole('button', { name: 'Una hora después' }));
-    expect(onChange).toHaveBeenLastCalledWith({ ...value, hour: 10 });
+    await render(editor(onChange));
     await user.press(screen.getByRole('button', { name: 'Miércoles' }));
     expect(onChange).toHaveBeenLastCalledWith({ ...value, days: [1, 3] });
     await user.press(screen.getByRole('switch', { name: 'Recordatorio' }));
@@ -125,16 +166,9 @@ describe('ReminderEditor', () => {
   });
 
   it('hides time and days when the reminder is off', async () => {
-    await render(
-      <ReminderEditor
-        value={{ enabled: false, hour: 9, minute: 0, days: [] }}
-        onChange={jest.fn()}
-        enableLabel="Recordatorio"
-        timeLabel="Hora"
-        daysLabel="Días"
-      />,
-    );
+    await render(editor(jest.fn(), { enabled: false, hour: 9, minute: 0, days: [] }));
     expect(screen.queryByText('Hora')).toBeNull();
+    expect(screen.queryByTestId('time-picker')).toBeNull();
     expect(within(screen.getByRole('switch')).queryByText('Recordatorio')).toBeOnTheScreen();
   });
 });

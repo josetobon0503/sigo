@@ -28,7 +28,8 @@
       "expo-localization",
       "expo-asset",
       "expo-font",
-      "expo-splash-screen"
+      "expo-splash-screen",
+      "@react-native-community/datetimepicker"
     ],
     "scheme": "sigo",
     "experiments": {

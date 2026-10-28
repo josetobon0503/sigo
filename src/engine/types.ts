@@ -64,7 +64,7 @@ export interface PainArea {
 
 export type Feeling = 'great' | 'good' | 'ok' | 'tired' | 'sore';
 
-export type AgeBand = '50-59' | '60-69' | '70-79' | '80+';
+export type AgeBand = 'under-50' | '50-59' | '60-69' | '70-79' | '80+';
 
 export interface UserProfile {
   name: string;

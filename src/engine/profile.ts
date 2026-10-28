@@ -23,7 +23,7 @@ export const PATTERNS: Pattern[] = [
   'calf',
 ];
 
-export const AGE_BANDS: AgeBand[] = ['50-59', '60-69', '70-79', '80+'];
+export const AGE_BANDS: AgeBand[] = ['under-50', '50-59', '60-69', '70-79', '80+'];
 
 export const EQUIPMENT: Equipment[] = ['chair', 'wall', 'bottles', 'towel', 'light_dumbbells'];
 

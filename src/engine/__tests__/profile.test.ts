@@ -24,7 +24,7 @@ describe('createProfile', () => {
     expect(initialLevels()).toEqual(levelsAt(1));
   });
 
-  it.each<AgeBand>(['50-59', '60-69', '70-79', '80+'])(
+  it.each<AgeBand>(['under-50', '50-59', '60-69', '70-79', '80+'])(
     'starts at level 1 for age %s',
     (ageBand) => {
       expect(createProfile({ ...draft, ageBand }, NOW).levels).toEqual(levelsAt(1));

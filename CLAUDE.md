@@ -49,7 +49,8 @@ Secondary persona: Roberto, 72, retired, lower-back and shoulder pain, light dum
 4. **Accessibility for 50+.** Minimum tap target 44 pt (primary buttons 56 pt tall, "It hurts" button 64 pt).
    Body text 17 pt, never below 15 pt. Respect the system font size (allowFontScaling, layouts must not break at
    large sizes). Every interactive element has `accessibilityLabel` and `accessibilityRole`. Text contrast >= 4.5:1.
-   No action that can only be done with a gesture (swipe, long press).
+   No action that can only be done with a gesture (swipe, long press). Exception: native system pickers
+   (such as the iOS time wheel) are allowed, because they work with VoiceOver and TalkBack.
 5. **Local-first and private.** All data stays on the device. No accounts, no backend, no analytics SDK, no ad SDK
    in the MVP. Pain and health data must never be sent to any third party.
 6. **Rules, not AI.** Workout generation, swapping and progression are **deterministic pure functions** in
@@ -158,7 +159,7 @@ type Feeling = 'great' | 'good' | 'ok' | 'tired' | 'sore';
 interface UserProfile {
   name: string;
   language: Lang;
-  ageBand: '50-59' | '60-69' | '70-79' | '80+';
+  ageBand: 'under-50' | '50-59' | '60-69' | '70-79' | '80+';
   equipment: Equipment[];
   levels: Record<Pattern, 1 | 2 | 3 | 4 | 5>;
   seatedOnly: boolean;          // true after a screening "yes" until the user changes it

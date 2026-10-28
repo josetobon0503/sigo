@@ -122,6 +122,18 @@ describe('equipment step', () => {
   });
 });
 
+describe('about step', () => {
+  it('offers "Under 50" as the first age band', async () => {
+    await render(<AboutScreen />);
+    const ages = ['Menos de 50', '50 a 59 años', '60 a 69 años', '70 a 79 años', '80 años o más'];
+    const labels = screen
+      .getAllByRole('button')
+      .map((b) => b.props.accessibilityLabel)
+      .filter((l: string) => ages.includes(l));
+    expect(labels).toEqual(ages);
+  });
+});
+
 describe("Maria's first run", () => {
   it('saves her profile with all levels at 1', async () => {
     const user = userEvent.setup();
@@ -194,6 +206,13 @@ describe('profile screen', () => {
     await render(<ProfileScreen />);
     await user.press(screen.getByRole('switch', { name: 'Solo ejercicios sentados' }));
     expect(useProfileStore.getState().profile?.seatedOnly).toBe(true);
+  });
+
+  it('can change the age band to "Under 50"', async () => {
+    const user = userEvent.setup();
+    await render(<ProfileScreen />);
+    await user.press(screen.getByRole('button', { name: 'Menos de 50' }));
+    expect(useProfileStore.getState().profile?.ageBand).toBe('under-50');
   });
 
   it('opens the safety tips', async () => {
