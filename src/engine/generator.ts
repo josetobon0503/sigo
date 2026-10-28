@@ -131,6 +131,7 @@ export function generateWorkout(
     exerciseId: e.id,
     section,
     dosage: e.dosage,
+    perSide: e.perSide,
   });
   const items: PlannedItem[] = [
     ...warmup.map(plan('warmup')),
@@ -143,7 +144,7 @@ export function generateWorkout(
 }
 
 function total(items: PlannedItem[]): number {
-  return items.reduce((sum, item) => sum + estimateSeconds(item.dosage), 0);
+  return items.reduce((sum, item) => sum + estimateSeconds(item.dosage, item.perSide), 0);
 }
 
 // A workout under 15 minutes first gets one more set on each main exercise (up to 3 sets),
@@ -163,6 +164,11 @@ function fillToMinimum(items: PlannedItem[], ctx: Context): void {
     const [extra] = rankCandidates('mobility', ctx);
     if (!extra) return;
     ctx.usedToday.add(extra.id);
-    items.push({ exerciseId: extra.id, section: 'cooldown', dosage: extra.dosage });
+    items.push({
+      exerciseId: extra.id,
+      section: 'cooldown',
+      dosage: extra.dosage,
+      perSide: extra.perSide,
+    });
   }
 }

@@ -43,7 +43,8 @@ export interface Exercise {
   level: Level; // 1 = gentlest
   loads: BodyArea[]; // joints meaningfully loaded by this exercise
   equipment: Equipment[];
-  dosage: Dosage;
+  dosage: Dosage; // for a perSide exercise, reps or seconds are for each side
+  perSide: boolean; // done one side at a time: "10 per side"
   purpose: Localized; // "what it is for", one or two plain sentences
   steps: LocalizedList; // "how to do it", 3-5 short steps
   mistakes: LocalizedList; // "how NOT to do it", 2-3 common mistakes
@@ -109,6 +110,7 @@ export interface PlannedItem {
   exerciseId: string;
   section: WorkoutSection;
   dosage: Dosage; // the exercise dosage, with extra sets if the workout was too short
+  perSide: boolean;
 }
 
 export interface GeneratedWorkout {

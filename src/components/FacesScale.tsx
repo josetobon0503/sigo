@@ -9,17 +9,37 @@ import { useTheme } from '@/theme/useTheme';
 const VALUES: PainIntensity[] = [1, 2, 3, 4, 5];
 const FACES = ['😀', '🙂', '😐', '😟', '😣'];
 
-export interface FacesScaleProps {
-  value: PainIntensity | null;
-  onChange: (value: PainIntensity) => void;
+export interface FaceOption<T> {
+  value: T;
+  label: string;
+}
+
+export interface FacesScaleProps<T extends string | number = PainIntensity> {
+  value: T | null;
+  onChange: (value: T) => void;
   accessibilityLabel: string; // what is being rated, e.g. "Knee, left side"
+  // Five options, from the green face to the red one. Defaults to the pain scale (None ... Worst).
+  options?: readonly FaceOption<T>[];
   testID?: string;
 }
 
 // Five colored faces (green to red), always with a text label: color is never the only cue.
-export function FacesScale({ value, onChange, accessibilityLabel, testID }: FacesScaleProps) {
+export function FacesScale<T extends string | number = PainIntensity>({
+  value,
+  onChange,
+  accessibilityLabel,
+  options,
+  testID,
+}: FacesScaleProps<T>) {
   const { t } = useTranslation();
   const { colors, typography, spacing, radius, sizes } = useTheme();
+  // Without options, T is the default PainIntensity.
+  const choices =
+    options ??
+    (VALUES.map((v) => ({
+      value: v,
+      label: t(`painIntensity.${v}`),
+    })) as FaceOption<unknown>[] as FaceOption<T>[]);
 
   return (
     <View
@@ -28,15 +48,14 @@ export function FacesScale({ value, onChange, accessibilityLabel, testID }: Face
       testID={testID}
       style={{ gap: spacing.sm }}
     >
-      {VALUES.map((v, i) => {
+      {choices.map(({ value: v, label }, i) => {
         const selected = value === v;
-        const label = t(`painIntensity.${v}`);
         return (
           <Pressable
-            key={v}
+            key={String(v)}
             onPress={() => onChange(v)}
             accessibilityRole="radio"
-            accessibilityLabel={t('faces.option', { label, value: v })}
+            accessibilityLabel={t('faces.option', { label, value: i + 1 })}
             accessibilityState={{ checked: selected }}
             style={({ pressed }) => [
               styles.option,

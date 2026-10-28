@@ -11,7 +11,24 @@
   },
   "today": {
     "title": "Today",
-    "placeholder": "Your workout for today will show up here. Coming soon!"
+    "minutes": "{{count}} min",
+    "exercises_one": "{{count}} exercise",
+    "exercises_other": "{{count}} exercises",
+    "considered": "We considered: {{areas}}",
+    "warmup": "Warm-up",
+    "main": "Exercises",
+    "cooldown": "Cool-down",
+    "equipmentTitle": "Equipment needed",
+    "noEquipment": "You don't need anything else.",
+    "yourArea": "your {{area}}",
+    "skippedPain": "We skipped {{pattern}} today to protect {{areas}}.",
+    "skippedOther": "We skipped {{pattern}} today: we couldn't find an option that works for you.",
+    "empty": "We couldn't find safe exercises for you today. Check your equipment in Profile and your pain areas.",
+    "start": "Start workout",
+    "startHint": "Opens the first exercise",
+    "doneTitle": "You already trained today!",
+    "doneBody": "Great job. Rest and see you tomorrow.",
+    "repeat": "Do the workout again"
   },
   "pain": {
     "title": "Pain",
@@ -202,5 +219,90 @@
       "breathe": "Keep breathing during every exercise. Don't hold your breath."
     },
     "close": "Close"
+  },
+  "list": {
+    "and": "{{first}} and {{last}}"
+  },
+  "patternSkipped": {
+    "squat": "squats",
+    "hinge": "hip exercises",
+    "upper_push": "arm pushing exercises",
+    "upper_pull": "arm pulling exercises",
+    "core": "core exercises",
+    "balance": "balance exercises",
+    "mobility": "loosening-up moves",
+    "calf": "calf exercises"
+  },
+  "dosage": {
+    "reps": "{{sets}} × {{reps}}",
+    "repsPerSide": "{{sets}} × {{reps}} per side",
+    "time": "{{sets}} × {{seconds}} s",
+    "timePerSide": "{{sets}} × {{seconds}} s per side",
+    "spokenReps_one": "{{count}} set of {{reps}} reps",
+    "spokenReps_other": "{{count}} sets of {{reps}} reps",
+    "spokenTime_one": "{{count}} set of {{seconds}} seconds",
+    "spokenTime_other": "{{count}} sets of {{seconds}} seconds",
+    "spokenPerSide": "{{dosage}}, per side"
+  },
+  "workout": {
+    "exit": "Exit",
+    "exitTitle": "Are you sure you want to stop?",
+    "exitBody": "We'll save what you already did.",
+    "exitConfirm": "Stop",
+    "exitCancel": "Keep going",
+    "exerciseProgress": "Exercise {{current}} of {{total}}",
+    "setProgress": "Set {{current}} of {{total}}",
+    "purposeTitle": "What it's for",
+    "stepsTitle": "How to do it",
+    "repsLabel": "reps",
+    "repsPerSideLabel": "reps per side",
+    "secondsLabel": "seconds",
+    "secondsPerSideLabel": "seconds per side",
+    "firstSide": "First side",
+    "secondSide": "Other side",
+    "switchSides": "Switch sides",
+    "done": "Done",
+    "doneHint": "Marks this set as done",
+    "start": "Start",
+    "pause": "Pause",
+    "resume": "Resume",
+    "secondsLeft_one": "{{count}} second left",
+    "secondsLeft_other": "{{count}} seconds left",
+    "hurt": "It hurts",
+    "hurtHint": "Stops this exercise",
+    "hurtTitle": "Stop and rest",
+    "hurtBody": "If it hurts, don't keep going with this exercise. Soon Sigo will offer you another one instead. If you have chest pain, feel dizzy or short of breath, call 911.",
+    "hurtOk": "Got it"
+  },
+  "rest": {
+    "title": "Rest",
+    "skip": "Skip",
+    "skipHint": "Ends the rest now",
+    "upNext": "Up next"
+  },
+  "finish": {
+    "title": "You did it!",
+    "titlePartial": "Good work today",
+    "exercises_one": "{{count}} exercise",
+    "exercises_other": "{{count}} exercises",
+    "minutes_one": "{{count}} minute",
+    "minutes_other": "{{count}} minutes",
+    "feelingQuestion": "How do you feel?",
+    "thanks": "Thanks! We saved it.",
+    "backHome": "Back to Today"
+  },
+  "feeling": {
+    "great": "Great",
+    "good": "Good",
+    "ok": "OK",
+    "tired": "Tired",
+    "sore": "Sore"
+  },
+  "profileDev": {
+    "simulateDay": "Simulate another day (development only)",
+    "simulatedDate": "Date: {{date}}",
+    "prevDay": "Previous day",
+    "nextDay": "Next day",
+    "realToday": "Back to today"
   }
 }

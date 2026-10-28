@@ -90,6 +90,8 @@ src/
     swap.ts               # finds a replacement exercise
     progression.ts        # updates levels after a workout
     safety.ts             # red-flag rules and screening result
+    session.ts            # workout session state machine (timers use endsAt + now)
+    today.ts              # Today screen helpers (considered areas, skip reasons, equipment)
     __tests__/
   data/
     exercises.ts          # exercise library (typed)
@@ -138,7 +140,8 @@ interface Exercise {
   level: 1 | 2 | 3 | 4 | 5;   // 1 = gentlest
   loads: BodyArea[];          // joints meaningfully loaded by this exercise
   equipment: Equipment[];
-  dosage: Dosage;
+  dosage: Dosage;             // for a perSide exercise, reps / seconds are for each side
+  perSide: boolean;           // done one side at a time ("10 per side"), e.g. single-leg stand
   purpose: Localized;         // "what it is for", one or two plain sentences
   steps: LocalizedList;       // "how to do it", 3-5 short steps
   mistakes: LocalizedList;    // "how NOT to do it", 2-3 common mistakes
@@ -302,7 +305,7 @@ screens; non-personalized ads only; no health data ever passed to an ad SDK; res
 - [x] Phase 1: Project setup, theme, i18n, tabs skeleton (Expo SDK 58; tabs via `expo-router/js-tabs`)
 - [x] Phase 2: Exercise library (37 exercises, ES/EN, not yet reviewed by a PT) + engine (generator, swap, progression, safety) with tests
 - [x] Phase 3: Onboarding + profile store (Zustand + AsyncStorage, splash until loaded, all levels start at 1) + Profile screen
-- [ ] Phase 4: Today screen + workout session (timer, rest, finish, feeling)
+- [x] Phase 4: Today screen + workout session (timestamp-based timers that survive the background, rest 30 s / 45 s, finish + feeling, history store, perSide exercises, dev "Simulate another day")
 - [ ] Phase 5: It hurts flow (safety, swap, preview) + Pain tab
 - [ ] Phase 6: Progression + Progress tab (history)
 - [ ] Phase 7: Video chapters + distance mode with spoken guidance

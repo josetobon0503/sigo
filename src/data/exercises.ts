@@ -17,6 +17,7 @@ export const exercises: Exercise[] = [
     loads: ['shoulder'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 1, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Suelta los hombros y la parte alta de la espalda antes de moverte.',
       en: 'Loosens your shoulders and upper back before you move.',
@@ -51,6 +52,7 @@ export const exercises: Exercise[] = [
     loads: ['neck'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 1, reps: 6 },
+    perSide: true,
     purpose: {
       es: 'Mueve el cuello con suavidad para que no se sienta tieso.',
       en: 'Moves your neck gently so it feels less stiff.',
@@ -93,6 +95,7 @@ export const exercises: Exercise[] = [
     loads: ['hip'],
     equipment: ['chair'],
     dosage: { kind: 'time', sets: 1, seconds: 45 },
+    perSide: false,
     purpose: {
       es: 'Calienta las piernas y la cadera sin tener que pararte.',
       en: 'Warms up your legs and hips without standing up.',
@@ -127,6 +130,7 @@ export const exercises: Exercise[] = [
     loads: ['ankle'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 1, reps: 8 },
+    perSide: true,
     purpose: {
       es: 'Mueve los tobillos para que caminar y pararte se sienta más fácil.',
       en: 'Moves your ankles so walking and standing feel easier.',
@@ -161,6 +165,7 @@ export const exercises: Exercise[] = [
     loads: ['upper_back', 'lower_back'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 1, reps: 6 },
+    perSide: true,
     purpose: {
       es: 'Suelta la espalda para que voltear y alcanzar cosas sea más cómodo.',
       en: 'Loosens your back so turning and reaching feel more comfortable.',
@@ -197,6 +202,7 @@ export const exercises: Exercise[] = [
     loads: ['knee'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: true,
     purpose: {
       es: 'Fortalece el muslo, que te ayuda a pararte y subir escaleras.',
       en: 'Strengthens the front of your thigh, which helps you stand up and climb stairs.',
@@ -231,6 +237,7 @@ export const exercises: Exercise[] = [
     loads: ['knee', 'hip'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: false,
     purpose: {
       es: 'Practica algo que haces todos los días: levantarte de una silla.',
       en: 'Practices something you do every day: getting up from a chair.',
@@ -265,6 +272,7 @@ export const exercises: Exercise[] = [
     loads: ['knee', 'hip'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Fortalece piernas y glúteos con un movimiento corto y seguro.',
       en: 'Strengthens your legs and glutes with a short, safe movement.',
@@ -303,6 +311,7 @@ export const exercises: Exercise[] = [
     loads: ['knee', 'hip'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Hace tus piernas más fuertes para levantarte sin ayuda.',
       en: 'Makes your legs stronger so you can get up without help.',
@@ -337,6 +346,7 @@ export const exercises: Exercise[] = [
     loads: ['knee', 'hip'],
     equipment: ['wall'],
     dosage: { kind: 'time', sets: 2, seconds: 20 },
+    perSide: false,
     purpose: {
       es: 'Fortalece los muslos sosteniendo una posición, sin moverte.',
       en: 'Strengthens your thighs by holding a position, without moving.',
@@ -373,6 +383,7 @@ export const exercises: Exercise[] = [
     loads: ['lower_back', 'hip'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: false,
     purpose: {
       es: 'Enseña a doblarte desde la cadera, para agacharte cuidando la espalda.',
       en: 'Teaches you to bend from your hips, so you protect your back when you bend down.',
@@ -407,6 +418,7 @@ export const exercises: Exercise[] = [
     loads: ['hip'],
     equipment: ['chair'],
     dosage: { kind: 'time', sets: 2, seconds: 20 },
+    perSide: false,
     purpose: {
       es: 'Despierta los glúteos, que te ayudan a pararte y caminar, sin mover la espalda.',
       en: 'Wakes up your glutes, which help you stand and walk, without moving your back.',
@@ -441,6 +453,7 @@ export const exercises: Exercise[] = [
     loads: ['hip', 'knee', 'ankle', 'foot', 'lower_back'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: true,
     purpose: {
       es: 'Fortalece los glúteos, que te ayudan a caminar y subir escaleras.',
       en: 'Strengthens your glutes (the muscles you sit on), which help you walk and climb stairs.',
@@ -475,6 +488,7 @@ export const exercises: Exercise[] = [
     loads: ['hip', 'knee', 'ankle', 'foot'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: true,
     purpose: {
       es: 'Fortalece el lado de la cadera, que te da firmeza al caminar.',
       en: 'Strengthens the side of your hip, which keeps you steady when you walk.',
@@ -509,6 +523,7 @@ export const exercises: Exercise[] = [
     loads: ['lower_back', 'hip'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: false,
     purpose: {
       es: 'Practica cómo agacharte bien para recoger cosas del piso.',
       en: 'Practices bending the right way to pick things up from the floor.',
@@ -543,6 +558,7 @@ export const exercises: Exercise[] = [
     loads: ['lower_back', 'hip'],
     equipment: ['towel'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Fortalece la parte de atrás de las piernas y la espalda.',
       en: 'Strengthens the back of your legs and your back.',
@@ -579,6 +595,7 @@ export const exercises: Exercise[] = [
     loads: ['shoulder', 'elbow'],
     equipment: ['chair', 'bottles'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Fortalece el pecho y los brazos para empujar puertas y levantarte.',
       en: 'Strengthens your chest and arms for pushing doors and getting up.',
@@ -611,6 +628,7 @@ export const exercises: Exercise[] = [
     loads: ['shoulder', 'elbow', 'wrist'],
     equipment: ['wall'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: false,
     purpose: {
       es: 'Fortalece pecho, hombros y brazos con el peso de tu cuerpo.',
       en: 'Strengthens your chest, shoulders and arms with your own body weight.',
@@ -645,6 +663,7 @@ export const exercises: Exercise[] = [
     loads: ['shoulder', 'elbow'],
     equipment: ['chair', 'bottles'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: false,
     purpose: {
       es: 'Fortalece los hombros para alcanzar cosas en lo alto.',
       en: 'Strengthens your shoulders for reaching things up high.',
@@ -677,6 +696,7 @@ export const exercises: Exercise[] = [
     loads: ['shoulder', 'elbow', 'wrist'],
     equipment: ['wall'],
     dosage: { kind: 'reps', sets: 3, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Un paso más de la lagartija en la pared, para brazos y pecho más fuertes.',
       en: 'The next step up from the wall push-up, for stronger arms and chest.',
@@ -713,6 +733,7 @@ export const exercises: Exercise[] = [
     loads: ['shoulder', 'elbow'],
     equipment: ['chair', 'towel'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Fortalece la espalda alta para estar más derecho.',
       en: 'Strengthens your upper back so you stand up straighter.',
@@ -747,6 +768,7 @@ export const exercises: Exercise[] = [
     loads: ['shoulder', 'upper_back'],
     equipment: ['chair', 'towel'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Despierta los músculos entre los omóplatos para mejorar la postura.',
       en: 'Wakes up the muscles between your shoulder blades to help your posture.',
@@ -781,6 +803,7 @@ export const exercises: Exercise[] = [
     loads: ['shoulder', 'elbow', 'upper_back'],
     equipment: ['chair', 'bottles'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Fortalece la espalda alta y los brazos para cargar bolsas y estar más derecho.',
       en: 'Strengthens your upper back and arms for carrying bags and standing up straighter.',
@@ -815,6 +838,7 @@ export const exercises: Exercise[] = [
     loads: ['shoulder', 'elbow', 'upper_back'],
     equipment: ['chair', 'towel'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Fortalece la espalda y los brazos para jalar y cargar cosas.',
       en: 'Strengthens your back and arms for pulling and carrying.',
@@ -849,6 +873,7 @@ export const exercises: Exercise[] = [
     loads: ['shoulder', 'elbow', 'upper_back', 'lower_back'],
     equipment: ['chair', 'bottles'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: true,
     purpose: {
       es: 'Fortalece la espalda y los brazos, como al levantar una bolsa del piso.',
       en: 'Strengthens your back and arms, like lifting a bag from the floor.',
@@ -885,6 +910,7 @@ export const exercises: Exercise[] = [
     loads: [],
     equipment: ['chair'],
     dosage: { kind: 'time', sets: 3, seconds: 10 },
+    perSide: false,
     purpose: {
       es: 'Despierta los músculos del abdomen que protegen tu espalda.',
       en: 'Wakes up the belly muscles that protect your back.',
@@ -919,6 +945,7 @@ export const exercises: Exercise[] = [
     loads: ['lower_back'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: false,
     purpose: {
       es: 'Fortalece el abdomen para sentarte y pararte con más firmeza.',
       en: 'Strengthens your belly so you sit and stand more steadily.',
@@ -953,6 +980,7 @@ export const exercises: Exercise[] = [
     loads: ['hip', 'knee', 'ankle', 'foot'],
     equipment: ['chair'],
     dosage: { kind: 'time', sets: 2, seconds: 30 },
+    perSide: false,
     purpose: {
       es: 'Trabaja el abdomen y la cadera mientras te mantienes derecho.',
       en: 'Works your belly and hips while you stay upright.',
@@ -987,6 +1015,7 @@ export const exercises: Exercise[] = [
     loads: ['shoulder', 'elbow'],
     equipment: ['wall'],
     dosage: { kind: 'time', sets: 3, seconds: 20 },
+    perSide: false,
     purpose: {
       es: 'Fortalece todo el tronco sosteniendo el cuerpo recto.',
       en: 'Strengthens your whole trunk by holding your body straight.',
@@ -1023,6 +1052,7 @@ export const exercises: Exercise[] = [
     loads: ['lower_back'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: true,
     purpose: {
       es: 'Entrena el control del cuerpo sin riesgo de caerte.',
       en: 'Trains body control with no risk of falling.',
@@ -1057,6 +1087,7 @@ export const exercises: Exercise[] = [
     loads: ['ankle', 'foot'],
     equipment: ['chair'],
     dosage: { kind: 'time', sets: 2, seconds: 20 },
+    perSide: false,
     purpose: {
       es: 'Mejora el equilibrio para caminar con más seguridad.',
       en: 'Improves your balance so you walk with more confidence.',
@@ -1091,6 +1122,7 @@ export const exercises: Exercise[] = [
     loads: ['ankle', 'foot'],
     equipment: ['chair'],
     dosage: { kind: 'time', sets: 2, seconds: 20 },
+    perSide: true,
     purpose: {
       es: 'Entrena el equilibrio que usas al caminar por lugares angostos.',
       en: 'Trains the balance you use when walking in narrow spaces.',
@@ -1125,6 +1157,7 @@ export const exercises: Exercise[] = [
     loads: ['ankle', 'foot', 'knee', 'hip'],
     equipment: ['chair'],
     dosage: { kind: 'time', sets: 2, seconds: 15 },
+    perSide: true,
     purpose: {
       es: 'Te prepara para subir escaleras y ponerte los pantalones de pie.',
       en: 'Gets you ready for climbing stairs and putting on pants while standing.',
@@ -1159,6 +1192,7 @@ export const exercises: Exercise[] = [
     loads: ['ankle', 'foot', 'knee', 'hip'],
     equipment: ['wall'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Entrena el equilibrio mientras te mueves, para evitar tropiezos.',
       en: 'Trains your balance while you move, to help prevent trips.',
@@ -1195,6 +1229,7 @@ export const exercises: Exercise[] = [
     loads: ['ankle', 'foot'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 12 },
+    perSide: false,
     purpose: {
       es: 'Fortalece las pantorrillas, que te ayudan a caminar y mantener el equilibrio.',
       en: 'Strengthens your calves, which help you walk and keep your balance.',
@@ -1229,6 +1264,7 @@ export const exercises: Exercise[] = [
     loads: ['ankle', 'foot'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
     purpose: {
       es: 'Fortalece las pantorrillas para caminar con más firmeza.',
       en: 'Strengthens your calves so you walk more steadily.',
@@ -1266,6 +1302,7 @@ export const exercises: Exercise[] = [
     loads: ['ankle', 'foot', 'knee', 'hip'],
     equipment: ['chair'],
     dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: true,
     purpose: {
       es: 'Un reto mayor para pantorrillas y tobillos más fuertes.',
       en: 'A bigger challenge for stronger calves and ankles.',

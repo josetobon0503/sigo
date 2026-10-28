@@ -18,6 +18,12 @@ export function hasEquipment(owned: Equipment[], needed: Equipment[]): boolean {
   );
 }
 
+// What the user will actually pick up for `item`: the item itself, or what stands in for it.
+export function resolveEquipment(owned: Equipment[], item: Equipment): Equipment {
+  if (owned.includes(item)) return item;
+  return (SUBSTITUTES[item] ?? []).find((s) => owned.includes(s)) ?? item;
+}
+
 // An avoided exercise comes back on its `until` day.
 export function isAvoided(
   profile: Pick<UserProfile, 'avoided'>,
@@ -50,11 +56,13 @@ export function isAllowed(
 }
 
 // Rough time on screen: ~4 s per rep, 30 s rest after each set, 15 s to get ready.
+// A perSide exercise does the work twice in each set.
 export const REP_SECONDS = 4;
 export const REST_SECONDS = 30;
 export const SETUP_SECONDS = 15;
 
-export function estimateSeconds(dosage: Dosage): number {
-  const work = dosage.kind === 'reps' ? dosage.reps * REP_SECONDS : dosage.seconds;
+export function estimateSeconds(dosage: Dosage, perSide = false): number {
+  const work =
+    (dosage.kind === 'reps' ? dosage.reps * REP_SECONDS : dosage.seconds) * (perSide ? 2 : 1);
   return SETUP_SECONDS + dosage.sets * (work + REST_SECONDS);
 }

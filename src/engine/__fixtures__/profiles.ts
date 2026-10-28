@@ -96,6 +96,7 @@ export function fakeExercise(overrides: Partial<Exercise> & Pick<Exercise, 'id'>
     loads: [],
     equipment: [],
     dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
     purpose: { es: 'x', en: 'x' },
     steps: { es: ['a', 'b', 'c'], en: ['a', 'b', 'c'] },
     mistakes: { es: ['a', 'b'], en: ['a', 'b'] },

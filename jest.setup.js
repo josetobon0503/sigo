@@ -19,3 +19,10 @@ jest.mock('@expo/vector-icons/Ionicons', () => {
   const Ionicons = (props) => React.createElement(View, { testID: `icon-${props.name}` });
   return { __esModule: true, default: Ionicons };
 });
+
+// Native modules used by the workout session.
+jest.mock('expo-haptics', () => ({
+  impactAsync: jest.fn(() => Promise.resolve()),
+  ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
+}));
+jest.mock('expo-keep-awake', () => ({ useKeepAwake: jest.fn() }));

@@ -106,6 +106,28 @@ describe('exercise library', () => {
     expect(e.loads).toEqual(expect.arrayContaining(['ankle', 'foot', 'knee', 'hip']));
   });
 
+  // "10 per side": a one-foot or one-hand exercise must say so, or the user does half the work.
+  it('marks every one-sided exercise as perSide', () => {
+    const ONE_SIDE_ES = /\b(un pie|una mano|un brazo|una pierna)\b/i;
+    const ONE_SIDE_EN = /\b(one[- ](foot|hand|arm|leg)|single[- ](leg|arm))\b/i;
+    const oneSided = exercises.filter(
+      (e) => ONE_SIDE_ES.test(e.name.es) || ONE_SIDE_EN.test(e.name.en),
+    );
+    expect(oneSided.length).toBeGreaterThan(0);
+    for (const e of oneSided)
+      expect({ id: e.id, perSide: e.perSide }).toEqual({ id: e.id, perSide: true });
+  });
+
+  it.each([
+    'supported-hip-extension',
+    'supported-hip-abduction',
+    'supported-single-leg-stand',
+    'supported-single-leg-heel-raise',
+    'seated-look-side-to-side',
+  ])('%s is done one side at a time', (id) => {
+    expect(exercises.find((x) => x.id === id)!.perSide).toBe(true);
+  });
+
   it('supported hip extension loads the lower back and warns about arching', () => {
     const e = exercises.find((x) => x.id === 'supported-hip-extension')!;
     expect(e.loads).toContain('lower_back');

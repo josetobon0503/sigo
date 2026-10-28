@@ -1,11 +1,13 @@
 export { BigButton, type BigButtonProps, type BigButtonVariant } from './BigButton';
+export { BigNumber, type BigNumberProps } from './BigNumber';
 export { BodyMap, type BodyMapProps } from './BodyMap';
 export { Card, type CardProps } from './Card';
 export { Chip, type ChipProps } from './Chip';
 export { ChipGroup, type ChipGroupProps } from './ChipGroup';
-export { FacesScale, type FacesScaleProps } from './FacesScale';
+export { FacesScale, type FaceOption, type FacesScaleProps } from './FacesScale';
 export { Notice, type NoticeProps } from './Notice';
 export { ONBOARDING_TOTAL_STEPS, OnboardingStep, type OnboardingStepProps } from './OnboardingStep';
+export { Pill, type PillProps } from './Pill';
 export { ReminderEditor, type ReminderEditorProps } from './ReminderEditor';
 export { ScreenContainer, type ScreenContainerProps } from './ScreenContainer';
 export { SwitchRow, type SwitchRowProps } from './SwitchRow';

@@ -8,6 +8,7 @@ import {
   toProfileDraft,
   useOnboardingStore,
 } from '../onboardingStore';
+import { useHistoryStore } from '../historyStore';
 import { useProfileStore } from '../profileStore';
 
 describe('onboarding draft', () => {
@@ -80,5 +81,39 @@ describe('profile store', () => {
     useProfileStore.getState().completeOnboarding(makeProfile());
     useProfileStore.getState().resetOnboarding();
     expect(useProfileStore.getState().profile).toBeNull();
+  });
+});
+
+describe('history store', () => {
+  const log = { id: 'a', date: '2026-10-28', durationSec: 600, items: [] };
+
+  beforeEach(async () => {
+    await AsyncStorage.clear();
+    useHistoryStore.setState({ logs: [] });
+  });
+
+  it('saves workouts on the device and adds the feeling later', async () => {
+    useHistoryStore.getState().addLog(log);
+    useHistoryStore.getState().setFeeling('a', 'tired');
+    const saved = JSON.parse((await AsyncStorage.getItem('sigo-history')) ?? '{}');
+    expect(saved.state.logs).toEqual([{ ...log, feeling: 'tired' }]);
+    expect(saved.state.hydrated).toBeUndefined();
+  });
+
+  it('replaces a log saved twice instead of repeating it', () => {
+    useHistoryStore.getState().addLog(log);
+    useHistoryStore.getState().addLog({ ...log, durationSec: 700 });
+    expect(useHistoryStore.getState().logs).toEqual([{ ...log, durationSec: 700 }]);
+  });
+
+  it('loads the saved history and marks itself hydrated', async () => {
+    useHistoryStore.setState({ hydrated: false });
+    await AsyncStorage.setItem(
+      'sigo-history',
+      JSON.stringify({ state: { logs: [log] }, version: 1 }),
+    );
+    await useHistoryStore.persist.rehydrate();
+    expect(useHistoryStore.getState().logs).toEqual([log]);
+    expect(useHistoryStore.getState().hydrated).toBe(true);
   });
 });

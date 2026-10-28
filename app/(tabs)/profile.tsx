@@ -14,6 +14,8 @@ import {
 } from '@/components';
 import { AGE_BANDS, EQUIPMENT, toggleEquipment } from '@/engine/profile';
 import { SUPPORTED_LANGUAGES } from '@/i18n';
+import { formatDay } from '@/i18n/format';
+import { useDevStore, useToday } from '@/store/devStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useTheme } from '@/theme/useTheme';
@@ -26,6 +28,9 @@ export default function ProfileScreen() {
   const updateProfile = useProfileStore((s) => s.updateProfile);
   const resetOnboarding = useProfileStore((s) => s.resetOnboarding);
   const resetDraft = useOnboardingStore((s) => s.reset);
+  const dayOffset = useDevStore((s) => s.dayOffset);
+  const setDayOffset = useDevStore((s) => s.setDayOffset);
+  const today = useToday();
 
   if (!profile) return null;
 
@@ -136,16 +141,51 @@ export default function ProfileScreen() {
       </Card>
 
       {__DEV__ ? (
-        <BigButton
-          label={t('profile.resetOnboarding')}
-          variant="secondary"
-          icon="refresh"
-          onPress={() => {
-            resetDraft();
-            resetOnboarding();
-          }}
-          testID="reset-onboarding"
-        />
+        <>
+          <Card style={{ gap: spacing.sm }} testID="simulate-day">
+            <Text accessibilityRole="header" style={[typography.bodyBold, { color: colors.text }]}>
+              {t('profileDev.simulateDay')}
+            </Text>
+            <Text style={[typography.body, { color: colors.text }]} testID="simulated-date">
+              {t('profileDev.simulatedDate', {
+                date: formatDay(today, profile.language),
+              })}
+            </Text>
+            <BigButton
+              label={t('profileDev.nextDay')}
+              variant="secondary"
+              icon="arrow-forward"
+              onPress={() => setDayOffset(dayOffset + 1)}
+              testID="next-day"
+            />
+            <BigButton
+              label={t('profileDev.prevDay')}
+              variant="secondary"
+              icon="arrow-back"
+              onPress={() => setDayOffset(dayOffset - 1)}
+              testID="prev-day"
+            />
+            {dayOffset !== 0 ? (
+              <BigButton
+                label={t('profileDev.realToday')}
+                variant="secondary"
+                icon="today-outline"
+                onPress={() => setDayOffset(0)}
+                testID="real-today"
+              />
+            ) : null}
+          </Card>
+          <BigButton
+            label={t('profile.resetOnboarding')}
+            variant="secondary"
+            icon="refresh"
+            onPress={() => {
+              resetDraft();
+              resetOnboarding();
+            }}
+            testID="reset-onboarding"
+          />
+        </>
       ) : null}
     </ScreenContainer>
   );
