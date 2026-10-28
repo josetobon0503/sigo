@@ -20,5 +20,35 @@
   "profile": {
     "title": "Perfil",
     "placeholder": "Aquí vas a poder cambiar tus datos, tu equipo y tu idioma."
+  },
+  "swap": {
+    "reason": {
+      "seatedVersion": "Es la versión sentada: mismo trabajo, menos carga.",
+      "gentlerVersion": "Es una versión más suave del mismo movimiento.",
+      "avoidsArea": "Este ejercicio no carga la zona que te duele.",
+      "mobility": "Por ahora, un movimiento suave para soltar el cuerpo."
+    }
+  },
+  "bodyArea": {
+    "neck": "Cuello",
+    "shoulder": "Hombro",
+    "elbow": "Codo",
+    "wrist": "Muñeca",
+    "upper_back": "Espalda alta",
+    "lower_back": "Espalda baja",
+    "hip": "Cadera",
+    "knee": "Rodilla",
+    "ankle": "Tobillo",
+    "foot": "Pie"
+  },
+  "pattern": {
+    "squat": "Piernas",
+    "hinge": "Cadera y glúteos",
+    "upper_push": "Empujar con los brazos",
+    "upper_pull": "Jalar con los brazos",
+    "core": "Abdomen",
+    "balance": "Equilibrio",
+    "mobility": "Soltar el cuerpo",
+    "calf": "Pantorrillas"
   }
 }

@@ -299,7 +299,7 @@ screens; non-personalized ads only; no health data ever passed to an ad SDK; res
 ## 12. Status
 
 - [x] Phase 1: Project setup, theme, i18n, tabs skeleton (Expo SDK 58; tabs via `expo-router/js-tabs`)
-- [ ] Phase 2: Exercise library + engine (generator, swap, progression, safety) with tests
+- [x] Phase 2: Exercise library (35 exercises, ES/EN, not yet reviewed by a PT) + engine (generator, swap, progression, safety) with tests
 - [ ] Phase 3: Onboarding + profile store
 - [ ] Phase 4: Today screen + workout session (timer, rest, finish, feeling)
 - [ ] Phase 5: It hurts flow (safety, swap, preview) + Pain tab

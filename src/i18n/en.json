@@ -20,5 +20,35 @@
   "profile": {
     "title": "Profile",
     "placeholder": "Here you will change your details, your equipment and your language."
+  },
+  "swap": {
+    "reason": {
+      "seatedVersion": "It's the seated version: same work, less load.",
+      "gentlerVersion": "It's a gentler version of the same movement.",
+      "avoidsArea": "This one keeps the load off the area that hurts.",
+      "mobility": "For now, a gentle movement to loosen up."
+    }
+  },
+  "bodyArea": {
+    "neck": "Neck",
+    "shoulder": "Shoulder",
+    "elbow": "Elbow",
+    "wrist": "Wrist",
+    "upper_back": "Upper back",
+    "lower_back": "Lower back",
+    "hip": "Hip",
+    "knee": "Knee",
+    "ankle": "Ankle",
+    "foot": "Foot"
+  },
+  "pattern": {
+    "squat": "Legs",
+    "hinge": "Hips and glutes",
+    "upper_push": "Arm pushing",
+    "upper_pull": "Arm pulling",
+    "core": "Core",
+    "balance": "Balance",
+    "mobility": "Loosen up",
+    "calf": "Calves"
   }
 }
