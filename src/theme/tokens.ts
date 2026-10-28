@@ -46,6 +46,10 @@ export const colors: Record<ColorScheme, ColorTokens> = {
   },
 };
 
+// Feeling and pain faces, green (1) to red (5). Always shown next to a text label, in both themes.
+// Not the alert color: that one is reserved for "It hurts" and safety screens.
+export const faceScale = ['#2E7D32', '#7CB342', '#F9A825', '#EF6C00', '#B71C1C'] as const;
+
 export const typography = {
   largeTitle: { fontSize: 34, lineHeight: 41, fontWeight: '700' },
   title: { fontSize: 22, lineHeight: 28, fontWeight: '700' },

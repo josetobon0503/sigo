@@ -1,4 +1,11 @@
 export { BigButton, type BigButtonProps, type BigButtonVariant } from './BigButton';
+export { BodyMap, type BodyMapProps } from './BodyMap';
 export { Card, type CardProps } from './Card';
 export { Chip, type ChipProps } from './Chip';
+export { ChipGroup, type ChipGroupProps } from './ChipGroup';
+export { FacesScale, type FacesScaleProps } from './FacesScale';
+export { Notice, type NoticeProps } from './Notice';
+export { ONBOARDING_TOTAL_STEPS, OnboardingStep, type OnboardingStepProps } from './OnboardingStep';
+export { ReminderEditor, type ReminderEditorProps } from './ReminderEditor';
 export { ScreenContainer, type ScreenContainerProps } from './ScreenContainer';
+export { SwitchRow, type SwitchRowProps } from './SwitchRow';

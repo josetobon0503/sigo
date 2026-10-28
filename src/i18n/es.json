@@ -19,7 +19,16 @@
   },
   "profile": {
     "title": "Perfil",
-    "placeholder": "Aquí vas a poder cambiar tus datos, tu equipo y tu idioma."
+    "nameLabel": "Nombre",
+    "ageLabel": "Edad",
+    "equipmentLabel": "Mi equipo",
+    "reminderLabel": "Recordatorio",
+    "seatedOnly": "Solo ejercicios sentados",
+    "seatedOnlyHint": "Útil si te sientes inestable de pie.",
+    "safetyTips": "Consejos de seguridad",
+    "aboutTitle": "Acerca de Sigo",
+    "version": "Versión {{version}}",
+    "resetOnboarding": "Reiniciar onboarding (solo desarrollo)"
   },
   "swap": {
     "reason": {
@@ -50,5 +59,150 @@
     "balance": "Equilibrio",
     "mobility": "Soltar el cuerpo",
     "calf": "Pantorrillas"
+  },
+  "common": {
+    "continue": "Continuar",
+    "back": "Atrás",
+    "yes": "Sí",
+    "no": "No",
+    "start": "Empezar"
+  },
+  "language": {
+    "label": "Idioma",
+    "es": "Español",
+    "en": "English"
+  },
+  "ageBand": {
+    "50-59": "50 a 59 años",
+    "60-69": "60 a 69 años",
+    "70-79": "70 a 79 años",
+    "80+": "80 años o más"
+  },
+  "side": {
+    "left": "Izquierdo",
+    "right": "Derecho",
+    "both": "Ambos lados"
+  },
+  "painIntensity": {
+    "1": "Nada",
+    "2": "Leve",
+    "3": "Algo",
+    "4": "Fuerte",
+    "5": "Muy fuerte"
+  },
+  "painKind": {
+    "achy": "Molestia",
+    "sharp": "Punzante",
+    "stiff": "Rígido"
+  },
+  "equipmentName": {
+    "chair": "Silla firme",
+    "wall": "Pared libre",
+    "bottles": "Botellas de agua",
+    "towel": "Toalla",
+    "light_dumbbells": "Pesas ligeras"
+  },
+  "days": {
+    "short": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb"
+    },
+    "long": {
+      "sun": "Domingo",
+      "mon": "Lunes",
+      "tue": "Martes",
+      "wed": "Miércoles",
+      "thu": "Jueves",
+      "fri": "Viernes",
+      "sat": "Sábado"
+    }
+  },
+  "time": {
+    "am": "a. m.",
+    "pm": "p. m.",
+    "hourEarlier": "Una hora antes",
+    "hourLater": "Una hora después",
+    "minutesEarlier": "15 minutos antes",
+    "minutesLater": "15 minutos después"
+  },
+  "faces": {
+    "option": "{{label}}, {{value}} de 5"
+  },
+  "bodyMap": {
+    "caption": "La figura está de espaldas: tu lado izquierdo está a la izquierda.",
+    "leftZone": "{{area}}, lado izquierdo",
+    "rightZone": "{{area}}, lado derecho"
+  },
+  "doctorNotice": {
+    "title": "Habla con tu doctor antes de empezar",
+    "body": "Puedes seguir, es tu decisión. Vamos a empezar con ejercicios suaves y sentados, y puedes cambiar eso después en Perfil."
+  },
+  "painNotice": {
+    "title": "Habla con tu doctor antes de empezar",
+    "body": "Un dolor muy fuerte o punzante merece que lo vea un doctor. Puedes seguir: vamos a evitar los ejercicios que carguen esa zona."
+  },
+  "onboarding": {
+    "progress": "Paso {{step}} de {{total}}",
+    "welcome": {
+      "title": "Te damos la bienvenida a Sigo",
+      "body": "Ejercicio suave en casa, que se adapta a lo que te duele. Solo necesitas una silla firme."
+    },
+    "disclaimer": {
+      "title": "Antes de empezar",
+      "body": "Si algo te duele mucho, para y descansa. Si sientes dolor en el pecho, mareo o te falta el aire, para y llama al 911.",
+      "accept": "Entiendo"
+    },
+    "screening": {
+      "title": "Unas preguntas rápidas",
+      "intro": "Contesta con calma. Esto nos ayuda a cuidarte."
+    },
+    "about": {
+      "title": "Cuéntanos de ti",
+      "nameLabel": "¿Cómo te llamas?",
+      "namePlaceholder": "Tu nombre",
+      "ageLabel": "¿Cuántos años tienes?"
+    },
+    "painWhere": {
+      "title": "¿Dónde te duele?",
+      "hint": "Toca la figura o elige en la lista. Puedes marcar varias zonas.",
+      "listLabel": "Zonas",
+      "sideLabel": "¿De qué lado? ({{area}})",
+      "noPain": "No me duele nada"
+    },
+    "painStrength": {
+      "title": "¿Qué tan fuerte es?",
+      "kindLabel": "¿Cómo se siente?"
+    },
+    "equipment": {
+      "title": "¿Qué tienes en casa?",
+      "hint": "Marca lo que tengas. Con una silla firme basta para empezar."
+    },
+    "reminder": {
+      "title": "¿Te recordamos tu rutina?",
+      "enable": "Quiero un recordatorio",
+      "timeLabel": "¿A qué hora?",
+      "daysLabel": "¿Qué días?"
+    },
+    "ready": {
+      "title": "¡Todo listo, {{name}}!",
+      "body": "Tu rutina de hoy ya te está esperando. Ve a tu ritmo.",
+      "start": "Ir a mi rutina"
+    }
+  },
+  "safetyTips": {
+    "title": "Consejos de seguridad",
+    "tips": {
+      "water": "Ten agua cerca y toma sorbos.",
+      "chair": "Usa una silla firme, sin ruedas, apoyada contra la pared.",
+      "redFlags": "Si sientes dolor en el pecho, mareo o te falta el aire, para y llama al 911.",
+      "pain": "Una molestia leve está bien. Si el dolor es punzante o muy fuerte, para.",
+      "breathe": "Respira durante todo el ejercicio. No aguantes el aire."
+    },
+    "close": "Cerrar"
   }
 }

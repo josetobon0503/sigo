@@ -19,7 +19,16 @@
   },
   "profile": {
     "title": "Profile",
-    "placeholder": "Here you will change your details, your equipment and your language."
+    "nameLabel": "Name",
+    "ageLabel": "Age",
+    "equipmentLabel": "My equipment",
+    "reminderLabel": "Reminder",
+    "seatedOnly": "Seated exercises only",
+    "seatedOnlyHint": "Helpful if you feel unsteady standing.",
+    "safetyTips": "Safety tips",
+    "aboutTitle": "About Sigo",
+    "version": "Version {{version}}",
+    "resetOnboarding": "Reset onboarding (development only)"
   },
   "swap": {
     "reason": {
@@ -50,5 +59,150 @@
     "balance": "Balance",
     "mobility": "Loosen up",
     "calf": "Calves"
+  },
+  "common": {
+    "continue": "Continue",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No",
+    "start": "Start"
+  },
+  "language": {
+    "label": "Language",
+    "es": "Español",
+    "en": "English"
+  },
+  "ageBand": {
+    "50-59": "50 to 59",
+    "60-69": "60 to 69",
+    "70-79": "70 to 79",
+    "80+": "80 or older"
+  },
+  "side": {
+    "left": "Left",
+    "right": "Right",
+    "both": "Both sides"
+  },
+  "painIntensity": {
+    "1": "None",
+    "2": "Mild",
+    "3": "Some",
+    "4": "Strong",
+    "5": "Very strong"
+  },
+  "painKind": {
+    "achy": "Achy",
+    "sharp": "Sharp",
+    "stiff": "Stiff"
+  },
+  "equipmentName": {
+    "chair": "Sturdy chair",
+    "wall": "Clear wall",
+    "bottles": "Water bottles",
+    "towel": "Towel",
+    "light_dumbbells": "Light dumbbells"
+  },
+  "days": {
+    "short": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    },
+    "long": {
+      "sun": "Sunday",
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday"
+    }
+  },
+  "time": {
+    "am": "AM",
+    "pm": "PM",
+    "hourEarlier": "One hour earlier",
+    "hourLater": "One hour later",
+    "minutesEarlier": "15 minutes earlier",
+    "minutesLater": "15 minutes later"
+  },
+  "faces": {
+    "option": "{{label}}, {{value}} of 5"
+  },
+  "bodyMap": {
+    "caption": "The figure is seen from behind: your left side is on the left.",
+    "leftZone": "{{area}}, left side",
+    "rightZone": "{{area}}, right side"
+  },
+  "doctorNotice": {
+    "title": "Please talk to your doctor before starting",
+    "body": "You can keep going, it's your decision. We'll start with gentle, seated exercises, and you can change that later in Profile."
+  },
+  "painNotice": {
+    "title": "Please talk to your doctor before starting",
+    "body": "Very strong or sharp pain is worth showing to a doctor. You can keep going: we'll avoid exercises that load that area."
+  },
+  "onboarding": {
+    "progress": "Step {{step}} of {{total}}",
+    "welcome": {
+      "title": "Welcome to Sigo",
+      "body": "Gentle exercise at home that adapts to your discomfort. All you need is a sturdy chair."
+    },
+    "disclaimer": {
+      "title": "Before you start",
+      "body": "If something hurts a lot, stop and rest. If you feel chest pain, dizziness or shortness of breath, stop and call 911.",
+      "accept": "I understand"
+    },
+    "screening": {
+      "title": "A few quick questions",
+      "intro": "Take your time. This helps us keep you safe."
+    },
+    "about": {
+      "title": "Tell us about you",
+      "nameLabel": "What's your name?",
+      "namePlaceholder": "Your name",
+      "ageLabel": "How old are you?"
+    },
+    "painWhere": {
+      "title": "Where does it hurt?",
+      "hint": "Tap the figure or pick from the list. You can mark more than one area.",
+      "listLabel": "Areas",
+      "sideLabel": "Which side? ({{area}})",
+      "noPain": "Nothing hurts"
+    },
+    "painStrength": {
+      "title": "How strong is it?",
+      "kindLabel": "What does it feel like?"
+    },
+    "equipment": {
+      "title": "What do you have at home?",
+      "hint": "Check what you have. A sturdy chair is enough to start."
+    },
+    "reminder": {
+      "title": "Want a reminder?",
+      "enable": "Remind me to exercise",
+      "timeLabel": "What time?",
+      "daysLabel": "Which days?"
+    },
+    "ready": {
+      "title": "You're all set, {{name}}!",
+      "body": "Today's workout is waiting for you. Go at your own pace.",
+      "start": "Go to my workout"
+    }
+  },
+  "safetyTips": {
+    "title": "Safety tips",
+    "tips": {
+      "water": "Keep water nearby and take sips.",
+      "chair": "Use a sturdy chair without wheels, placed against a wall.",
+      "redFlags": "If you feel chest pain, dizziness or shortness of breath, stop and call 911.",
+      "pain": "Mild discomfort is OK. If the pain is sharp or very strong, stop.",
+      "breathe": "Keep breathing during every exercise. Don't hold your breath."
+    },
+    "close": "Close"
   }
 }
