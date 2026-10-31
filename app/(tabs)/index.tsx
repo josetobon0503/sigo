@@ -39,7 +39,7 @@ export default function TodayScreen() {
   const areaName = (area: BodyArea) => t(`bodyArea.${area}`).toLocaleLowerCase(lang);
   const considered = consideredAreas(profile).map((a) => areaName(a));
   const reasons = skipReasons(workout.skippedPatterns, profile, exercises, today);
-  const equipment = equipmentNeeded(workout.items, exercises, profile.equipment);
+  const equipment = equipmentNeeded(workout.items, exercises, profile.equipment, profile.floorOk);
   const trained = trainedOn(logs, today);
   const minutes = Math.round(workout.estimatedSec / 60);
   const hasItems = workout.items.length > 0;
@@ -123,9 +123,25 @@ export default function TodayScreen() {
             <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
               {t(`today.${section}`)}
             </Text>
-            {items.map((item) => (
-              <ExerciseRow key={item.exerciseId} item={item} exercise={byId.get(item.exerciseId)} />
-            ))}
+            {items.map((item, i) => {
+              const exercise = byId.get(item.exerciseId);
+              const prev = i > 0 ? byId.get(items[i - 1].exerciseId) : undefined;
+              // Exercises lying down come together at the end: say so once, before the first.
+              const toBed = exercise?.position === 'lying' && prev?.position !== 'lying';
+              return (
+                <View key={item.exerciseId} style={{ gap: spacing.sm }}>
+                  {toBed ? (
+                    <Text
+                      style={[typography.bodyBold, { color: colors.primary }]}
+                      testID="lying-notice"
+                    >
+                      {t(profile.floorOk ? 'today.lyingNotice' : 'today.lyingNoticeBed')}
+                    </Text>
+                  ) : null}
+                  <ExerciseRow item={item} exercise={exercise} />
+                </View>
+              );
+            })}
           </Card>
         );
       })}

@@ -91,8 +91,12 @@ describe('Today screen', () => {
   });
 
   it('shows the areas it considered and why a pattern was skipped', async () => {
+    // No bed and no floor: nothing lying down can stand in for the squat.
     useProfileStore.setState({
-      profile: makeProfile({ painAreas: [pain('knee', 4), pain('lower_back', 2)] }),
+      profile: makeProfile({
+        painAreas: [pain('knee', 4), pain('lower_back', 2)],
+        equipment: ['chair', 'wall', 'bottles', 'towel'],
+      }),
     });
     await render(<TodayScreen />);
     expect(screen.getByTestId('considered-pill')).toHaveTextContent(
@@ -123,6 +127,50 @@ describe('Today screen', () => {
     expect(screen.queryByRole('button', { name: 'Empezar' })).toBeNull();
     await user.press(screen.getByRole('button', { name: 'Repetir la rutina' }));
     expect(mockRouter.push).toHaveBeenCalledWith('/workout/session');
+  });
+});
+
+describe('"Now to the bed"', () => {
+  // Seated only at level 2: the level 2 exercises it can do are all lying down.
+  const inBed = (floorOk: boolean) =>
+    makeProfile({ levels: levelsAt(2), seatedOnly: true, floorOk, painAreas: [] });
+
+  it('Today says it once, before the first exercise lying down', async () => {
+    useProfileStore.setState({ profile: inBed(true) });
+    await render(<TodayScreen />);
+    expect(screen.getAllByTestId('lying-notice')).toHaveLength(1);
+    expect(screen.getByText('Ahora a la cama (o al piso)')).toBeOnTheScreen();
+  });
+
+  it('says only "the bed" without floorOk', async () => {
+    useProfileStore.setState({ profile: inBed(false) });
+    await render(<TodayScreen />);
+    expect(screen.getByText('Ahora a la cama')).toBeOnTheScreen();
+  });
+
+  it('the rest says it when the next exercise is the first lying down', async () => {
+    useProfileStore.setState({ profile: inBed(true) });
+    useSessionStore.getState().start(
+      {
+        ...SHORT,
+        items: [
+          { ...SHORT.items[0], dosage: { kind: 'reps', sets: 1, reps: 8 } },
+          { ...SHORT.items[0], exerciseId: 'pelvic-tilt', perSide: false },
+          { ...SHORT.items[0], exerciseId: 'heel-slide' },
+        ],
+      },
+      true,
+    );
+    await render(<SessionScreen />);
+    await user.press(screen.getByRole('button', { name: 'Hecho' }));
+    expect(screen.getByTestId('up-next')).toHaveTextContent(/Ahora a la cama \(o al piso\)/);
+    await user.press(screen.getByRole('button', { name: 'Saltar' }));
+    for (let i = 0; i < 2; i++) {
+      await user.press(screen.getByRole('button', { name: 'Hecho' }));
+      if (screen.queryByRole('button', { name: 'Saltar' })) break;
+    }
+    // From lying down to lying down: no notice.
+    expect(screen.queryByTestId('lying-notice')).toBeNull();
   });
 });
 

@@ -7,7 +7,6 @@ import { exercises } from '../exercises';
 // skips the slot when the area is blocked, which is the right call. Never drop an area from
 // `loads` to shrink this list.
 const COVERAGE_EXCEPTIONS: Partial<Record<Pattern, BodyArea[]>> = {
-  squat: ['knee'], // standing up and sitting down always bends the knee under load
   hinge: ['hip'], // a hinge is a hip movement by definition
   upper_push: ['shoulder', 'elbow'], // pushing moves the arm at the shoulder and straightens the elbow
   upper_pull: ['shoulder'], // pulling always moves the shoulder blade and upper arm
@@ -124,13 +123,48 @@ describe('exercise library', () => {
     }
   });
 
-  it('level 1 is seated, and holding on for balance is level 2 at most', () => {
+  it('level 1 is seated or lying, and holding on for balance is level 2 at most', () => {
     for (const e of exercises) {
       if (e.position === 'seated')
         expect({ id: e.id, level: e.level }).toEqual({ id: e.id, level: 1 });
       if (e.position === 'standing_supported') expect(e.level).toBe(2);
-      if (e.level === 1) expect(e.position).toBe('seated');
+      if (e.level === 1) expect(['seated', 'lying']).toContain(e.position);
     }
+  });
+
+  describe('lying down', () => {
+    const lying = exercises.filter((e) => e.position === 'lying');
+
+    it('has 12-15 exercises, from level 1 to 4', () => {
+      expect(lying.length).toBeGreaterThanOrEqual(12);
+      expect(new Set(lying.map((e) => e.level))).toEqual(new Set([1, 2, 3, 4]));
+    });
+
+    it.each(lying.map((e) => [e.id, e] as const))(
+      '%s is done on the bed or the floor and ends with how to get up',
+      (_id, e) => {
+        expect(e.equipment).toContain('bed');
+        expect(e.steps.es[0]).toMatch(/en la cama o en el piso/);
+        expect(e.steps.en[0]).toMatch(/on the bed or the floor/);
+        expect(e.steps.es.at(-1)).toBe(
+          'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+        );
+        expect(e.steps.en.at(-1)).toBe(
+          'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+        );
+      },
+    );
+
+    it('prone Y raise warns about the neck', () => {
+      const e = exercises.find((x) => x.id === 'prone-y-raise')!;
+      expect(e.mistakes.es).toContain('No levantes la cabeza ni fuerces el cuello.');
+    });
+
+    it('the bridges and the dead bug moved from the floor to lying down', () => {
+      for (const id of ['glute-bridge', 'single-leg-glute-bridge', 'dead-bug']) {
+        expect(exercises.find((x) => x.id === id)!.position).toBe('lying');
+      }
+    });
   });
 
   it('floor exercises are level 3 or more', () => {

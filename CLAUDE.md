@@ -130,13 +130,16 @@ type Pattern =
   | 'calf';
 
 // 'standing_supported' = holding on for BALANCE. A wall, counter or table that only carries the trunk or the
-// hands (wall sit, counter push-up, one-arm row on a table) is 'standing'. 'floor' needs floorOk.
-type Position = 'seated' | 'standing_supported' | 'standing' | 'floor';
+// hands (wall sit, counter push-up, one-arm row on a table) is 'standing'. 'floor' (planks, hands and
+// knees) needs floorOk. 'lying' (on the back, side or front) is done on the bed, or on the floor on a towel
+// with floorOk.
+type Position = 'seated' | 'standing_supported' | 'standing' | 'floor' | 'lying';
 type Equipment =
   | 'chair' | 'wall' | 'bottles' | 'towel' | 'light_dumbbells'
   | 'backpack'   // backpack with books or bottles, adjustable weight
   | 'step'       // sturdy step or the bottom stair
-  | 'band';      // elastic band, optional
+  | 'band'       // elastic band, optional
+  | 'bed';       // for exercises lying down; checked by default like chair and towel
 
 type Dosage =
   | { kind: 'reps'; sets: number; reps: number; slow?: true } // slow = 3 s down (level 5)
@@ -208,7 +211,7 @@ interface WorkoutLog {
 ### Levels
 | Level | Meaning |
 |---|---|
-| 1 | Seated |
+| 1 | Seated or lying down |
 | 2 | Standing, holding on for balance |
 | 3 | Standing (or on the floor) without support, body weight. An average 55-65 adult who walks daily |
 | 4 | With load (backpack / bottles) or one side at a time |
@@ -216,9 +219,15 @@ interface WorkoutLog {
 
 - Support for **balance** caps an exercise at level 2. Support that only carries the trunk or the hands (wall sit,
   counter push-up, row with a hand on a chair or table) does not: the demand decides the level.
-- Floor exercises (`position: 'floor'`) are only offered when `floorOk` is true and the exercise is level >= 3,
-  never with `seatedOnly`, and `findSwap` never moves someone down to the floor (unless the current exercise is
-  already on the floor).
+- Floor exercises (`position: 'floor'`: planks, hands and knees) are only offered when `floorOk` is true and the
+  exercise is level >= 3, never with `seatedOnly`, and `findSwap` never moves someone down to the floor (unless the
+  current exercise is already on the floor).
+- Lying exercises (`position: 'lying'`) are level 1-4 by demand. They need the bed, or `floorOk` and a towel (on
+  the floor). They do NOT need `floorOk` and are allowed with `seatedOnly` (no standing). Their first step says
+  "on the bed or the floor" and their last step is always "To get up: roll onto your side, sit up and wait a few
+  seconds before you stand."
+- `findSwap` and `findHarder` only offer a lying exercise when the current one is lying, and the other way around
+  (never send someone to bed in the middle of the workout).
 - Balance: levels 1-2 are seated or holding on. Levels 3+ have no support but are done **next to a sturdy chair
   for safety**, and the steps say so.
 
@@ -260,6 +269,10 @@ An area is **caution** if intensity = 2 (allowed, but prefer seated / supported 
   respects `seatedOnly`, and was not used in the previous workout if an alternative exists.
 - `balance` exercises at level <= 2 must be `standing_supported` or `seated`.
 - `floor` exercises only with `floorOk` and level >= 3.
+- Lying exercises: never in the warm-up, at most 3 per workout (cool-down included), and all together at the end
+  of the main block, right before the cool-down. Today and the rest before the first one say "Now to the bed (or
+  the floor)" ("Now to the bed" without `floorOk`). Knee to chest (lying mobility) is only used as the cool-down,
+  and only when the main block ends lying down. Trimming removes main slots before the block is ordered.
 - If no exercise fits a slot, skip the slot (never break the rule to fill it). Return a list of skipped patterns
   so the UI can say "We skipped X today to protect your knee".
 - Deterministic: same inputs = same output (use the date as seed if you need variety).
@@ -393,6 +406,8 @@ screens; non-personalized ads only; no health data ever passed to an ad SDK; res
 - [x] Difficulty recalibration: level scale 1-5, 72 exercises (35 new), dosage by level, backpack / step / band,
   floor exercises with floorOk, 4 activity options, 25-minute cap, "Mamá activa" persona
 - [x] Phase 5b: "Too easy" (findHarder), "How was it?" rating, progression applied after each workout
+- [x] Lying exercises: position 'lying' (bed or floor), 'bed' equipment (profile v4), 12 new + 3 converted from
+  floor (84 exercises), lying block at the end, max 3, lying <-> lying swaps
 - [ ] Phase 6: Progress tab (history) and "you leveled up" message (progression itself is done in 5b)
 - [ ] Phase 7: Video chapters + distance mode with spoken guidance
 - [ ] Phase 8: Reminders, accessibility pass, polish

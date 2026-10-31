@@ -45,11 +45,15 @@ export function findSwap(
   blocked.add(report.area);
   const used = new Set(usedToday);
   // Getting down to the floor right after a pain report is not the safer choice, unless the
-  // exercise that hurt was already on the floor.
+  // exercise that hurt was already on the floor. Lying down only after lying down, and the other
+  // way around: never send someone to bed in the middle of the workout.
+  const samePlace = (e: Exercise) =>
+    (e.position !== 'floor' || current.position === 'floor') &&
+    (e.position === 'lying') === (current.position === 'lying');
   const eligible = (e: Exercise) =>
     e.id !== current.id &&
     e.level <= current.level &&
-    (e.position !== 'floor' || current.position === 'floor') &&
+    samePlace(e) &&
     isAllowed(e, profile, blocked, date);
   // Same level first, then seated / supported before standing, then not used today.
   const byPreference = (a: Exercise, b: Exercise) =>
@@ -65,7 +69,10 @@ export function findSwap(
     sibling ? library.filter((e) => e.pattern === sibling && eligible(e)) : [],
     library.filter(
       (e) =>
-        e.pattern === 'mobility' && e.id !== current.id && isAllowed(e, profile, blocked, date),
+        e.pattern === 'mobility' &&
+        e.id !== current.id &&
+        samePlace(e) &&
+        isAllowed(e, profile, blocked, date),
     ),
   ];
   const [best] = groups.find((g) => g.length > 0)?.sort(byPreference) ?? [];

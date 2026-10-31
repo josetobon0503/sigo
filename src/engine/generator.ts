@@ -18,6 +18,9 @@ const COOLDOWN_COUNT = 1;
 const MIN_SECONDS = 15 * 60;
 const MAX_SECONDS = 25 * 60;
 const MIN_MAIN = 5;
+const MAX_LYING = 3; // exercises lying down per workout, cool-down included
+
+const isLying = (e: Exercise) => e.position === 'lying';
 const MAX_SETS = 3;
 
 // FNV-1a: a stable tie-breaker so the same date always gives the same workout.
@@ -66,8 +69,11 @@ interface Context {
 
 // Candidates for a pattern, best first: the user's level (or the closest lower one), then
 // seated / supported if it loads a caution area, then not used last time, then the date seed.
-function rankCandidates(pattern: Pattern, ctx: Context): Exercise[] {
+// Exercises lying down only when `allowLying` and while fewer than 3 are planned.
+function rankCandidates(pattern: Pattern, ctx: Context, allowLying = true): Exercise[] {
   const { profile, library, date, blocked, caution, usedLastTime, usedToday } = ctx;
+  const lyingOk =
+    allowLying && library.filter((e) => usedToday.has(e.id) && isLying(e)).length < MAX_LYING;
   const maxLevel = profile.levels[pattern];
   const cautionPenalty = (e: Exercise) =>
     loadsAny(e, caution) && e.position === 'standing' ? 1 : 0;
@@ -77,6 +83,7 @@ function rankCandidates(pattern: Pattern, ctx: Context): Exercise[] {
         e.pattern === pattern &&
         e.level <= maxLevel &&
         !usedToday.has(e.id) &&
+        (lyingOk || !isLying(e)) &&
         isAllowed(e, profile, blocked, date),
     )
     .sort(
@@ -105,10 +112,10 @@ export function generateWorkout(
     usedToday: new Set(),
   };
 
-  const mobility = rankCandidates('mobility', ctx).slice(0, WARMUP_COUNT + COOLDOWN_COUNT);
+  // The warm-up is never lying down. One mobility exercise stays free for the cool-down.
+  const mobility = rankCandidates('mobility', ctx, false).slice(0, WARMUP_COUNT + COOLDOWN_COUNT);
   const warmup = mobility.slice(0, Math.max(1, mobility.length - COOLDOWN_COUNT));
-  const cooldown = mobility.slice(warmup.length);
-  mobility.forEach((e) => ctx.usedToday.add(e.id));
+  warmup.forEach((e) => ctx.usedToday.add(e.id));
 
   const main: Exercise[] = [];
   const skipped = new Set<Pattern>();
@@ -129,18 +136,35 @@ export function generateWorkout(
   if (mobility.length === 0) skipped.add('mobility');
   main.forEach((e) => skipped.delete(e.pattern));
 
+  // Over 25 minutes: drop the second warm-up exercise, then the last main slot (keeping 5: the
+  // first four slots cover every required group).
+  let cooldown = pickCooldown(main, ctx);
+  const seconds = () =>
+    [...warmup, ...main, ...cooldown].reduce(
+      (sum, e) => sum + estimateSeconds(e.dosage, e.perSide),
+      0,
+    );
+  if (seconds() > MAX_SECONDS && warmup.length > 1) warmup.shift();
+  while (seconds() > MAX_SECONDS && main.length > MIN_MAIN) main.pop();
+  if (!main.some(isLying) && cooldown.some(isLying)) {
+    cooldown.forEach((e) => ctx.usedToday.delete(e.id));
+    cooldown = pickCooldown(main, ctx);
+  }
+
   const plan = (section: WorkoutSection) => (e: Exercise) => ({
     exerciseId: e.id,
     section,
     dosage: e.dosage,
     perSide: e.perSide,
   });
+  // Exercises lying down go together at the end of the main block, right before the cool-down.
   const items: PlannedItem[] = [
     ...warmup.map(plan('warmup')),
-    ...main.map(plan('main')),
+    ...main.filter((e) => !isLying(e)).map(plan('main')),
+    ...main.filter(isLying).map(plan('main')),
     ...cooldown.map(plan('cooldown')),
   ];
-  trimToMaximum(items);
+  reduceSets(items);
   fillToMinimum(items, ctx);
 
   return { date: dayOf(date), items, skippedPatterns: [...skipped], estimatedSec: total(items) };
@@ -150,21 +174,18 @@ function total(items: PlannedItem[]): number {
   return items.reduce((sum, item) => sum + estimateSeconds(item.dosage, item.perSide), 0);
 }
 
-// A workout over 25 minutes (3 sets from level 3 on) first loses its second warm-up exercise, then
-// its last main exercise, keeping at least 5 (the first four main slots cover every required
-// group), and last, main exercises go from 3 sets to 2, starting from the end.
-function trimToMaximum(items: PlannedItem[]): void {
-  const count = (section: WorkoutSection) => items.filter((i) => i.section === section).length;
-  if (total(items) > MAX_SECONDS && count('warmup') > 1) {
-    items.splice(
-      items.findIndex((i) => i.section === 'warmup'),
-      1,
-    );
-  }
-  while (total(items) > MAX_SECONDS && count('main') > MIN_MAIN) {
-    const lastMain = items.map((i) => i.section).lastIndexOf('main');
-    items.splice(lastMain, 1);
-  }
+// The cool-down stays in bed (knee to chest) only when the main block ends lying down.
+function pickCooldown(main: Exercise[], ctx: Context): Exercise[] {
+  const candidates = rankCandidates('mobility', ctx, main.some(isLying));
+  const pick = candidates.find(isLying) ?? candidates[0];
+  if (!pick) return [];
+  ctx.usedToday.add(pick.id);
+  return [pick];
+}
+
+// Still over 25 minutes (3 sets from level 3 on): main exercises go from 3 sets to 2, starting
+// from the end.
+function reduceSets(items: PlannedItem[]): void {
   for (const item of [...items].reverse()) {
     if (total(items) <= MAX_SECONDS) return;
     if (item.section === 'main' && item.dosage.sets > 2) {
@@ -187,7 +208,7 @@ function fillToMinimum(items: PlannedItem[], ctx: Context): void {
     }
   }
   while (total(items) < MIN_SECONDS) {
-    const [extra] = rankCandidates('mobility', ctx);
+    const [extra] = rankCandidates('mobility', ctx, false);
     if (!extra) return;
     ctx.usedToday.add(extra.id);
     items.push({

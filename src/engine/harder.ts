@@ -22,6 +22,8 @@ export function findHarder(
       (e) =>
         e.pattern === current.pattern &&
         e.level > current.level &&
+        // Lying down only after lying down, and the other way around.
+        (e.position === 'lying') === (current.position === 'lying') &&
         isAllowed(e, profile, blocked, date),
     )
     .sort(

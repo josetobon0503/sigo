@@ -20,8 +20,8 @@ export interface OnboardingDraft {
   screeningAnswers: Record<string, boolean>;
 }
 
-// Almost everyone has a chair and a towel, so they start checked.
-export const DEFAULT_EQUIPMENT: Equipment[] = ['chair', 'towel'];
+// Almost everyone has a chair, a towel and a bed, so they start checked.
+export const DEFAULT_EQUIPMENT: Equipment[] = ['chair', 'towel', 'bed'];
 
 export function initialDraft(): OnboardingDraft {
   return {

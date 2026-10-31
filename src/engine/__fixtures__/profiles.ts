@@ -45,6 +45,7 @@ export const ALL_EQUIPMENT: Equipment[] = [
   'backpack',
   'step',
   'band',
+  'bed',
 ];
 
 export function levelsAt(level: Level): Record<Pattern, Level> {
@@ -78,11 +79,11 @@ export function makeProfile(overrides: Partial<UserProfile> = {}): UserProfile {
   };
 }
 
-// Maria, 52: left knee 3 (achy), lower back 2, chair + wall + bottles.
+// Maria, 52: left knee 3 (achy), lower back 2, chair + wall + bottles + bed.
 export const maria = makeProfile({
   name: 'María',
   ageBand: '50-59',
-  equipment: ['chair', 'wall', 'bottles'],
+  equipment: ['chair', 'wall', 'bottles', 'bed'],
   levels: levelsAt(2),
   painAreas: [pain('knee', 3, 'achy', 'left'), pain('lower_back', 2)],
 });

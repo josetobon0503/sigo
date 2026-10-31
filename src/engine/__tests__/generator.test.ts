@@ -12,7 +12,14 @@ import {
 import { generateWorkout } from '../generator';
 import { estimateSeconds } from '../rules';
 import { blockedAreas } from '../safety';
-import type { Exercise, GeneratedWorkout, Pattern, UserProfile, WorkoutLog } from '../types';
+import type {
+  Equipment,
+  Exercise,
+  GeneratedWorkout,
+  Pattern,
+  UserProfile,
+  WorkoutLog,
+} from '../types';
 
 const DATE = '2026-10-28';
 const WEEK = [
@@ -384,12 +391,53 @@ describe('generateWorkout: personas', () => {
     );
   });
 
-  it('Maria never gets a squat while her knee is blocked', () => {
+  it('Maria (knee blocked) gets leg work lying down that keeps the load off her knee', () => {
+    const LEG_WORK = ['straight-leg-raise', 'glute-bridge'];
+    const legs = WEEK.flatMap((date) =>
+      section(generateWorkout(maria, exercises, [], date), 'main'),
+    ).filter((e) => e.pattern === 'squat' || e.pattern === 'hinge');
+    expect(legs.some((e) => LEG_WORK.includes(e.id))).toBe(true);
+    for (const e of legs) expect(e.loads).not.toContain('knee');
+    // Every squat she gets is the straight leg raise: the knee stays straight.
+    for (const e of legs.filter((x) => x.pattern === 'squat'))
+      expect(e.id).toBe('straight-leg-raise');
+  });
+
+  it('without a bed, Maria still skips squats to protect her knee', () => {
+    const noBed = { ...maria, equipment: maria.equipment.filter((e) => e !== 'bed') };
     for (const date of WEEK) {
-      const workout = generateWorkout(maria, exercises, [], date);
+      const workout = generateWorkout(noBed, exercises, [], date);
       expect(allExercises(workout).map((e) => e.pattern)).not.toContain('squat');
       expect(workout.skippedPatterns).toContain('squat');
     }
+  });
+
+  it.each(WEEK)(
+    'Roberto with seatedOnly gets exercises lying down and nothing standing on %s',
+    (date) => {
+      const workout = generateWorkout(
+        { ...roberto, seatedOnly: true, equipment: [...roberto.equipment, 'bed'] },
+        exercises,
+        [],
+        date,
+      );
+      const positions = allExercises(workout).map((e) => e.position);
+      expect(positions.every((p) => p === 'seated' || p === 'lying')).toBe(true);
+    },
+  );
+
+  it('Roberto with seatedOnly gets at least one exercise lying down in the week', () => {
+    const lying = WEEK.flatMap((date) =>
+      allExercises(
+        generateWorkout(
+          { ...roberto, seatedOnly: true, equipment: [...roberto.equipment, 'bed'] },
+          exercises,
+          [],
+          date,
+        ),
+      ),
+    ).filter((e) => e.position === 'lying');
+    expect(lying.length).toBeGreaterThan(0);
   });
 
   it.each(WEEK)('Roberto gets at least 15 minutes on %s, never more than 3 sets', (date) => {
@@ -417,9 +465,10 @@ describe('generateWorkout: personas', () => {
       for (const e of section(workout, 'main')) {
         expect({ id: e.id, position: e.position }).toEqual({
           id: e.id,
-          position: expect.stringMatching(/^(standing|floor)$/),
+          position: expect.stringMatching(/^(standing|floor|lying)$/),
         });
-        expect(e.level).toBe(3);
+        // Never something like a pelvic tilt in her main block.
+        expect(e.level).toBeGreaterThanOrEqual(3);
       }
       expect(workout.estimatedSec).toBeGreaterThanOrEqual(20 * 60);
       expect(workout.estimatedSec).toBeLessThanOrEqual(25 * 60);
@@ -451,5 +500,91 @@ describe('estimateSeconds', () => {
     expect(estimateSeconds({ kind: 'reps', sets: 3, reps: 8, slow: true }, true)).toBe(
       15 + 3 * (96 + 30),
     );
+  });
+});
+
+describe('generateWorkout: lying down', () => {
+  const DAYS = Array.from({ length: 14 }, (_, i) => `2026-11-${String(i + 1).padStart(2, '0')}`);
+  const profiles: [string, UserProfile][] = [
+    ['seated only, level 2', makeProfile({ levels: levelsAt(2), seatedOnly: true })],
+    ['level 1', makeProfile({ levels: levelsAt(1) })],
+    ['level 2', makeProfile({ levels: levelsAt(2) })],
+    ['Maria', maria],
+    ['Roberto in bed', { ...roberto, seatedOnly: true, equipment: [...roberto.equipment, 'bed'] }],
+  ];
+  const cases = profiles.flatMap(([name, profile]) => DAYS.map((d) => [name, profile, d] as const));
+  const position = (id: string) => exerciseOf(id).position;
+
+  it.each(cases)(
+    '%s on %s: lying exercises come together at the end, at most 3, never in the warm-up',
+    (_name, profile, date) => {
+      const { items } = generateWorkout(profile, exercises, [], date);
+      const lying = items
+        .map((i, n) => [n, position(i.exerciseId)] as const)
+        .filter(([, p]) => p === 'lying');
+      expect(lying.length).toBeLessThanOrEqual(3);
+      // One block: no other exercise in between.
+      if (lying.length > 0) {
+        const first = lying[0][0];
+        expect(lying.map(([n]) => n)).toEqual(lying.map((_, k) => first + k));
+        // Only the cool-down may follow the block.
+        for (const item of items.slice(first + lying.length)) expect(item.section).toBe('cooldown');
+      }
+      for (const item of items.filter((i) => i.section === 'warmup')) {
+        expect(position(item.exerciseId)).not.toBe('lying');
+      }
+    },
+  );
+
+  it.each(cases)(
+    '%s on %s: knee to chest only as the cool-down, after the block',
+    (_n, profile, date) => {
+      const { items } = generateWorkout(profile, exercises, [], date);
+      const knee = items.find((i) => i.exerciseId === 'knee-to-chest');
+      if (!knee) return;
+      expect(knee.section).toBe('cooldown');
+      expect(items.some((i) => i.section === 'main' && position(i.exerciseId) === 'lying')).toBe(
+        true,
+      );
+    },
+  );
+
+  it('caps the workout at 3 exercises lying down', () => {
+    const library = [
+      ...['squat', 'hinge', 'upper_push', 'upper_pull', 'balance', 'core'].map((pattern) =>
+        fakeExercise({ id: `lying-${pattern}`, pattern: pattern as Pattern, position: 'lying' }),
+      ),
+      fakeExercise({ id: 'lying-stretch', pattern: 'mobility', position: 'lying' }),
+    ];
+    const items = generateWorkout(makeProfile({ levels: levelsAt(1) }), library, [], DATE).items;
+    expect(items.length).toBe(3);
+    expect(items.every((i) => i.section === 'main')).toBe(true);
+  });
+
+  it('without a bed, needs floorOk and a towel', () => {
+    const library = [
+      fakeExercise({ id: 'lying', pattern: 'core', position: 'lying', equipment: ['bed'] }),
+    ];
+    const ids = (equipment: Equipment[], floorOk: boolean) =>
+      generateWorkout(
+        makeProfile({ equipment, floorOk, levels: levelsAt(1) }),
+        library,
+        [],
+        DATE,
+      ).items.map((i) => i.exerciseId);
+    expect(ids(['bed'], false)).toEqual(['lying']);
+    expect(ids(['towel'], true)).toEqual(['lying']);
+    expect(ids(['towel'], false)).toEqual([]);
+    expect(ids(['chair'], true)).toEqual([]);
+  });
+
+  it('lying down is fine with seatedOnly and needs no floorOk', () => {
+    const library = [
+      fakeExercise({ id: 'lying', pattern: 'core', position: 'lying', equipment: ['bed'] }),
+    ];
+    const profile = makeProfile({ seatedOnly: true, floorOk: false, levels: levelsAt(1) });
+    expect(generateWorkout(profile, library, [], DATE).items.map((i) => i.exerciseId)).toEqual([
+      'lying',
+    ]);
   });
 });

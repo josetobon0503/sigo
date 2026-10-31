@@ -278,6 +278,50 @@ describe('findSwap: floor', () => {
   });
 });
 
+describe('findSwap: lying down', () => {
+  const standing = fakeExercise({
+    id: 'standing',
+    pattern: 'core',
+    position: 'standing',
+    loads: ['wrist'],
+  });
+  const lying = fakeExercise({
+    id: 'lying',
+    pattern: 'core',
+    position: 'lying',
+    loads: ['lower_back'],
+  });
+  const lyingStretch = fakeExercise({
+    id: 'lying-stretch',
+    pattern: 'mobility',
+    position: 'lying',
+  });
+  const seatedStretch = fakeExercise({ id: 'seated-stretch', pattern: 'mobility' });
+  const library = [standing, lying, lyingStretch, seatedStretch];
+
+  it('never sends someone to bed in the middle of the workout', () => {
+    expect(swappedId(findSwap(standing, report('wrist'), makeProfile(), library, [], DATE))).toBe(
+      'seated-stretch',
+    );
+  });
+
+  it('lying down, offers only another exercise lying down', () => {
+    const otherLying = fakeExercise({ id: 'z-lying', pattern: 'core', position: 'lying' });
+    const result = findSwap(
+      lying,
+      report('lower_back'),
+      makeProfile(),
+      [...library, otherLying],
+      [],
+      DATE,
+    );
+    expect(swappedId(result)).toBe('z-lying');
+    expect(swappedId(findSwap(lying, report('lower_back'), makeProfile(), library, [], DATE))).toBe(
+      'lying-stretch',
+    );
+  });
+});
+
 describe('findSwap: no candidates', () => {
   it('falls back to a mobility exercise that does not load the area', () => {
     const result = findSwap(

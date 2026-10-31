@@ -1,6 +1,7 @@
 // Exercise library. Levels follow CLAUDE.md section 6: 1 seated, 2 holding on for balance,
 // 3 standing or on the floor with body weight, 4 with load or one side at a time, 5 one side with
-// load, slow tempo or more range. Floor exercises are only offered to users with floorOk.
+// load, slow tempo or more range. Lying exercises (bed, or floor with floorOk) are level 1-4 by
+// demand. Floor exercises (planks, hands and knees) are only offered to users with floorOk.
 // Dosage follows the level (see the data tests); mobility stays at 1 set as a warm-up.
 // `loads` lists every joint the exercise really loads: never remove an area to make a test pass.
 // Standing on one leg (even briefly, even with support) loads that leg's ankle, foot, knee and hip.
@@ -190,6 +191,42 @@ export const exercises: Exercise[] = [
     mistakes: {
       es: ['Girar con impulso o de golpe.', 'Mover las rodillas junto con el tronco.'],
       en: ['Twisting with a swing or a jerk.', 'Letting your knees turn with your body.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+
+  {
+    id: 'knee-to-chest',
+    name: { es: 'Rodilla al pecho', en: 'Knee to chest' },
+    pattern: 'mobility',
+    position: 'lying',
+    level: 1,
+    loads: ['hip', 'lower_back'],
+    equipment: ['bed'],
+    dosage: { kind: 'reps', sets: 1, reps: 6 },
+    perSide: true,
+    purpose: {
+      es: 'Suelta la espalda baja y la cadera al terminar.',
+      en: 'Eases your lower back and hips at the end.',
+    },
+    steps: {
+      es: [
+        'Acuéstate boca arriba en la cama o en el piso, con las rodillas dobladas y los pies apoyados.',
+        'Toma una rodilla con las dos manos y acércala al pecho.',
+        'Sostén unos segundos, respirando, y bájala. Cambia de pierna.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie on your back on the bed or the floor, knees bent and feet flat.',
+        'Hold one knee with both hands and bring it toward your chest.',
+        'Hold a few seconds, breathing, then lower it. Switch legs.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['Jalar con fuerza.', 'Levantar la cabeza.'],
+      en: ['Pulling hard.', 'Lifting your head.'],
     },
     video: {},
     reviewedByProfessional: false,
@@ -596,6 +633,77 @@ export const exercises: Exercise[] = [
     reviewedByProfessional: false,
   },
 
+  {
+    id: 'heel-slide',
+    name: { es: 'Deslizar el talón', en: 'Heel slide' },
+    pattern: 'squat',
+    position: 'lying',
+    level: 1,
+    loads: ['knee', 'hip'],
+    equipment: ['bed'],
+    dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: true,
+    purpose: {
+      es: 'Mueve la rodilla y la cadera con suavidad, sin cargar peso.',
+      en: 'Moves your knee and hip gently, without carrying any weight.',
+    },
+    steps: {
+      es: [
+        'Acuéstate boca arriba en la cama o en el piso, con las piernas estiradas.',
+        'Desliza un talón hacia la cadera, doblando la rodilla.',
+        'Vuelve a estirarla despacio. Termina y cambia de pierna.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie on your back on the bed or the floor, legs straight.',
+        'Slide one heel toward your hips, bending the knee.',
+        'Straighten it slowly. Finish, then switch legs.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['Doblar la rodilla hasta que duela.', 'Levantar el pie de la cama.'],
+      en: ['Bending your knee until it hurts.', 'Lifting your foot off the bed.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+  {
+    id: 'straight-leg-raise',
+    name: { es: 'Levantar la pierna estirada', en: 'Straight leg raise' },
+    pattern: 'squat',
+    position: 'lying',
+    level: 2,
+    loads: ['hip'],
+    equipment: ['bed'],
+    dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: true,
+    purpose: {
+      es: 'Fortalece el muslo sin doblar la rodilla.',
+      en: 'Strengthens your thigh without bending your knee.',
+    },
+    steps: {
+      es: [
+        'Acuéstate boca arriba en la cama o en el piso, con una rodilla doblada y la otra pierna estirada.',
+        'Aprieta el muslo de la pierna estirada.',
+        'Súbela hasta la altura de la otra rodilla y bájala despacio. Termina y cambia de pierna.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie on your back on the bed or the floor, one knee bent and the other leg straight.',
+        'Tighten the thigh of your straight leg.',
+        'Lift it to the height of your other knee and lower it slowly. Finish, then switch legs.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['Doblar la rodilla al subir.', 'Arquear la espalda.'],
+      en: ['Bending your knee as you lift.', 'Arching your back.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+
   // ---------- hinge (hip-dominant) ----------
   {
     id: 'seated-hip-hinge',
@@ -847,11 +955,11 @@ export const exercises: Exercise[] = [
     id: 'glute-bridge',
     name: { es: 'Puente de glúteos', en: 'Glute bridge' },
     pattern: 'hinge',
-    position: 'floor',
-    level: 3,
+    position: 'lying',
+    level: 2,
     loads: ['hip', 'lower_back'],
-    equipment: ['towel'],
-    dosage: { kind: 'reps', sets: 3, reps: 10 },
+    equipment: ['bed'],
+    dosage: { kind: 'reps', sets: 2, reps: 10 },
     perSide: false,
     purpose: {
       es: 'Fortalece glúteos y espalda baja, que te ayudan a pararte y caminar derecho.',
@@ -859,16 +967,16 @@ export const exercises: Exercise[] = [
     },
     steps: {
       es: [
-        'Acuéstate boca arriba sobre una toalla o un tapete, con las rodillas dobladas.',
-        'Pon los pies en el piso, al ancho de la cadera.',
+        'Acuéstate boca arriba en la cama o en el piso, con las rodillas dobladas y los pies apoyados.',
         'Aprieta los glúteos y sube la cadera hasta formar una línea recta.',
         'Baja despacio.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
       ],
       en: [
-        'Lie on your back on a towel or mat, knees bent.',
-        'Feet flat on the floor, hip-width apart.',
+        'Lie on your back on the bed or the floor, knees bent and feet flat.',
         'Squeeze your glutes and lift your hips into a straight line.',
         'Lower slowly.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
       ],
     },
     mistakes: {
@@ -920,10 +1028,10 @@ export const exercises: Exercise[] = [
     id: 'single-leg-glute-bridge',
     name: { es: 'Puente de glúteos a una pierna', en: 'Single-leg glute bridge' },
     pattern: 'hinge',
-    position: 'floor',
+    position: 'lying',
     level: 4,
     loads: ['hip', 'lower_back', 'knee'],
-    equipment: ['towel'],
+    equipment: ['bed'],
     dosage: { kind: 'reps', sets: 3, reps: 8 },
     perSide: true,
     purpose: {
@@ -932,16 +1040,18 @@ export const exercises: Exercise[] = [
     },
     steps: {
       es: [
-        'Acuéstate boca arriba sobre una toalla o un tapete, con las rodillas dobladas.',
-        'Estira una pierna hacia arriba o al frente.',
-        'Aprieta el glúteo y sube la cadera con el pie que está en el piso.',
+        'Acuéstate boca arriba en la cama o en el piso, con las rodillas dobladas y los pies apoyados.',
+        'Estira una pierna al frente.',
+        'Aprieta el glúteo y sube la cadera con el pie que está apoyado.',
         'Baja despacio. Termina y cambia de pierna.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
       ],
       en: [
-        'Lie on your back on a towel or mat, knees bent.',
-        'Straighten one leg up or forward.',
-        'Squeeze your glute and lift your hips with the foot on the floor.',
+        'Lie on your back on the bed or the floor, knees bent and feet flat.',
+        'Straighten one leg out in front.',
+        'Squeeze your glute and lift your hips with the foot that is down.',
         'Lower slowly. Finish, then switch legs.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
       ],
     },
     mistakes: {
@@ -982,6 +1092,186 @@ export const exercises: Exercise[] = [
     mistakes: {
       es: ['Curvar la espalda.', 'Ir rápido y perder el equilibrio.'],
       en: ['Rounding your back.', 'Going fast and losing your balance.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+
+  {
+    id: 'bent-knee-fallout',
+    name: { es: 'Abrir las rodillas acostado', en: 'Bent-knee fallout' },
+    pattern: 'hinge',
+    position: 'lying',
+    level: 1,
+    loads: ['hip'],
+    equipment: ['bed'],
+    dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: false,
+    purpose: {
+      es: 'Activa los músculos de la cadera con un movimiento suave.',
+      en: 'Wakes up the muscles around your hips with a gentle movement.',
+    },
+    steps: {
+      es: [
+        'Acuéstate boca arriba en la cama o en el piso, con las rodillas dobladas y los pies apoyados.',
+        'Deja caer las rodillas hacia los lados, despacio, sin forzar.',
+        'Júntalas otra vez apretando los glúteos.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie on your back on the bed or the floor, knees bent and feet flat.',
+        'Let your knees fall out to the sides, slowly, without forcing.',
+        'Bring them back together, squeezing your glutes.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['Abrir tanto que tire la ingle.', 'Despegar la espalda baja.'],
+      en: ['Opening so far that it pulls in your groin.', 'Letting your lower back lift.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+  {
+    id: 'clamshell',
+    name: { es: 'Almeja de lado', en: 'Clamshell' },
+    pattern: 'hinge',
+    position: 'lying',
+    level: 2,
+    loads: ['hip'],
+    equipment: ['bed'],
+    dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: true,
+    purpose: {
+      es: 'Fortalece el costado de la cadera, que te da estabilidad al caminar.',
+      en: 'Strengthens the side of your hip, which keeps you steady when you walk.',
+    },
+    steps: {
+      es: [
+        'Acuéstate de lado en la cama o en el piso, con las rodillas dobladas y los pies juntos.',
+        'Abre la rodilla de arriba sin separar los pies.',
+        'Ciérrala despacio. Termina y cambia de lado.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie on your side on the bed or the floor, knees bent and feet together.',
+        'Open your top knee without separating your feet.',
+        'Close it slowly. Finish, then switch sides.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['Girar la cadera hacia atrás.', 'Ir rápido.'],
+      en: ['Rolling your hips back.', 'Going fast.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+  {
+    id: 'side-lying-leg-raise',
+    name: { es: 'Levantar la pierna de lado', en: 'Side-lying leg raise' },
+    pattern: 'hinge',
+    position: 'lying',
+    level: 2,
+    loads: ['hip'],
+    equipment: ['bed'],
+    dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: true,
+    purpose: {
+      es: 'Fortalece el costado de la cadera para un mejor equilibrio.',
+      en: 'Strengthens the side of your hip for better balance.',
+    },
+    steps: {
+      es: [
+        'Acuéstate de lado en la cama o en el piso. Dobla la pierna de abajo.',
+        'Con la pierna de arriba estirada, súbela un poco.',
+        'Bájala despacio. Termina y cambia de lado.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie on your side on the bed or the floor. Bend your bottom leg.',
+        'With your top leg straight, lift it a little.',
+        'Lower it slowly. Finish, then switch sides.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['Llevar la pierna hacia adelante.', 'Subirla tan alto que la cadera gire.'],
+      en: ['Moving your leg forward.', 'Lifting so high that your hips roll.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+  {
+    id: 'bridge-march',
+    name: { es: 'Puente con marcha', en: 'Bridge march' },
+    pattern: 'hinge',
+    position: 'lying',
+    level: 3,
+    loads: ['hip', 'lower_back', 'knee'],
+    equipment: ['bed'],
+    dosage: { kind: 'reps', sets: 3, reps: 10 },
+    perSide: true,
+    purpose: {
+      es: 'Fortalece glúteos y abdomen, y la cadera aprende a no ladearse.',
+      en: 'Strengthens your glutes and belly, and teaches your hips to stay level.',
+    },
+    steps: {
+      es: [
+        'Acuéstate boca arriba en la cama o en el piso, con las rodillas dobladas y los pies apoyados.',
+        'Sube la cadera en puente.',
+        'Sin bajarla, sube un pie un poco y bájalo. Luego el otro.',
+        'Baja la cadera despacio.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie on your back on the bed or the floor, knees bent and feet flat.',
+        'Lift your hips into a bridge.',
+        'Without dropping them, lift one foot a little and put it down. Then the other.',
+        'Lower your hips slowly.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['Dejar caer la cadera al levantar el pie.', 'Arquear la espalda.'],
+      en: ['Letting your hips drop as you lift a foot.', 'Arching your back.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+  {
+    id: 'backpack-bridge',
+    name: { es: 'Puente con mochila en la cadera', en: 'Backpack hip bridge' },
+    pattern: 'hinge',
+    position: 'lying',
+    level: 4,
+    loads: ['hip', 'lower_back'],
+    equipment: ['bed', 'backpack'],
+    dosage: { kind: 'reps', sets: 3, reps: 10 },
+    perSide: false,
+    purpose: {
+      es: 'Suma peso al puente para fortalecer más los glúteos.',
+      en: 'Adds weight to the bridge to build stronger glutes.',
+    },
+    steps: {
+      es: [
+        'Acuéstate boca arriba en la cama o en el piso, con las rodillas dobladas y los pies apoyados.',
+        'Pon la mochila sobre la cadera y sostenla con las manos.',
+        'Aprieta los glúteos y sube la cadera.',
+        'Baja despacio.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie on your back on the bed or the floor, knees bent and feet flat.',
+        'Rest the backpack on your hips and hold it with your hands.',
+        'Squeeze your glutes and lift your hips.',
+        'Lower slowly.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['Usar tanto peso que se te arquee la espalda.', 'Dejar que la mochila se resbale.'],
+      en: ['Using so much weight that your back arches.', 'Letting the backpack slide.'],
     },
     video: {},
     reviewedByProfessional: false,
@@ -1299,6 +1589,42 @@ export const exercises: Exercise[] = [
     mistakes: {
       es: ['Contar rápido y no hacer la pausa.', 'Dejar caer la cadera.'],
       en: ['Counting fast and skipping the pause.', 'Letting your hips sag.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+
+  {
+    id: 'lying-bottle-press',
+    name: { es: 'Empujar botellas acostado', en: 'Lying bottle press' },
+    pattern: 'upper_push',
+    position: 'lying',
+    level: 2,
+    loads: ['shoulder', 'elbow'],
+    equipment: ['bed', 'bottles'],
+    dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
+    purpose: {
+      es: 'Fortalece pecho y brazos con la espalda bien apoyada.',
+      en: 'Strengthens your chest and arms with your back fully supported.',
+    },
+    steps: {
+      es: [
+        'Acuéstate boca arriba en la cama o en el piso, con las rodillas dobladas y los pies apoyados. Toma una botella en cada mano.',
+        'Con los codos a la altura del pecho, empuja las botellas hacia el techo.',
+        'Bájalas despacio.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie on your back on the bed or the floor, knees bent and feet flat. Hold a bottle in each hand.',
+        'With your elbows at chest level, push the bottles up to the ceiling.',
+        'Lower them slowly.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['Dejar caer las botellas.', 'Abrir mucho los codos.'],
+      en: ['Letting the bottles drop.', 'Flaring your elbows out wide.'],
     },
     video: {},
     reviewedByProfessional: false,
@@ -1660,6 +1986,45 @@ export const exercises: Exercise[] = [
     reviewedByProfessional: false,
   },
 
+  {
+    id: 'prone-y-raise',
+    name: { es: 'Brazos en Y boca abajo', en: 'Prone Y raise' },
+    pattern: 'upper_pull',
+    position: 'lying',
+    level: 2,
+    loads: ['shoulder', 'upper_back'],
+    equipment: ['bed'],
+    dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: false,
+    purpose: {
+      es: 'Fortalece la espalda alta para mantenerte derecho.',
+      en: 'Strengthens your upper back to help you stand tall.',
+    },
+    steps: {
+      es: [
+        'Acuéstate boca abajo en la cama o en el piso, con una toalla doblada bajo la frente.',
+        'Estira los brazos hacia adelante formando una Y, con los pulgares hacia arriba.',
+        'Sube un poco los brazos y bájalos despacio.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie face down on the bed or the floor, with a folded towel under your forehead.',
+        'Stretch your arms forward in a Y, thumbs up.',
+        'Lift your arms a little and lower them slowly.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['No levantes la cabeza ni fuerces el cuello.', 'Subir los hombros hacia las orejas.'],
+      en: [
+        "Don't lift your head or strain your neck.",
+        'Shrugging your shoulders up to your ears.',
+      ],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+
   // ---------- core ----------
   {
     id: 'seated-belly-brace',
@@ -1876,10 +2241,10 @@ export const exercises: Exercise[] = [
     id: 'dead-bug',
     name: { es: 'Brazo y pierna contrarios boca arriba', en: 'Dead bug' },
     pattern: 'core',
-    position: 'floor',
+    position: 'lying',
     level: 3,
     loads: ['lower_back', 'hip'],
-    equipment: ['towel'],
+    equipment: ['bed'],
     dosage: { kind: 'reps', sets: 3, reps: 10 },
     perSide: true,
     purpose: {
@@ -1888,21 +2253,21 @@ export const exercises: Exercise[] = [
     },
     steps: {
       es: [
-        'Acuéstate boca arriba sobre una toalla, con las rodillas dobladas en el aire y los brazos hacia el techo.',
-        'Pega la espalda baja al piso.',
-        'Baja un brazo hacia atrás y la pierna contraria hacia el piso, despacio.',
-        'Regresa y cambia de lado.',
+        'Acuéstate boca arriba en la cama o en el piso, con las rodillas dobladas en el aire y los brazos hacia el techo.',
+        'Pega la espalda baja a la cama o al piso.',
+        'Baja un brazo hacia atrás y la pierna contraria hacia abajo, despacio. Regresa y cambia de lado.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
       ],
       en: [
-        'Lie on your back on a towel, knees bent in the air and arms up to the ceiling.',
-        'Press your lower back into the floor.',
-        'Slowly lower one arm back and the opposite leg toward the floor.',
-        'Return and switch sides.',
+        'Lie on your back on the bed or the floor, knees bent in the air and arms up to the ceiling.',
+        'Press your lower back into the bed or the floor.',
+        'Slowly lower one arm back and the opposite leg down. Return and switch sides.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
       ],
     },
     mistakes: {
-      es: ['Despegar la espalda baja del piso.', 'Ir rápido.'],
-      en: ['Letting your lower back lift off the floor.', 'Going fast.'],
+      es: ['Despegar la espalda baja.', 'Ir rápido.'],
+      en: ['Letting your lower back lift.', 'Going fast.'],
     },
     video: {},
     reviewedByProfessional: false,
@@ -2014,6 +2379,77 @@ export const exercises: Exercise[] = [
     mistakes: {
       es: ['Girar la cadera al levantar el pie.', 'Arquear la espalda.'],
       en: ['Twisting your hips as you lift your foot.', 'Arching your back.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+
+  {
+    id: 'pelvic-tilt',
+    name: { es: 'Inclinar la pelvis', en: 'Pelvic tilt' },
+    pattern: 'core',
+    position: 'lying',
+    level: 1,
+    loads: ['lower_back'],
+    equipment: ['bed'],
+    dosage: { kind: 'reps', sets: 2, reps: 8 },
+    perSide: false,
+    purpose: {
+      es: 'Despierta el abdomen y suelta la espalda baja, con un movimiento muy pequeño.',
+      en: 'Wakes up your belly and eases your lower back, with a very small movement.',
+    },
+    steps: {
+      es: [
+        'Acuéstate boca arriba en la cama o en el piso, con las rodillas dobladas y los pies apoyados.',
+        'Aprieta el abdomen y pega la espalda baja a la cama o al piso.',
+        'Sostén 3 segundos y suelta despacio.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie on your back on the bed or the floor, knees bent and feet flat.',
+        'Tighten your belly and press your lower back into the bed or the floor.',
+        'Hold for 3 seconds and relax slowly.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['Empujar con los pies o levantar la cadera.', 'Aguantar la respiración.'],
+      en: ['Pushing with your feet or lifting your hips.', 'Holding your breath.'],
+    },
+    video: {},
+    reviewedByProfessional: false,
+  },
+  {
+    id: 'lying-march',
+    name: { es: 'Marcha acostado', en: 'Lying march' },
+    pattern: 'core',
+    position: 'lying',
+    level: 2,
+    loads: ['lower_back', 'hip'],
+    equipment: ['bed'],
+    dosage: { kind: 'reps', sets: 2, reps: 10 },
+    perSide: true,
+    purpose: {
+      es: 'Fortalece el abdomen mientras mueves las piernas.',
+      en: 'Strengthens your belly while you move your legs.',
+    },
+    steps: {
+      es: [
+        'Acuéstate boca arriba en la cama o en el piso, con las rodillas dobladas y los pies apoyados.',
+        'Aprieta el abdomen.',
+        'Sube un pie unos centímetros y bájalo. Luego el otro, como marchando despacio.',
+        'Para levantarte: gira de lado, siéntate y espera unos segundos antes de pararte.',
+      ],
+      en: [
+        'Lie on your back on the bed or the floor, knees bent and feet flat.',
+        'Tighten your belly.',
+        'Lift one foot a few inches and lower it. Then the other, like a slow march.',
+        'To get up: roll onto your side, sit up and wait a few seconds before you stand.',
+      ],
+    },
+    mistakes: {
+      es: ['Despegar la espalda baja.', 'Aguantar la respiración.'],
+      en: ['Letting your lower back lift.', 'Holding your breath.'],
     },
     video: {},
     reviewedByProfessional: false,

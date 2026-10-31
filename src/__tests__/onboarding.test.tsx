@@ -111,16 +111,17 @@ describe('pain strength step', () => {
 });
 
 describe('equipment step', () => {
-  it('starts with chair and towel checked, and they can be unchecked', async () => {
+  it('starts with chair, towel and bed checked, and they can be unchecked', async () => {
     const user = userEvent.setup();
     await render(<EquipmentScreen />);
     expect(screen.getByRole('button', { name: 'Silla firme' })).toBeSelected();
     expect(screen.getByRole('button', { name: 'Toalla' })).toBeSelected();
+    expect(screen.getByRole('button', { name: 'Cama' })).toBeSelected();
     expect(screen.getByRole('button', { name: 'Pared libre' })).not.toBeSelected();
 
     await user.press(screen.getByRole('button', { name: 'Toalla' }));
     expect(screen.getByRole('button', { name: 'Toalla' })).not.toBeSelected();
-    expect(draft().equipment).toEqual(['chair']);
+    expect(draft().equipment).toEqual(['chair', 'bed']);
   });
 });
 
@@ -241,7 +242,7 @@ describe("Maria's first run", () => {
       language: 'es',
       activity: 'some',
       floorOk: false,
-      equipment: ['chair', 'towel'],
+      equipment: ['chair', 'towel', 'bed'],
       levels: levelsAt(2),
       seatedOnly: false,
       screening: { anyYes: false },

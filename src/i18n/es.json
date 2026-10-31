@@ -28,7 +28,9 @@
     "startHint": "Abre el primer ejercicio",
     "doneTitle": "¡Ya entrenaste hoy!",
     "doneBody": "Buen trabajo. Descansa y nos vemos mañana.",
-    "repeat": "Repetir la rutina"
+    "repeat": "Repetir la rutina",
+    "lyingNotice": "Ahora a la cama (o al piso)",
+    "lyingNoticeBed": "Ahora a la cama"
   },
   "pain": {
     "title": "Dolor",
@@ -159,7 +161,8 @@
     "light_dumbbells": "Pesas ligeras",
     "backpack": "Mochila con libros o botellas",
     "step": "Escalón o primer peldaño",
-    "band": "Banda elástica"
+    "band": "Banda elástica",
+    "bed": "Cama"
   },
   "days": {
     "short": {

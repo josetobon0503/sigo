@@ -12,16 +12,23 @@ const SUBSTITUTES: Partial<Record<Equipment, Equipment[]>> = {
   bottles: ['light_dumbbells'],
 };
 
-export function hasEquipment(owned: Equipment[], needed: Equipment[]): boolean {
+// Without a bed, a towel on the floor works for exercises lying down, if the user can get down to
+// the floor and back up (floorOk).
+function substitutes(item: Equipment, floorOk: boolean): Equipment[] {
+  if (item === 'bed') return floorOk ? ['towel'] : [];
+  return SUBSTITUTES[item] ?? [];
+}
+
+export function hasEquipment(owned: Equipment[], needed: Equipment[], floorOk = false): boolean {
   return needed.every(
-    (item) => owned.includes(item) || (SUBSTITUTES[item] ?? []).some((s) => owned.includes(s)),
+    (item) => owned.includes(item) || substitutes(item, floorOk).some((s) => owned.includes(s)),
   );
 }
 
 // What the user will actually pick up for `item`: the item itself, or what stands in for it.
-export function resolveEquipment(owned: Equipment[], item: Equipment): Equipment {
+export function resolveEquipment(owned: Equipment[], item: Equipment, floorOk = false): Equipment {
   if (owned.includes(item)) return item;
-  return (SUBSTITUTES[item] ?? []).find((s) => owned.includes(s)) ?? item;
+  return substitutes(item, floorOk).find((s) => owned.includes(s)) ?? item;
 }
 
 // An avoided exercise comes back on its `until` day.
@@ -45,9 +52,12 @@ export function isAllowed(
   date: string,
 ): boolean {
   if (loadsAny(exercise, blocked)) return false;
-  if (!hasEquipment(profile.equipment, exercise.equipment)) return false;
+  if (!hasEquipment(profile.equipment, exercise.equipment, profile.floorOk)) return false;
   if (isAvoided(profile, exercise.id, date)) return false;
-  if (profile.seatedOnly && exercise.position !== 'seated') return false;
+  // Seated only means "no standing": lying down is fine.
+  if (profile.seatedOnly && exercise.position !== 'seated' && exercise.position !== 'lying') {
+    return false;
+  }
   // The floor only for users who can get down and up alone, and never below level 3.
   if (exercise.position === 'floor' && (!profile.floorOk || exercise.level < 3)) return false;
   // Gentle balance work (levels 1-2) always has something to hold on to.

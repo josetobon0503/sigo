@@ -29,6 +29,7 @@ import {
 } from '@/engine/session';
 import type { ItemRating, Lang } from '@/engine/types';
 import { formatDosage } from '@/i18n/format';
+import { useProfileStore } from '@/store/profileStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { useTheme } from '@/theme/useTheme';
 
@@ -320,6 +321,10 @@ function RestView({ session, now, lang }: { session: Session; now: number; lang:
   const next = nextStep(session);
   const nextItem = session.items[next.index];
   const nextExercise = nextItem ? byId.get(nextItem.exerciseId) : undefined;
+  const currentExercise = byId.get(session.items[session.index]?.exerciseId ?? '');
+  const floorOk = useProfileStore((s) => s.profile?.floorOk ?? false);
+  // Going from standing or sitting to lying down: say where to go.
+  const toBed = nextExercise?.position === 'lying' && currentExercise?.position !== 'lying';
 
   return (
     <>
@@ -362,6 +367,11 @@ function RestView({ session, now, lang }: { session: Session; now: number; lang:
             <Text style={[typography.body, { color: colors.textSecondary }]}>
               {t('rest.upNext')}
             </Text>
+            {toBed ? (
+              <Text style={[typography.bodyBold, { color: colors.primary }]} testID="lying-notice">
+                {t(floorOk ? 'today.lyingNotice' : 'today.lyingNoticeBed')}
+              </Text>
+            ) : null}
             <Text style={[typography.title, { color: colors.text }]}>
               {nextExercise.name[lang]}
             </Text>

@@ -49,11 +49,14 @@ export function equipmentNeeded(
   items: PlannedItem[],
   library: Exercise[],
   owned: Equipment[],
+  floorOk = false,
 ): Equipment[] {
   const byId = new Map(library.map((e) => [e.id, e]));
   const needed = new Set(
     items.flatMap((item) =>
-      (byId.get(item.exerciseId)?.equipment ?? []).map((eq) => resolveEquipment(owned, eq)),
+      (byId.get(item.exerciseId)?.equipment ?? []).map((eq) =>
+        resolveEquipment(owned, eq, floorOk),
+      ),
     ),
   );
   return EQUIPMENT.filter((eq) => needed.has(eq));

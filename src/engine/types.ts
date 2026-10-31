@@ -29,8 +29,10 @@ export type Pattern =
 
 // 'standing_supported' means holding on for balance. A wall, counter or table that only carries
 // the trunk or the hands (wall sit, counter push-up, one-arm row on a table) is 'standing'.
-// 'floor' is only offered to users who can get down and up without help (floorOk).
-export type Position = 'seated' | 'standing_supported' | 'standing' | 'floor';
+// 'floor' (planks, hands and knees) is only offered to users who can get down and up without help
+// (floorOk). 'lying' (on the back, side or front) is done on the bed, or on the floor on a towel with
+// floorOk; it needs neither floorOk nor standing, so it is fine with seatedOnly.
+export type Position = 'seated' | 'standing_supported' | 'standing' | 'floor' | 'lying';
 export type Equipment =
   | 'chair'
   | 'wall'
@@ -39,7 +41,8 @@ export type Equipment =
   | 'light_dumbbells'
   | 'backpack' // a backpack with books or water bottles, adjustable weight
   | 'step' // a sturdy step or the first stair
-  | 'band'; // elastic band, optional
+  | 'band' // elastic band, optional
+  | 'bed'; // for exercises lying down
 
 export type Level = 1 | 2 | 3 | 4 | 5;
 

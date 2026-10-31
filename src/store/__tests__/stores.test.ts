@@ -14,9 +14,9 @@ import { migrateProfile, useProfileStore } from '../profileStore';
 describe('onboarding draft', () => {
   beforeEach(() => useOnboardingStore.getState().reset());
 
-  it('starts with chair and towel checked', () => {
-    expect(DEFAULT_EQUIPMENT).toEqual(['chair', 'towel']);
-    expect(useOnboardingStore.getState().draft.equipment).toEqual(['chair', 'towel']);
+  it('starts with chair, towel and bed checked', () => {
+    expect(DEFAULT_EQUIPMENT).toEqual(['chair', 'towel', 'bed']);
+    expect(useOnboardingStore.getState().draft.equipment).toEqual(['chair', 'towel', 'bed']);
   });
 
   it('is not ready without an age band', () => {
@@ -70,6 +70,17 @@ describe('profile migration', () => {
     expect(migrated.profile?.activity).toBeNull();
     expect(migrated.profile?.floorOk).toBe(false);
     expect(migrated.profile?.levels.squat).toBe(4);
+  });
+
+  it('version 3 profiles get the bed, once', () => {
+    const old = makeProfile({ equipment: ['chair', 'towel'] });
+    expect(migrateProfile({ profile: old }, 3).profile?.equipment).toEqual([
+      'chair',
+      'towel',
+      'bed',
+    ]);
+    const withBed = makeProfile({ equipment: ['bed', 'chair'] });
+    expect(migrateProfile({ profile: withBed }, 3).profile?.equipment).toEqual(['bed', 'chair']);
   });
 
   it('version 2 "regular" becomes "daily" (both level 3)', () => {

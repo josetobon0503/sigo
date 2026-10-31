@@ -28,7 +28,9 @@
     "startHint": "Opens the first exercise",
     "doneTitle": "You already trained today!",
     "doneBody": "Great job. Rest and see you tomorrow.",
-    "repeat": "Do the workout again"
+    "repeat": "Do the workout again",
+    "lyingNotice": "Now to the bed (or the floor)",
+    "lyingNoticeBed": "Now to the bed"
   },
   "pain": {
     "title": "Pain",
@@ -159,7 +161,8 @@
     "light_dumbbells": "Light dumbbells",
     "backpack": "Backpack with books or bottles",
     "step": "Step or bottom stair",
-    "band": "Elastic band"
+    "band": "Elastic band",
+    "bed": "Bed"
   },
   "days": {
     "short": {

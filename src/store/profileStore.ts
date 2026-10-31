@@ -10,6 +10,7 @@ type Persisted = { profile: UserProfile | null };
 
 // Version 2 added the activity level: older profiles keep their levels and have no answer yet.
 // Version 3 split "regular" into "daily" (same level 3) and "strength", and added floorOk (off).
+// Version 4 added exercises lying down: the bed is checked, as it is in onboarding.
 export function migrateProfile(persisted: unknown, version: number): Persisted {
   const state = (persisted ?? { profile: null }) as Persisted;
   if (!state.profile) return state;
@@ -18,6 +19,9 @@ export function migrateProfile(persisted: unknown, version: number): Persisted {
   if (version < 3) {
     const activity = (profile.activity as string | null) === 'regular' ? 'daily' : profile.activity;
     profile = { ...profile, activity, floorOk: profile.floorOk ?? false };
+  }
+  if (version < 4 && !profile.equipment.includes('bed')) {
+    profile = { ...profile, equipment: [...profile.equipment, 'bed'] };
   }
   return { profile };
 }
@@ -42,7 +46,7 @@ export const useProfileStore = create<ProfileState>()(
     }),
     {
       name: 'sigo-profile',
-      version: 3,
+      version: 4,
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({ profile: state.profile }),
       migrate: (persisted, version) => migrateProfile(persisted, version),

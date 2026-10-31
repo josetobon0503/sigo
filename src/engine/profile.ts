@@ -35,6 +35,7 @@ export const EQUIPMENT: Equipment[] = [
   'backpack',
   'step',
   'band',
+  'bed',
 ];
 
 export function toggleEquipment(list: Equipment[], item: Equipment): Equipment[] {

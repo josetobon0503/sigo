@@ -95,6 +95,18 @@ describe('findHarder', () => {
     expect(pickedId(findHarder(current, profile, noSupport, ['a-standing'], DATE))).toBe('b-floor');
   });
 
+  it('lying down only after lying down, and the other way around', () => {
+    const lying = squat('lying', 1, { position: 'lying' });
+    const library = [
+      current,
+      lying,
+      squat('lying-3', 3, { position: 'lying' }),
+      squat('standing-4', 4),
+    ];
+    expect(pickedId(findHarder(current, makeProfile(), library, [], DATE))).toBe('standing-4');
+    expect(pickedId(findHarder(lying, makeProfile(), library, [], DATE))).toBe('lying-3');
+  });
+
   it('with the real library, sit-to-stand with hands leads to a level 3 squat', () => {
     const result = findHarder(get('sit-to-stand-with-hands'), makeProfile(), exercises, [], DATE);
     expect(result.type === 'harder' && result.exercise.level).toBe(3);
