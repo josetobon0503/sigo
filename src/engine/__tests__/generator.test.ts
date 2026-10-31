@@ -4,11 +4,13 @@ import {
   fakeExercise,
   levelsAt,
   makeProfile,
+  mamaActiva,
   maria,
   pain,
   roberto,
 } from '../__fixtures__/profiles';
 import { generateWorkout } from '../generator';
+import { estimateSeconds } from '../rules';
 import { blockedAreas } from '../safety';
 import type { Exercise, GeneratedWorkout, Pattern, UserProfile, WorkoutLog } from '../types';
 
@@ -163,9 +165,9 @@ describe('generateWorkout: rules for each exercise', () => {
     expect(workout.skippedPatterns).toContain('squat');
   });
 
-  it('never picks standing balance at level 3 or below', () => {
+  it('never picks standing balance at level 2 or below', () => {
     const library = [
-      fakeExercise({ id: 'free-stand', pattern: 'balance', position: 'standing', level: 3 }),
+      fakeExercise({ id: 'free-stand', pattern: 'balance', position: 'standing', level: 2 }),
       fakeExercise({
         id: 'held-stand',
         pattern: 'balance',
@@ -175,6 +177,32 @@ describe('generateWorkout: rules for each exercise', () => {
     ];
     const ids = generateWorkout(makeProfile(), library, [], DATE).items.map((i) => i.exerciseId);
     expect(ids).toEqual(['held-stand']);
+  });
+
+  it('balance without support is fine from level 3', () => {
+    const library = [
+      fakeExercise({ id: 'free-stand', pattern: 'balance', position: 'standing', level: 3 }),
+    ];
+    const ids = generateWorkout(makeProfile(), library, [], DATE).items.map((i) => i.exerciseId);
+    expect(ids).toEqual(['free-stand']);
+  });
+
+  it('offers the floor only with floorOk, from level 3', () => {
+    const library = [
+      fakeExercise({ id: 'bridge', pattern: 'hinge', position: 'floor', level: 3 }),
+      fakeExercise({ id: 'easy-floor', pattern: 'core', position: 'floor', level: 2 }),
+    ];
+    const ids = (floorOk: boolean) =>
+      generateWorkout(makeProfile({ floorOk }), library, [], DATE).items.map((i) => i.exerciseId);
+    expect(ids(false)).toEqual([]);
+    expect(ids(true)).toEqual(['bridge']);
+    const seated = generateWorkout(
+      makeProfile({ floorOk: true, seatedOnly: true }),
+      library,
+      [],
+      DATE,
+    );
+    expect(seated.items).toEqual([]);
   });
 
   it('allows standing balance from level 4', () => {
@@ -335,6 +363,7 @@ describe('generateWorkout: personas', () => {
   const personas: [string, UserProfile][] = [
     ['Maria', maria],
     ['Roberto', roberto],
+    ['Mamá activa', mamaActiva],
   ];
 
   describe.each(personas)('%s', (_name, profile) => {
@@ -376,8 +405,51 @@ describe('generateWorkout: personas', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  const TWO_WEEKS = Array.from(
+    { length: 14 },
+    (_, i) => `2026-11-${String(i + 1).padStart(2, '0')}`,
+  );
+
+  it.each(TWO_WEEKS)(
+    'Mamá activa (level 3) gets no seated or supported main exercise on %s, in 20-25 min',
+    (date) => {
+      const workout = generateWorkout(mamaActiva, exercises, [], date);
+      for (const e of section(workout, 'main')) {
+        expect({ id: e.id, position: e.position }).toEqual({
+          id: e.id,
+          position: expect.stringMatching(/^(standing|floor)$/),
+        });
+        expect(e.level).toBe(3);
+      }
+      expect(workout.estimatedSec).toBeGreaterThanOrEqual(20 * 60);
+      expect(workout.estimatedSec).toBeLessThanOrEqual(25 * 60);
+      expect(workout.skippedPatterns).toEqual([]);
+    },
+  );
+
+  it('Mamá activa gets floor exercises only because she said yes', () => {
+    const floorIn = (floorOk: boolean) =>
+      WEEK.flatMap((date) =>
+        allExercises(generateWorkout({ ...mamaActiva, floorOk }, exercises, [], date)),
+      ).filter((e) => e.position === 'floor');
+    expect(floorIn(false)).toEqual([]);
+  });
+
   it('Roberto skips upper body to protect his shoulder', () => {
     const workout = generateWorkout(roberto, exercises, [], DATE);
     expect(workout.skippedPatterns).toEqual(expect.arrayContaining(['upper_push', 'upper_pull']));
+  });
+});
+
+describe('estimateSeconds', () => {
+  it('counts 4 s per rep, 6 s with the slow level 5 tempo, and both sides', () => {
+    // 15 s to get ready + sets × (work + 30 s rest)
+    expect(estimateSeconds({ kind: 'reps', sets: 2, reps: 10 })).toBe(15 + 2 * (40 + 30));
+    expect(estimateSeconds({ kind: 'reps', sets: 3, reps: 8, slow: true })).toBe(
+      15 + 3 * (48 + 30),
+    );
+    expect(estimateSeconds({ kind: 'reps', sets: 3, reps: 8, slow: true }, true)).toBe(
+      15 + 3 * (96 + 30),
+    );
   });
 });

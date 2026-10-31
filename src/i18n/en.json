@@ -32,7 +32,26 @@
   },
   "pain": {
     "title": "Pain",
-    "placeholder": "Here you will tell us where it hurts, so we can protect that area."
+    "intro": "Mark where it hurts. Sigo avoids or softens the exercises that load that area.",
+    "mapHint": "Tap an area on the figure to add or change it.",
+    "listTitle": "My areas",
+    "empty": "You have no areas marked. Great!",
+    "summary": "{{intensity}} · {{kind}}",
+    "add": "Add an area",
+    "edit": "Edit",
+    "editLabel": "Edit {{area}}",
+    "remove": "Remove",
+    "removeLabel": "Remove {{area}}",
+    "removeTitle": "Remove {{area}}?",
+    "removeBody": "Sigo will stop protecting this area in your exercises.",
+    "removeConfirm": "Remove",
+    "cancel": "Cancel",
+    "addTitle": "Add an area",
+    "areaLabel": "Which area?",
+    "sideLabel": "Which side?",
+    "strengthLabel": "How strong is it?",
+    "kindLabel": "What does it feel like?",
+    "save": "Save"
   },
   "profile": {
     "title": "Profile",
@@ -45,15 +64,28 @@
     "safetyTips": "Safety tips",
     "aboutTitle": "About Sigo",
     "version": "Version {{version}}",
-    "resetOnboarding": "Reset onboarding (development only)"
+    "resetOnboarding": "Reset onboarding (development only)",
+    "activityLabel": "My activity level",
+    "activityHint": "Changing it starts all your exercises at that level.",
+    "activityDoctor": "Based on your health questions, talk to your doctor before raising the level.",
+    "floorOk": "Floor exercises",
+    "floorOkHint": "Only if you can get down to the floor and back up without help."
   },
   "swap": {
     "reason": {
       "seatedVersion": "It's the seated version: same work, less load.",
       "gentlerVersion": "It's a gentler version of the same movement.",
       "avoidsArea": "This one keeps the load off the area that hurts.",
+      "similarMovement": "It works the same part of the body without loading the area that hurts.",
       "mobility": "For now, a gentle movement to loosen up."
-    }
+    },
+    "title": "Try this one instead",
+    "accept": "Swap and continue",
+    "preview": "Preview",
+    "skip": "Skip and rest",
+    "restTitle": "Better to rest",
+    "restBody": "We couldn't find another exercise that protects that area today. Rest, then we'll go on to the next one.",
+    "restContinue": "Rest and continue"
   },
   "bodyArea": {
     "neck": "Neck",
@@ -96,6 +128,12 @@
     "70-79": "70 to 79",
     "80+": "80 or older"
   },
+  "activity": {
+    "low": "I barely move",
+    "some": "I walk some days",
+    "daily": "I walk almost every day",
+    "strength": "I do strength training or sports 2 or more times a week"
+  },
   "side": {
     "left": "Left",
     "right": "Right",
@@ -118,7 +156,10 @@
     "wall": "Clear wall",
     "bottles": "Water bottles",
     "towel": "Towel",
-    "light_dumbbells": "Light dumbbells"
+    "light_dumbbells": "Light dumbbells",
+    "backpack": "Backpack with books or bottles",
+    "step": "Step or bottom stair",
+    "band": "Elastic band"
   },
   "days": {
     "short": {
@@ -182,6 +223,16 @@
       "namePlaceholder": "Your name",
       "ageLabel": "How old are you?"
     },
+    "activity": {
+      "title": "How active are you?",
+      "hint": "This way we start at your pace. Sigo adjusts it over time."
+    },
+    "floor": {
+      "title": "Can you get down to the floor and back up without help?",
+      "hint": "If you say yes, we'll sometimes suggest exercises on the floor, on a towel or a mat.",
+      "yes": "Yes, I can",
+      "no": "No, I'd rather not"
+    },
     "painWhere": {
       "title": "Where does it hurt?",
       "hint": "Tap the figure or pick from the list. You can mark more than one area.",
@@ -242,7 +293,10 @@
     "spokenReps_other": "{{count}} sets of {{reps}} reps",
     "spokenTime_one": "{{count}} set of {{seconds}} seconds",
     "spokenTime_other": "{{count}} sets of {{seconds}} seconds",
-    "spokenPerSide": "{{dosage}}, per side"
+    "spokenPerSide": "{{dosage}}, per side",
+    "repsSlow": "{{sets}} × {{reps}} · 3 s down",
+    "repsSlowPerSide": "{{sets}} × {{reps}} per side · 3 s down",
+    "spokenSlow": "{{dosage}}, lowering for 3 seconds"
   },
   "workout": {
     "exit": "Exit",
@@ -270,15 +324,56 @@
     "secondsLeft_other": "{{count}} seconds left",
     "hurt": "It hurts",
     "hurtHint": "Stops this exercise",
-    "hurtTitle": "Stop and rest",
-    "hurtBody": "If it hurts, don't keep going with this exercise. Soon Sigo will offer you another one instead. If you have chest pain, feel dizzy or short of breath, call 911.",
-    "hurtOk": "Got it"
+    "tooEasy": "Too easy",
+    "tooEasyHint": "Offers you a slightly harder exercise"
   },
   "rest": {
     "title": "Rest",
     "skip": "Skip",
     "skipHint": "Ends the rest now",
-    "upNext": "Up next"
+    "upNext": "Up next",
+    "ratingQuestion": "How was it?",
+    "ratingHint": "It's optional. It helps us adjust your workout."
+  },
+  "rating": {
+    "easy": "Too easy",
+    "good": "Good",
+    "hard": "Hard"
+  },
+  "harder": {
+    "title": "Try a harder one?",
+    "accept": "Swap and continue",
+    "keep": "Keep this one",
+    "topTitle": "You're at the highest level of this exercise",
+    "topBody": "Do it slower and more controlled: that makes it harder too.",
+    "continue": "Continue"
+  },
+  "hurt": {
+    "title": "Where does it hurt?",
+    "areaLabel": "Area",
+    "otherAreas": "Another area",
+    "strengthLabel": "How strong?",
+    "sharp": "Is it a sharp pain?",
+    "sharpHint": "Like a stab or a sudden jab.",
+    "redFlag": "Chest pain or dizziness?",
+    "redFlagHint": "Opens the safety screen",
+    "continue": "Continue",
+    "cancel": "Back to the exercise"
+  },
+  "safety": {
+    "title": "Stop and rest",
+    "body": "Sit down and breathe calmly. Don't keep going with this exercise.",
+    "redFlags": "If you have chest pain, feel dizzy or short of breath, call 911.",
+    "call": "Call 911",
+    "callHint": "Opens the phone to call 911",
+    "ok": "I'm OK, keep going",
+    "okHint": "You rest, then go on to the next exercise",
+    "end": "End workout"
+  },
+  "preview": {
+    "mistakesTitle": "How NOT to do it",
+    "use": "Use this exercise",
+    "back": "Back"
   },
   "finish": {
     "title": "You did it!",

@@ -7,7 +7,7 @@ import { toProfileDraft, useOnboardingStore } from '@/store/onboardingStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useTheme } from '@/theme/useTheme';
 
-// Step 9: save the profile. The root layout then switches to the tabs on its own.
+// Step 11: save the profile. The root layout then switches to the tabs on its own.
 export default function ReadyScreen() {
   const { t } = useTranslation();
   const { colors, typography } = useTheme();
@@ -24,7 +24,7 @@ export default function ReadyScreen() {
 
   return (
     <OnboardingStep
-      step={9}
+      step={11}
       title={t('onboarding.ready.title', { name: draft.name.trim() })}
       nextLabel={t('onboarding.ready.start')}
       nextDisabled={!ready}

@@ -12,7 +12,8 @@ import { useTheme } from '@/theme/useTheme';
 
 const FEELINGS: Feeling[] = ['great', 'good', 'ok', 'tired', 'sore'];
 
-// The log is already saved when this screen opens; the feeling is added to it.
+// The log is already saved when this screen opens; the feeling is added to it. Leaving the screen
+// updates the levels once, with the feeling if the user gave one.
 export default function FinishScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -23,8 +24,15 @@ export default function FinishScreen() {
   const log = useHistoryStore((s) => s.logs.find((l) => l.id === logId));
   const setFeeling = useSessionStore((s) => s.setFeeling);
   const clear = useSessionStore((s) => s.clear);
+  const applyProgression = useSessionStore((s) => s.applyProgression);
 
-  useEffect(() => () => clear(), [clear]);
+  useEffect(
+    () => () => {
+      applyProgression();
+      clear();
+    },
+    [applyProgression, clear],
+  );
 
   if (!session || !log) return null;
 
@@ -71,7 +79,10 @@ export default function FinishScreen() {
       <BigButton
         label={t('finish.backHome')}
         icon="home"
-        onPress={() => router.dismissTo('/')}
+        onPress={() => {
+          applyProgression();
+          router.dismissTo('/');
+        }}
         testID="back-home"
       />
     </ScreenContainer>

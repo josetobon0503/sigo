@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 
 import type { ProfileDraft } from '@/engine/profile';
-import type { AgeBand, Equipment, Lang, UserProfile } from '@/engine/types';
+import type { ActivityLevel, AgeBand, Equipment, Lang, UserProfile } from '@/engine/types';
 import { getDeviceLanguage } from '@/i18n';
 
 import type { PainSelection } from './painSelection';
@@ -12,6 +12,8 @@ export interface OnboardingDraft {
   name: string;
   language: Lang;
   ageBand: AgeBand | null;
+  activity: ActivityLevel | null;
+  floorOk: boolean | null;
   equipment: Equipment[];
   painAreas: PainSelection[];
   reminder: UserProfile['reminder'];
@@ -26,6 +28,8 @@ export function initialDraft(): OnboardingDraft {
     name: '',
     language: getDeviceLanguage(),
     ageBand: null,
+    activity: null,
+    floorOk: null,
     equipment: [...DEFAULT_EQUIPMENT],
     painAreas: [],
     reminder: { enabled: true, hour: 9, minute: 0, days: [1, 2, 3, 4, 5] },
@@ -33,15 +37,22 @@ export function initialDraft(): OnboardingDraft {
   };
 }
 
-// The draft is ready for createProfile once the age band and every pain intensity are set.
+// The draft is ready for createProfile once the age band, the activity level, the floor answer
+// and every pain intensity are set.
 export function toProfileDraft(draft: OnboardingDraft): ProfileDraft | null {
-  if (!draft.ageBand) return null;
+  if (!draft.ageBand || !draft.activity || draft.floorOk === null) return null;
   const painAreas = [];
   for (const p of draft.painAreas) {
     if (p.intensity === null) return null;
     painAreas.push({ ...p, intensity: p.intensity });
   }
-  return { ...draft, ageBand: draft.ageBand, painAreas };
+  return {
+    ...draft,
+    ageBand: draft.ageBand,
+    activity: draft.activity,
+    floorOk: draft.floorOk,
+    painAreas,
+  };
 }
 
 interface OnboardingState {

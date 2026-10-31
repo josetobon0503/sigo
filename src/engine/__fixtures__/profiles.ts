@@ -36,7 +36,16 @@ export const ALL_AREAS: BodyArea[] = [
   'foot',
 ];
 
-export const ALL_EQUIPMENT: Equipment[] = ['chair', 'wall', 'bottles', 'towel', 'light_dumbbells'];
+export const ALL_EQUIPMENT: Equipment[] = [
+  'chair',
+  'wall',
+  'bottles',
+  'towel',
+  'light_dumbbells',
+  'backpack',
+  'step',
+  'band',
+];
 
 export function levelsAt(level: Level): Record<Pattern, Level> {
   return Object.fromEntries(ALL_PATTERNS.map((p) => [p, level])) as Record<Pattern, Level>;
@@ -56,6 +65,8 @@ export function makeProfile(overrides: Partial<UserProfile> = {}): UserProfile {
     name: 'Test',
     language: 'es',
     ageBand: '60-69',
+    activity: 'daily',
+    floorOk: false,
     equipment: ALL_EQUIPMENT,
     levels: levelsAt(3),
     seatedOnly: false,
@@ -84,6 +95,17 @@ export const roberto = makeProfile({
   levels: levelsAt(1),
   seatedOnly: false,
   painAreas: [pain('lower_back', 3), pain('shoulder', 3, 'achy', 'right')],
+});
+
+// "Active mom", 57: walks every day (level 3), nothing hurts, can get down to the floor.
+export const mamaActiva = makeProfile({
+  name: 'Mamá',
+  ageBand: '50-59',
+  activity: 'daily',
+  floorOk: true,
+  equipment: ['chair', 'towel', 'bottles', 'backpack', 'step'],
+  levels: levelsAt(3),
+  painAreas: [],
 });
 
 // Minimal exercise for synthetic libraries.

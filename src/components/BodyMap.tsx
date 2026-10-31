@@ -49,10 +49,11 @@ const SHAPES: ViewStyle[] = [
 
 export interface BodyMapProps {
   value: PainSelection[];
-  onChange: (value: PainSelection[]) => void;
+  onChange?: (value: PainSelection[]) => void; // toggles zones, as in onboarding
+  onZonePress?: (area: BodyArea, side: ZoneSide) => void; // replaces the toggle, e.g. to open an editor
 }
 
-export function BodyMap({ value, onChange }: BodyMapProps) {
+export function BodyMap({ value, onChange, onZonePress }: BodyMapProps) {
   const { t } = useTranslation();
   const { colors, typography, spacing } = useTheme();
 
@@ -82,7 +83,9 @@ export function BodyMap({ value, onChange }: BodyMapProps) {
           return (
             <Pressable
               key={`${area}-${side ?? 'center'}`}
-              onPress={() => onChange(toggleZone(value, area, side))}
+              onPress={() =>
+                onZonePress ? onZonePress(area, side) : onChange?.(toggleZone(value, area, side))
+              }
               accessibilityRole="checkbox"
               accessibilityLabel={zoneLabel(area, side)}
               accessibilityState={{ checked: selected }}

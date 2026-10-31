@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { OnboardingStep, ReminderEditor } from '@/components';
 import { useOnboardingStore } from '@/store/onboardingStore';
 
-// Step 8: reminder time. Only saved here; notifications are scheduled in a later phase.
+// Step 10: reminder time. Only saved here; notifications are scheduled in a later phase.
 export default function ReminderScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -13,7 +13,7 @@ export default function ReminderScreen() {
 
   return (
     <OnboardingStep
-      step={8}
+      step={10}
       title={t('onboarding.reminder.title')}
       onNext={() => router.push('/onboarding/ready')}
     >

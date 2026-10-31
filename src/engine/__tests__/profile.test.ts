@@ -1,7 +1,7 @@
 import { SCREENING_QUESTIONS } from '../../data/screening';
 import { levelsAt } from '../__fixtures__/profiles';
-import { createProfile, initialLevels, type ProfileDraft } from '../profile';
-import type { AgeBand } from '../types';
+import { createProfile, levelsFor, setActivity, type ProfileDraft } from '../profile';
+import type { ActivityLevel, AgeBand, Level } from '../types';
 
 const NOW = '2026-10-28T10:00:00.000Z';
 const allNo = Object.fromEntries(SCREENING_QUESTIONS.map((q) => [q, false]));
@@ -10,6 +10,8 @@ const draft: ProfileDraft = {
   name: '  María ',
   language: 'es',
   ageBand: '50-59',
+  activity: 'low',
+  floorOk: false,
   equipment: ['chair', 'towel'],
   painAreas: [
     { area: 'knee', side: 'left', intensity: 3, kind: 'achy' },
@@ -20,14 +22,24 @@ const draft: ProfileDraft = {
 };
 
 describe('createProfile', () => {
-  it('starts every pattern at level 1', () => {
-    expect(initialLevels()).toEqual(levelsAt(1));
+  it.each<[ActivityLevel, Level]>([
+    ['low', 1],
+    ['some', 2],
+    ['daily', 3],
+    ['strength', 4],
+  ])('activity "%s" starts every pattern at level %i', (activity, level) => {
+    expect(levelsFor(activity)).toEqual(levelsAt(level));
+    const profile = createProfile({ ...draft, activity }, NOW);
+    expect(profile.levels).toEqual(levelsAt(level));
+    expect(profile.activity).toBe(activity);
   });
 
   it.each<AgeBand>(['under-50', '50-59', '60-69', '70-79', '80+'])(
-    'starts at level 1 for age %s',
+    'the age band (%s) does not change the starting level',
     (ageBand) => {
-      expect(createProfile({ ...draft, ageBand }, NOW).levels).toEqual(levelsAt(1));
+      expect(createProfile({ ...draft, ageBand, activity: 'some' }, NOW).levels).toEqual(
+        levelsAt(2),
+      );
     },
   );
 
@@ -37,6 +49,8 @@ describe('createProfile', () => {
       name: 'María',
       language: 'es',
       ageBand: '50-59',
+      activity: 'low',
+      floorOk: false,
       equipment: ['chair', 'towel'],
       levels: levelsAt(1),
       seatedOnly: false,
@@ -50,9 +64,9 @@ describe('createProfile', () => {
     });
   });
 
-  it('a "yes" in the screening turns on seatedOnly', () => {
+  it('a "yes" in the screening wins over the activity level: level 1 and seatedOnly', () => {
     const profile = createProfile(
-      { ...draft, screeningAnswers: { ...allNo, fallLastYear: true } },
+      { ...draft, activity: 'strength', screeningAnswers: { ...allNo, fallLastYear: true } },
       NOW,
     );
     expect(profile.seatedOnly).toBe(true);
@@ -66,5 +80,13 @@ describe('createProfile', () => {
     profile.reminder.days.push(0);
     expect(draft.equipment).toEqual(['chair', 'towel']);
     expect(draft.reminder.days).toEqual([1, 3, 5]);
+  });
+});
+
+describe('setActivity', () => {
+  it('sets every pattern to the starting level of the new activity', () => {
+    expect(setActivity('daily')).toEqual({ activity: 'daily', levels: levelsAt(3) });
+    expect(setActivity('strength')).toEqual({ activity: 'strength', levels: levelsAt(4) });
+    expect(setActivity('low')).toEqual({ activity: 'low', levels: levelsAt(1) });
   });
 });

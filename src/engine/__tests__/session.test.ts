@@ -7,11 +7,16 @@ import {
   displaySeconds,
   endSession,
   GENTLE_REST_SECONDS,
+  markPain,
   nextStep,
+  rateItem,
+  ratingAsked,
   pauseTimer,
   restRemainingMs,
+  replaceCurrent,
   restSeconds,
   skipRest,
+  skipToRest,
   startSession,
   startTimer,
   SWITCH_SIDE_SECONDS,
@@ -228,5 +233,102 @@ describe('ending and the log', () => {
     const s = start([]);
     expect(s.phase.kind).toBe('finished');
     expect(buildLog(s, 'x', T0).items).toEqual([]);
+  });
+});
+
+describe('"It hurts" changes', () => {
+  const knee = { area: 'knee' as const, intensity: 3, kind: 'achy' as const };
+
+  it('markPain keeps the report on the current item', () => {
+    const s = markPain(start(['reps-a', 'timed-b']), knee);
+    expect(s.items[0].painReported).toEqual(knee);
+    expect(s.items[1].painReported).toBeUndefined();
+  });
+
+  it('replaceCurrent keeps the sets done and the planned number of sets', () => {
+    let s = start(['reps-a', 'timed-b']);
+    s = skipRest(completeSet(s, T0)); // set 1 of reps-a done, now on set 2
+    s = replaceCurrent(s, library[2]); // gentle-c: 1 set of 8 reps in the library
+    const item = s.items[0];
+    expect(item.exerciseId).toBe('gentle-c');
+    expect(item.swappedFrom).toBe('reps-a');
+    expect(item.level).toBe(1);
+    expect(item.setsDone).toBe(1);
+    expect(item.dosage).toEqual({ kind: 'reps', sets: 2, reps: 8 });
+    expect(s.set).toBe(2);
+    expect(s.phase).toEqual({ kind: 'exercise', timer: { status: 'idle' } });
+  });
+
+  it('replaceCurrent resets a running timer and the side', () => {
+    let s = start(['side-d', 'reps-a']);
+    s = tick(startTimer(s, T0), T0 + sec(16));
+    expect(s.side).toBe(2);
+    s = replaceCurrent(s, library[1]);
+    expect(s.side).toBe(1);
+    expect(s.phase).toEqual({ kind: 'exercise', timer: { status: 'idle' } });
+    expect(s.items[0]).toMatchObject({ perSide: false, dosage: { kind: 'time', seconds: 20 } });
+  });
+
+  it('a second swap still remembers the planned exercise', () => {
+    let s = replaceCurrent(start(['reps-a']), library[1]);
+    s = replaceCurrent(s, library[2]);
+    expect(s.items[0]).toMatchObject({ exerciseId: 'gentle-c', swappedFrom: 'reps-a' });
+  });
+
+  it('skipToRest rests, then opens the next exercise', () => {
+    let s = skipToRest(start(['reps-a', 'timed-b']), T0);
+    expect(s.phase).toEqual({ kind: 'rest', endsAt: T0 + sec(30) });
+    expect(nextStep(s)).toEqual({ index: 1, set: 1 });
+    s = tick(s, T0 + sec(30));
+    expect(s.index).toBe(1);
+    expect(s.items[0].setsDone).toBe(0);
+  });
+
+  it('skipToRest on the last exercise ends the session', () => {
+    const s = skipToRest(start(['reps-a']), T0 + sec(5));
+    expect(s.phase).toEqual({ kind: 'finished' });
+    expect(s.endedAt).toBe(T0 + sec(5));
+  });
+
+  it('the log keeps swappedFrom and painReported', () => {
+    let s = markPain(start(['reps-a', 'timed-b']), knee);
+    s = replaceCurrent(s, library[2]);
+    s = endSession(s, T0 + sec(60));
+    expect(buildLog(s, 'log', T0 + sec(60)).items).toEqual([
+      { exerciseId: 'gentle-c', completed: false, swappedFrom: 'reps-a', painReported: knee },
+      { exerciseId: 'timed-b', completed: false },
+    ]);
+  });
+});
+
+describe('"How was it?"', () => {
+  it('rateItem saves the rating, the last answer wins, and the log keeps it', () => {
+    let s = start(['reps-a', 'timed-b']);
+    s = rateItem(s, 0, 'easy');
+    s = rateItem(s, 0, 'hard');
+    expect(s.items[0].rating).toBe('hard');
+    expect(buildLog(endSession(s, T0), 'log', T0).items[0]).toMatchObject({ rating: 'hard' });
+    expect(rateItem(s, 9, 'good')).toBe(s);
+  });
+
+  it('is asked in the rest after the last set of a main exercise only', () => {
+    let s = start(['reps-a', 'timed-b']);
+    s = completeSet(s, T0); // set 1 of 2: rest, not asked yet
+    expect(ratingAsked(s)).toBe(false);
+    s = completeSet(skipRest(s), T0); // last set
+    expect(ratingAsked(s)).toBe(true);
+  });
+
+  it('is not asked after skipping an exercise', () => {
+    expect(ratingAsked(skipToRest(start(['reps-a', 'timed-b']), T0))).toBe(false);
+  });
+
+  it('is not asked for the warm-up', () => {
+    const plan = workout(['gentle-c', 'reps-a']);
+    const items = plan.items.map(
+      (i, n) => ({ ...i, section: n === 0 ? 'warmup' : 'main' }) as const,
+    );
+    const s = startSession({ ...plan, items }, library, false, T0);
+    expect(ratingAsked(completeSet(s, T0))).toBe(false);
   });
 });

@@ -6,6 +6,12 @@ import type { Dosage, Lang } from '@/engine/types';
 
 // "2 × 10", "2 × 30 s por lado".
 export function formatDosage(t: TFunction, dosage: Dosage, perSide: boolean): string {
+  if (dosage.kind === 'reps' && dosage.slow) {
+    return t(perSide ? 'dosage.repsSlowPerSide' : 'dosage.repsSlow', {
+      sets: dosage.sets,
+      reps: dosage.reps,
+    });
+  }
   if (dosage.kind === 'reps') {
     return t(perSide ? 'dosage.repsPerSide' : 'dosage.reps', {
       sets: dosage.sets,
@@ -24,7 +30,8 @@ export function spokenDosage(t: TFunction, dosage: Dosage, perSide: boolean): st
     dosage.kind === 'reps'
       ? t('dosage.spokenReps', { count: dosage.sets, reps: dosage.reps })
       : t('dosage.spokenTime', { count: dosage.sets, seconds: dosage.seconds });
-  return perSide ? t('dosage.spokenPerSide', { dosage: base }) : base;
+  const sided = perSide ? t('dosage.spokenPerSide', { dosage: base }) : base;
+  return dosage.kind === 'reps' && dosage.slow ? t('dosage.spokenSlow', { dosage: sided }) : sided;
 }
 
 // "rodilla, cadera y espalda baja".

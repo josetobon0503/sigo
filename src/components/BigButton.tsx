@@ -14,6 +14,7 @@ export interface BigButtonProps {
   accessibilityLabel?: string; // defaults to label
   accessibilityHint?: string;
   disabled?: boolean;
+  selected?: boolean; // for a choice among buttons, e.g. "How was it?"
   style?: StyleProp<ViewStyle>;
   testID?: string;
 }
@@ -27,6 +28,7 @@ export function BigButton({
   accessibilityLabel,
   accessibilityHint,
   disabled = false,
+  selected,
   style,
   testID,
 }: BigButtonProps) {
@@ -47,7 +49,7 @@ export function BigButton({
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityHint={accessibilityHint}
-      accessibilityState={{ disabled }}
+      accessibilityState={{ disabled, selected }}
       testID={testID}
       style={({ pressed }) => [
         styles.button,

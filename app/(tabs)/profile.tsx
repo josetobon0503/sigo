@@ -12,7 +12,13 @@ import {
   ScreenContainer,
   SwitchRow,
 } from '@/components';
-import { AGE_BANDS, EQUIPMENT, toggleEquipment } from '@/engine/profile';
+import {
+  ACTIVITY_LEVELS,
+  AGE_BANDS,
+  EQUIPMENT,
+  setActivity,
+  toggleEquipment,
+} from '@/engine/profile';
 import { SUPPORTED_LANGUAGES } from '@/i18n';
 import { formatDay } from '@/i18n/format';
 import { useDevStore, useToday } from '@/store/devStore';
@@ -75,6 +81,28 @@ export default function ProfileScreen() {
         </ChipGroup>
       </Card>
 
+      <Card style={{ gap: spacing.sm }}>
+        <ChipGroup label={t('profile.activityLabel')}>
+          {ACTIVITY_LEVELS.map((level) => (
+            <Chip
+              key={level}
+              label={t(`activity.${level}`)}
+              selected={profile.activity === level}
+              onPress={() => updateProfile(setActivity(level))}
+              testID={`activity-${level}`}
+            />
+          ))}
+        </ChipGroup>
+        <Text style={[typography.caption, { color: colors.textSecondary }]}>
+          {t('profile.activityHint')}
+        </Text>
+        {profile.screening?.anyYes ? (
+          <Text style={[typography.body, { color: colors.text }]} testID="activity-doctor">
+            {t('profile.activityDoctor')}
+          </Text>
+        ) : null}
+      </Card>
+
       <Card>
         <ChipGroup label={t('language.label')}>
           {SUPPORTED_LANGUAGES.map((lang) => (
@@ -109,6 +137,16 @@ export default function ProfileScreen() {
           value={profile.seatedOnly}
           onChange={(seatedOnly) => updateProfile({ seatedOnly })}
           testID="seated-only"
+        />
+      </Card>
+
+      <Card>
+        <SwitchRow
+          label={t('profile.floorOk')}
+          hint={t('profile.floorOkHint')}
+          value={profile.floorOk}
+          onChange={(floorOk) => updateProfile({ floorOk })}
+          testID="floor-ok"
         />
       </Card>
 

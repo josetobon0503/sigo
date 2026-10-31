@@ -1,5 +1,5 @@
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
@@ -21,17 +21,19 @@ import {
   currentItem,
   displaySeconds,
   nextStep,
+  ratingAsked,
   restRemainingMs,
   timerView,
   type Session,
   type SessionItem,
 } from '@/engine/session';
-import type { Lang } from '@/engine/types';
+import type { ItemRating, Lang } from '@/engine/types';
 import { formatDosage } from '@/i18n/format';
 import { useSessionStore } from '@/store/sessionStore';
 import { useTheme } from '@/theme/useTheme';
 
 const TICK_MS = 250;
+const RATINGS: ItemRating[] = ['easy', 'good', 'hard'];
 const byId = new Map(exercises.map((e) => [e.id, e]));
 
 // Re-renders a few times a second and applies timers that ended, also right after the app comes
@@ -79,11 +81,14 @@ export default function SessionScreen() {
     lastSetsDone.current = setsDone;
   }, [setsDone]);
 
+  // Only while this screen is on top: the "It hurts" screens can end the session and come back.
   const finished = !session || session.phase.kind === 'finished';
-  useEffect(() => {
-    if (!session) router.dismissTo('/');
-    else if (finished) router.replace('/workout/finish');
-  }, [session, finished, router]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!session) router.dismissTo('/');
+      else if (finished) router.replace('/workout/finish');
+    }, [session, finished, router]),
+  );
 
   const confirmExit = useCallback(() => {
     Alert.alert(t('workout.exitTitle'), t('workout.exitBody'), [
@@ -152,8 +157,9 @@ function ExerciseView({
   lang: Lang;
 }) {
   const { t } = useTranslation();
-  const { colors, typography, spacing } = useTheme();
-  const { completeSet, startTimer, pauseTimer } = useSessionStore.getState();
+  const router = useRouter();
+  const { colors, typography, spacing, sizes } = useTheme();
+  const { completeSet, startTimer, pauseTimer, tooEasy } = useSessionStore.getState();
   const exercise = byId.get(item.exerciseId);
   if (!exercise) return null;
 
@@ -222,8 +228,11 @@ function ExerciseView({
     );
   }
 
-  const showHurt = () =>
-    Alert.alert(t('workout.hurtTitle'), t('workout.hurtBody'), [{ text: t('workout.hurtOk') }]);
+  // The timer waits while the user tells us what hurts.
+  const showHurt = () => {
+    pauseTimer();
+    router.push('/hurt');
+  };
 
   return (
     <>
@@ -260,6 +269,26 @@ function ExerciseView({
             testID="set-done"
           />
         ) : null}
+        {/* Less prominent than "Done" and "It hurts": a text button, not in the footer. */}
+        <Pressable
+          onPress={() => {
+            pauseTimer();
+            tooEasy();
+            router.push('/workout/harder');
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={t('workout.tooEasy')}
+          accessibilityHint={t('workout.tooEasyHint')}
+          testID="too-easy"
+          style={({ pressed }) => [
+            styles.textButton,
+            { minHeight: sizes.minTapTarget, opacity: pressed ? 0.6 : 1 },
+          ]}
+        >
+          <Text style={[typography.bodyBold, { color: colors.primary }]}>
+            {t('workout.tooEasy')}
+          </Text>
+        </Pressable>
       </ScrollView>
       <View
         style={[
@@ -285,7 +314,9 @@ function RestView({ session, now, lang }: { session: Session; now: number; lang:
   const { t } = useTranslation();
   const { colors, typography, spacing } = useTheme();
   const skipRest = useSessionStore((s) => s.skipRest);
+  const rate = useSessionStore((s) => s.rate);
   const seconds = displaySeconds(restRemainingMs(session, now));
+  const rated = session.items[session.index]?.rating;
   const next = nextStep(session);
   const nextItem = session.items[next.index];
   const nextExercise = nextItem ? byId.get(nextItem.exerciseId) : undefined;
@@ -305,6 +336,27 @@ function RestView({ session, now, lang }: { session: Session; now: number; lang:
           accessibilityLabel={t('workout.secondsLeft', { count: seconds })}
           testID="rest-timer"
         />
+        {ratingAsked(session) ? (
+          <Card style={{ gap: spacing.sm }} testID="rating">
+            <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
+              {t('rest.ratingQuestion')}
+            </Text>
+            <Text style={[typography.caption, { color: colors.textSecondary }]}>
+              {t('rest.ratingHint')}
+            </Text>
+            {RATINGS.map((rating) => (
+              <BigButton
+                key={rating}
+                label={t(`rating.${rating}`)}
+                variant={rated === rating ? 'primary' : 'secondary'}
+                icon={rated === rating ? 'checkmark' : undefined}
+                selected={rated === rating}
+                onPress={() => rate(session.index, rating)}
+                testID={`rating-${rating}`}
+              />
+            ))}
+          </Card>
+        ) : null}
         {nextItem && nextExercise ? (
           <Card style={{ gap: spacing.xs }} testID="up-next">
             <Text style={[typography.body, { color: colors.textSecondary }]}>
@@ -351,6 +403,11 @@ const styles = StyleSheet.create({
   },
   center: {
     textAlign: 'center',
+  },
+  textButton: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
   },
   footer: {
     borderTopWidth: StyleSheet.hairlineWidth,

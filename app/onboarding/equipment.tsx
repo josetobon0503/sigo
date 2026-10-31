@@ -7,7 +7,7 @@ import { EQUIPMENT, toggleEquipment } from '@/engine/profile';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { useTheme } from '@/theme/useTheme';
 
-// Step 7: equipment I have. Chair and towel start checked.
+// Step 9: equipment I have. Chair and towel start checked.
 export default function EquipmentScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function EquipmentScreen() {
 
   return (
     <OnboardingStep
-      step={7}
+      step={9}
       title={t('onboarding.equipment.title')}
       onNext={() => router.push('/onboarding/reminder')}
     >

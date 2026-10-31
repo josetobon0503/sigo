@@ -81,17 +81,21 @@ app/                      # Expo Router routes
     index.tsx             # Today
     pain.tsx
     profile.tsx
-  workout/                # modal stack: session, rest, finish
-  hurt/                   # modal stack: it-hurts, safety, swap, preview
+  workout/                # modal stack: session (with rest), harder ("Too easy"), finish
+  hurt/                   # modal stack: it-hurts (index), safety, swap, preview
+  pain-area.tsx           # modal: add or edit one painful area (from the Pain tab)
 src/
   engine/                 # PURE logic, no React imports
     types.ts
     generator.ts          # builds today's workout
     swap.ts               # finds a replacement exercise
+    harder.ts             # finds a harder exercise ("Too easy")
     progression.ts        # updates levels after a workout
     safety.ts             # red-flag rules and screening result
     session.ts            # workout session state machine (timers use endsAt + now)
     today.ts              # Today screen helpers (considered areas, skip reasons, equipment)
+    pain.ts               # pain report side effects and Pain tab edits (raise area, avoid 14 days)
+    profile.ts            # createProfile, activity levels
     __tests__/
   data/
     exercises.ts          # exercise library (typed)
@@ -125,11 +129,17 @@ type Pattern =
   | 'mobility'     // warm-up and cool-down
   | 'calf';
 
-type Position = 'seated' | 'standing_supported' | 'standing'; // NO floor exercises in the MVP
-type Equipment = 'chair' | 'wall' | 'bottles' | 'towel' | 'light_dumbbells';
+// 'standing_supported' = holding on for BALANCE. A wall, counter or table that only carries the trunk or the
+// hands (wall sit, counter push-up, one-arm row on a table) is 'standing'. 'floor' needs floorOk.
+type Position = 'seated' | 'standing_supported' | 'standing' | 'floor';
+type Equipment =
+  | 'chair' | 'wall' | 'bottles' | 'towel' | 'light_dumbbells'
+  | 'backpack'   // backpack with books or bottles, adjustable weight
+  | 'step'       // sturdy step or the bottom stair
+  | 'band';      // elastic band, optional
 
 type Dosage =
-  | { kind: 'reps'; sets: number; reps: number }
+  | { kind: 'reps'; sets: number; reps: number; slow?: true } // slow = 3 s down (level 5)
   | { kind: 'time'; sets: number; seconds: number };
 
 interface Exercise {
@@ -159,10 +169,14 @@ interface PainArea {
 
 type Feeling = 'great' | 'good' | 'ok' | 'tired' | 'sore';
 
+type ActivityLevel = 'low' | 'some' | 'daily' | 'strength'; // "How active are you?" in onboarding
+
 interface UserProfile {
   name: string;
   language: Lang;
   ageBand: 'under-50' | '50-59' | '60-69' | '70-79' | '80+';
+  activity: ActivityLevel | null; // null for profiles created before the question existed
+  floorOk: boolean;             // can get down to the floor and back up without help
   equipment: Equipment[];
   levels: Record<Pattern, 1 | 2 | 3 | 4 | 5>;
   seatedOnly: boolean;          // true after a screening "yes" until the user changes it
@@ -177,6 +191,7 @@ interface WorkoutItem {
   completed: boolean;
   swappedFrom?: string;
   painReported?: { area: BodyArea; intensity: number; kind: PainArea['kind'] };
+  rating?: 'easy' | 'good' | 'hard'; // "How was it?"; "Too easy" during the exercise counts as 'easy'
 }
 
 interface WorkoutLog {
@@ -190,18 +205,61 @@ interface WorkoutLog {
 
 ## 6. Engine rules
 
+### Levels
+| Level | Meaning |
+|---|---|
+| 1 | Seated |
+| 2 | Standing, holding on for balance |
+| 3 | Standing (or on the floor) without support, body weight. An average 55-65 adult who walks daily |
+| 4 | With load (backpack / bottles) or one side at a time |
+| 5 | One side with load, slow tempo (3 s down) or more range |
+
+- Support for **balance** caps an exercise at level 2. Support that only carries the trunk or the hands (wall sit,
+  counter push-up, row with a hand on a chair or table) does not: the demand decides the level.
+- Floor exercises (`position: 'floor'`) are only offered when `floorOk` is true and the exercise is level >= 3,
+  never with `seatedOnly`, and `findSwap` never moves someone down to the floor (unless the current exercise is
+  already on the floor).
+- Balance: levels 1-2 are seated or holding on. Levels 3+ have no support but are done **next to a sturdy chair
+  for safety**, and the steps say so.
+
+### Dosage by level (8-12 reps)
+| Level | Reps | Timed | Tempo |
+|---|---|---|---|
+| 1 | 2 x 8 | 2 x 20 s | normal |
+| 2 | 2 x 10 | 2 x 30 s | normal |
+| 3 | 3 x 10 | 3 x 30 s | normal |
+| 4 | 3 x 10 (one side at a time: 3 x 8 per side) | 3 x 30 s | normal |
+| 5 | 3 x 8, `slow: true` | 3 x 40 s | 3 s down |
+
+Mobility (warm-up / cool-down) is 1 set. A data test checks every exercise against this table.
+
+### Starting level
+- Onboarding asks "How active are you?" right after the age band: "I barely move" -> 1, "I walk some days" -> 2,
+  "I walk almost every day" -> 3, "I do strength training or sports 2+ times a week" -> 4.
+  Every pattern starts at that level. The age band never changes the level.
+- Next step: "Can you get down to the floor and back up without help?" -> `floorOk` (editable in Profile).
+- The readiness screening still wins: any "yes" -> every level 1 and `seatedOnly = true`.
+- Profile > "My activity level" can change it later; that sets every pattern to the new level.
+
+### Pain tab
+- Add, edit and remove areas. Remove asks for confirmation (list and editor). Saving intensity 1 ("None")
+  removes the area.
+
 ### Blocked areas
 An area is **blocked** if the profile has it with intensity >= 3, or kind = 'sharp'.
 An area is **caution** if intensity = 2 (allowed, but prefer seated / supported variants).
 
 ### `generateWorkout(profile, library, history, date)`
 - Target 15-25 minutes: 1-2 mobility warm-up + 5-6 main exercises + 1 mobility cool-down.
+  Over 25 min: drop the second warm-up, then the last main exercise (keep at least 5), then lower main
+  exercises from 3 to 2 sets starting from the end. Under 15 min: add sets (up to 3), then extra mobility.
 - Main block rotates patterns so that across a week every pattern is trained: always include `squat` or `hinge`,
   one of `upper_push` / `upper_pull`, `balance`, and one of `core` / `calf`.
 - For each slot pick an exercise of the user's level for that pattern (or the closest lower level) that:
   does not load a blocked area, uses only equipment the user has, is not in `avoided` (until date not passed),
   respects `seatedOnly`, and was not used in the previous workout if an alternative exists.
-- `balance` exercises at level <= 3 must be `standing_supported` or `seated`.
+- `balance` exercises at level <= 2 must be `standing_supported` or `seated`.
+- `floor` exercises only with `floorOk` and level >= 3.
 - If no exercise fits a slot, skip the slot (never break the rule to fill it). Return a list of skipped patterns
   so the UI can say "We skipped X today to protect your knee".
 - Deterministic: same inputs = same output (use the date as seed if you need variety).
@@ -211,19 +269,42 @@ An area is **caution** if intensity = 2 (allowed, but prefer seated / supported 
 - Candidates: same `pattern`, different id, does NOT load `report.area` or any blocked area, equipment available,
   `level <= current.level`, not in `avoided`, respects `seatedOnly`.
 - Sort: same level first, then `seated` / `standing_supported` before `standing`, then not used today.
-- If no candidate: try a `mobility` exercise that does not load the area. If still none -> `{ type: 'rest' }`.
+- If no candidate: try the **sibling pattern** with the same filters (`squat` <-> `hinge`,
+  `upper_push` <-> `upper_pull`; reason `swap.reason.similarMovement`). `core`, `balance` and `calf` have no
+  sibling. If still none: a `mobility` exercise that does not load the area. If still none -> `{ type: 'rest' }`.
 - Return `{ type: 'swap', exercise, reasonKey }` where `reasonKey` is an i18n key for the one-sentence "why"
   (e.g. `swap.reason.seatedVersion`, `swap.reason.avoidsArea`).
-- Side effects (done by the store, not the engine): add `current.id` to `avoided` for 14 days; add or raise the
-  pain area in the profile.
+- Side effects (done by the store with pure helpers in `src/engine/pain.ts`, also for red-flag reports that have
+  an area): add `current.id` to `avoided` for 14 days (reporting it again restarts the 14 days); add the pain area
+  (side `both`) or raise it to the reported intensity (never lower it; sharp stays sharp).
+- In the session the replacement keeps the sets already done and the planned number of sets; the item keeps
+  `swappedFrom` (the planned exercise) and `painReported`. "Skip and rest", a `rest` result and "I'm OK, keep
+  going" on the Safety screen all rest and then go on to the next exercise, never back to the one that hurt.
+
+### `findHarder(current, profile, library, usedToday, date)` ("Too easy")
+- Candidates: same `pattern`, `level > current.level`, and every generator rule (`isAllowed`): no blocked area,
+  equipment available, not in `avoided`, respects `seatedOnly`, floor only with `floorOk`, balance <= 2 held.
+- Pick the **closest** higher level; then seated / supported first, then not used today, then id.
+- Returns `{ type: 'harder', exercise }` ("Try a harder one?": Swap and continue / Keep this one) or
+  `{ type: 'top' }` ("You're at the highest level of this exercise: do it slower and more controlled").
+- Pressing "Too easy" pauses the timer and rates the item `easy`, whether or not the user swaps.
+
+### "How was it?"
+- The rest after the **last set** of a finished **main** exercise asks "How was it?": Too easy / Good / Hard
+  (optional). Warm-up, cool-down and skipped exercises are not asked. The last answer wins.
 
 ### `updateLevels(profile, log, history)`
-- For each pattern trained in `log`:
-  - Any pain report on that pattern -> level - 1 (min 1).
-  - Feeling `sore` in the last 2 workouts that included that pattern -> level - 1.
-  - Feeling `great` or `good` and no pain on that pattern in the last 2 workouts that included it -> level + 1 (max 5).
-  - Otherwise unchanged.
-- Never move more than 1 level per workout.
+- Applied once when the user leaves the Finish screen (button or closing it), with the feeling if given.
+- An item counts as trained if it was completed, has a pain report or has a rating. It trains the pattern of
+  its exercise and of `swappedFrom`.
+- For each pattern trained in `log`, the first rule that matches:
+  1. Any pain report on that pattern -> level - 1 (min 1).
+  2. Feeling `sore` in the last 2 workouts that included that pattern -> level - 1.
+  3. Any item of that pattern rated `hard` -> unchanged this time.
+  4. Any item of that pattern rated `easy` (or "Too easy" used) -> level + 1 right away (max 5).
+  5. Feeling `great` or `good` and no pain on that pattern in the last 2 workouts that included it -> level + 1.
+  6. Otherwise unchanged.
+- Never move more than 1 level per pattern per workout.
 
 ### Safety and screening
 - Onboarding asks a short readiness screening inspired by PAR-Q+ (heart condition, chest pain, dizziness / fainting,
@@ -251,7 +332,8 @@ Symbols. Feeling and pain scales use five colored faces (green to red) **plus te
 ## 8. Screens (MVP)
 
 **Onboarding (first run):** Welcome + language -> Disclaimer -> Readiness screening -> Name and age band ->
-Where does it hurt (body map + chips) -> How strong (faces 1-5) -> Equipment I have -> Reminder time -> Ready.
+How active are you (4 options) -> Floor yes / no -> Where does it hurt (body map + chips) -> How strong
+(faces 1-5) -> Equipment I have -> Reminder time -> Ready.
 
 **Tabs:** Today | Pain | Profile.
 - Today: workout summary (day, minutes, number of exercises), "Knee and lower back considered" pill,
@@ -306,8 +388,12 @@ screens; non-personalized ads only; no health data ever passed to an ad SDK; res
 - [x] Phase 2: Exercise library (37 exercises, ES/EN, not yet reviewed by a PT) + engine (generator, swap, progression, safety) with tests
 - [x] Phase 3: Onboarding + profile store (Zustand + AsyncStorage, splash until loaded, all levels start at 1) + Profile screen
 - [x] Phase 4: Today screen + workout session (timestamp-based timers that survive the background, rest 30 s / 45 s, finish + feeling, history store, perSide exercises, dev "Simulate another day")
-- [ ] Phase 5: It hurts flow (safety, swap, preview) + Pain tab
-- [ ] Phase 6: Progression + Progress tab (history)
+- [x] Phase 5a: activity level in onboarding and Profile, It hurts flow (safety, swap, preview) + Pain tab
+- [x] Phase 5a fixes: remove a pain area from the editor, "None" removes it, sibling-pattern swap
+- [x] Difficulty recalibration: level scale 1-5, 72 exercises (35 new), dosage by level, backpack / step / band,
+  floor exercises with floorOk, 4 activity options, 25-minute cap, "Mamá activa" persona
+- [x] Phase 5b: "Too easy" (findHarder), "How was it?" rating, progression applied after each workout
+- [ ] Phase 6: Progress tab (history) and "you leveled up" message (progression itself is done in 5b)
 - [ ] Phase 7: Video chapters + distance mode with spoken guidance
 - [ ] Phase 8: Reminders, accessibility pass, polish
 - [ ] Phase 9: EAS build, TestFlight, privacy policy, App Store listing

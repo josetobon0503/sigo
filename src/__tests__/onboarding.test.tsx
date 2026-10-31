@@ -4,6 +4,8 @@ import { render, screen, userEvent, within } from '@testing-library/react-native
 
 import ProfileScreen from '../../app/(tabs)/profile';
 import AboutScreen from '../../app/onboarding/about';
+import ActivityScreen from '../../app/onboarding/activity';
+import FloorScreen from '../../app/onboarding/floor';
 import EquipmentScreen from '../../app/onboarding/equipment';
 import PainStrengthScreen from '../../app/onboarding/pain-strength';
 import PainWhereScreen from '../../app/onboarding/pain-where';
@@ -134,8 +136,62 @@ describe('about step', () => {
   });
 });
 
+describe('activity step', () => {
+  it('waits for an answer and offers the four levels', async () => {
+    const user = userEvent.setup();
+    await render(<ActivityScreen />);
+    expect(screen.getByText('¿Qué tan activo/a eres?')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Continuar' })).toBeDisabled();
+    for (const label of [
+      'Casi no me muevo',
+      'Camino algunos días',
+      'Camino casi todos los días',
+      'Hago ejercicio de fuerza o deporte 2 o más veces por semana',
+    ]) {
+      expect(screen.getByRole('button', { name: label })).toBeOnTheScreen();
+    }
+    await user.press(screen.getByRole('button', { name: 'Camino casi todos los días' }));
+    expect(draft().activity).toBe('daily');
+    expect(screen.getByTestId('activity-daily')).toBeSelected();
+    await user.press(screen.getByRole('button', { name: 'Continuar' }));
+    expect(mockRouter.push).toHaveBeenLastCalledWith('/onboarding/floor');
+  });
+
+  it('a "yes" in the screening still starts at level 1, seated only', async () => {
+    const user = userEvent.setup();
+    update({
+      name: 'Roberto',
+      ageBand: '70-79',
+      activity: 'strength',
+      floorOk: true,
+      screeningAnswers: { fallLastYear: true },
+    });
+    await render(<ReadyScreen />);
+    await user.press(screen.getByRole('button', { name: 'Ir a mi rutina' }));
+    expect(useProfileStore.getState().profile).toMatchObject({
+      activity: 'strength',
+      levels: levelsAt(1),
+      seatedOnly: true,
+    });
+  });
+});
+
+describe('floor step', () => {
+  it('waits for an answer and saves it', async () => {
+    const user = userEvent.setup();
+    await render(<FloorScreen />);
+    expect(screen.getByRole('button', { name: 'Continuar' })).toBeDisabled();
+    await user.press(screen.getByRole('button', { name: 'Sí, puedo' }));
+    expect(draft().floorOk).toBe(true);
+    await user.press(screen.getByRole('button', { name: 'No, prefiero no hacerlo' }));
+    expect(draft().floorOk).toBe(false);
+    await user.press(screen.getByRole('button', { name: 'Continuar' }));
+    expect(mockRouter.push).toHaveBeenLastCalledWith('/onboarding/pain-where');
+  });
+});
+
 describe("Maria's first run", () => {
-  it('saves her profile with all levels at 1', async () => {
+  it('saves her profile with all levels at her activity level', async () => {
     const user = userEvent.setup();
     for (const id of SCREENING_QUESTIONS)
       update({ screeningAnswers: { ...draft().screeningAnswers, [id]: false } });
@@ -144,8 +200,18 @@ describe("Maria's first run", () => {
     await user.type(screen.getByTestId('name-input'), 'María');
     await user.press(screen.getByRole('button', { name: '50 a 59 años' }));
     await user.press(screen.getByRole('button', { name: 'Continuar' }));
-    expect(mockRouter.push).toHaveBeenLastCalledWith('/onboarding/pain-where');
+    expect(mockRouter.push).toHaveBeenLastCalledWith('/onboarding/activity');
     await about.unmount();
+
+    const activity = await render(<ActivityScreen />);
+    await user.press(screen.getByRole('button', { name: 'Camino algunos días' }));
+    await user.press(screen.getByRole('button', { name: 'Continuar' }));
+    await activity.unmount();
+
+    const floor = await render(<FloorScreen />);
+    await user.press(screen.getByRole('button', { name: 'No, prefiero no hacerlo' }));
+    await user.press(screen.getByRole('button', { name: 'Continuar' }));
+    await floor.unmount();
 
     const where = await render(<PainWhereScreen />);
     await user.press(screen.getByRole('checkbox', { name: 'Rodilla, lado izquierdo' }));
@@ -173,8 +239,10 @@ describe("Maria's first run", () => {
       name: 'María',
       ageBand: '50-59',
       language: 'es',
+      activity: 'some',
+      floorOk: false,
       equipment: ['chair', 'towel'],
-      levels: levelsAt(1),
+      levels: levelsAt(2),
       seatedOnly: false,
       screening: { anyYes: false },
       painAreas: [
@@ -213,6 +281,47 @@ describe('profile screen', () => {
     await render(<ProfileScreen />);
     await user.press(screen.getByRole('button', { name: 'Menos de 50' }));
     expect(useProfileStore.getState().profile?.ageBand).toBe('under-50');
+  });
+
+  it('changing the activity level sets every pattern to that level', async () => {
+    const user = userEvent.setup();
+    useProfileStore.setState({
+      profile: makeProfile({ activity: null, levels: { ...levelsAt(2), squat: 4 } }),
+    });
+    await render(<ProfileScreen />);
+    expect(screen.getByText('Mi nivel de actividad')).toBeOnTheScreen();
+    await user.press(screen.getByRole('button', { name: 'Casi no me muevo' }));
+    expect(useProfileStore.getState().profile).toMatchObject({
+      activity: 'low',
+      levels: levelsAt(1),
+    });
+    expect(screen.getByTestId('activity-low')).toBeSelected();
+  });
+
+  it('turns floor exercises on and off', async () => {
+    const user = userEvent.setup();
+    await render(<ProfileScreen />);
+    await user.press(screen.getByRole('switch', { name: 'Ejercicios en el piso' }));
+    expect(useProfileStore.getState().profile?.floorOk).toBe(true);
+  });
+
+  it('offers the new equipment, not checked', async () => {
+    useProfileStore.setState({ profile: makeProfile({ equipment: ['chair'] }) });
+    await render(<ProfileScreen />);
+    for (const name of [
+      'Mochila con libros o botellas',
+      'Escalón o primer peldaño',
+      'Banda elástica',
+    ])
+      expect(screen.getByRole('button', { name })).not.toBeSelected();
+  });
+
+  it('reminds to talk to the doctor after a "yes" in the screening', async () => {
+    useProfileStore.setState({
+      profile: makeProfile({ screening: { completedAt: '2026-10-01', anyYes: true } }),
+    });
+    await render(<ProfileScreen />);
+    expect(screen.getByTestId('activity-doctor')).toBeOnTheScreen();
   });
 
   it('opens the safety tips', async () => {

@@ -117,3 +117,68 @@ describe('updateLevels', () => {
     expect(updateLevels(profileAt(3), today, [today], library).squat).toBe(3);
   });
 });
+
+describe('updateLevels: "How was it?"', () => {
+  const rated = (exerciseId: string, rating: WorkoutItem['rating']): WorkoutItem => ({
+    exerciseId,
+    completed: true,
+    rating,
+  });
+
+  it('"Very easy" raises the pattern by 1 right away, without waiting for 2 workouts', () => {
+    const today = log('t', '2026-10-28', [rated('squat-a', 'easy'), done('push-a')]);
+    const levels = updateLevels(profileAt(2), today, [], library);
+    expect(levels.squat).toBe(3);
+    expect(levels.upper_push).toBe(2);
+  });
+
+  it('never more than 1 level, even with two "easy" items of the same pattern', () => {
+    const today = log(
+      't',
+      '2026-10-28',
+      [rated('squat-a', 'easy'), rated('squat-b', 'easy')],
+      'great',
+    );
+    expect(updateLevels(profileAt(2), today, [], library).squat).toBe(3);
+  });
+
+  it('"Hard" holds the level, even after good workouts', () => {
+    const before = log('b', '2026-10-26', [done('squat-a')], 'great');
+    const today = log('t', '2026-10-28', [rated('squat-a', 'hard')], 'great');
+    expect(updateLevels(profileAt(3), today, [before], library).squat).toBe(3);
+  });
+
+  it('"Hard" wins over "easy" on the same pattern', () => {
+    const today = log('t', '2026-10-28', [rated('squat-a', 'easy'), rated('squat-b', 'hard')]);
+    expect(updateLevels(profileAt(3), today, [], library).squat).toBe(3);
+  });
+
+  it('pain wins over "easy"', () => {
+    const today = log('t', '2026-10-28', [rated('squat-a', 'easy'), hurt('squat-b')]);
+    expect(updateLevels(profileAt(3), today, [], library).squat).toBe(2);
+  });
+
+  it('two "sore" workouts win over "easy"', () => {
+    const before = log('b', '2026-10-26', [done('squat-a')], 'sore');
+    const today = log('t', '2026-10-28', [rated('squat-a', 'easy')], 'sore');
+    expect(updateLevels(profileAt(3), today, [before], library).squat).toBe(2);
+  });
+
+  it('"easy" never goes above 5', () => {
+    const today = log('t', '2026-10-28', [rated('squat-a', 'easy')]);
+    expect(updateLevels(profileAt(5), today, [], library).squat).toBe(5);
+  });
+
+  it('"Too easy" on an exercise that was swapped for a harder one raises the pattern', () => {
+    const today = log('t', '2026-10-28', [
+      { exerciseId: 'squat-b', swappedFrom: 'squat-a', completed: true, rating: 'easy' },
+    ]);
+    expect(updateLevels(profileAt(2), today, [], library).squat).toBe(3);
+  });
+
+  it('items the user never got to do not count', () => {
+    const before = log('b', '2026-10-26', [done('squat-a')], 'great');
+    const today = log('t', '2026-10-28', [{ exerciseId: 'squat-a', completed: false }], 'great');
+    expect(updateLevels(profileAt(3), today, [before], library).squat).toBe(3);
+  });
+});

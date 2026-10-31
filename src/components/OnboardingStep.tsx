@@ -8,7 +8,7 @@ import { useTheme } from '@/theme/useTheme';
 import { BigButton } from './BigButton';
 import { ScreenContainer } from './ScreenContainer';
 
-export const ONBOARDING_TOTAL_STEPS = 9;
+export const ONBOARDING_TOTAL_STEPS = 11;
 
 export interface OnboardingStepProps {
   step: number; // 1-based

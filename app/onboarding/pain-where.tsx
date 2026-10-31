@@ -11,7 +11,7 @@ import { useTheme } from '@/theme/useTheme';
 
 const SIDES: Side[] = ['left', 'right', 'both'];
 
-// Step 5: where does it hurt (body map + chips, with side for paired areas).
+// Step 7: where does it hurt (body map + chips, with side for paired areas).
 export default function PainWhereScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function PainWhereScreen() {
 
   return (
     <OnboardingStep
-      step={5}
+      step={7}
       title={t('onboarding.painWhere.title')}
       onNext={() =>
         router.push(painAreas.length > 0 ? '/onboarding/pain-strength' : '/onboarding/equipment')

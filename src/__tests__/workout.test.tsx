@@ -7,10 +7,12 @@ import { Alert } from 'react-native';
 import ProfileScreen from '../../app/(tabs)/profile';
 import TodayScreen from '../../app/(tabs)/index';
 import FinishScreen from '../../app/workout/finish';
+import HarderScreen from '../../app/workout/harder';
 import SessionScreen from '../../app/workout/session';
-import { makeProfile, pain } from '@/engine/__fixtures__/profiles';
+import { levelsAt, makeProfile, pain } from '@/engine/__fixtures__/profiles';
+import { currentItem } from '@/engine/session';
 import type { GeneratedWorkout, WorkoutLog } from '@/engine/types';
-import { formatDosage } from '@/i18n/format';
+import { formatDosage, spokenDosage } from '@/i18n/format';
 import i18n, { setLanguage } from '@/i18n';
 import { useDevStore } from '@/store/devStore';
 import { useHistoryStore } from '@/store/historyStore';
@@ -18,7 +20,14 @@ import { useProfileStore } from '@/store/profileStore';
 import { useSessionStore } from '@/store/sessionStore';
 
 const mockRouter = { push: jest.fn(), back: jest.fn(), replace: jest.fn(), dismissTo: jest.fn() };
-jest.mock('expo-router', () => ({ useRouter: () => mockRouter }));
+jest.mock('expo-router', () => {
+  const { useEffect } = jest.requireActual<typeof import('react')>('react');
+  return {
+    useRouter: () => mockRouter,
+    // Rendered alone, a screen is always the focused one.
+    useFocusEffect: (effect: () => void) => useEffect(effect, [effect]),
+  };
+});
 
 const TODAY = '2026-10-28';
 
@@ -62,7 +71,7 @@ beforeEach(async () => {
   await AsyncStorage.clear();
   useProfileStore.setState({ profile: makeProfile({ painAreas: [] }) });
   useHistoryStore.setState({ logs: [] });
-  useSessionStore.setState({ session: null, logId: null, updatedAt: 0 });
+  useSessionStore.setState({ session: null, logId: null, progressed: false, updatedAt: 0 });
   useDevStore.setState({ dayOffset: 0 });
 });
 
@@ -128,6 +137,16 @@ describe('dosage text', () => {
       '2 × 10 per side',
     );
     await setLanguage('es');
+  });
+
+  it('level 5 says to lower in 3 seconds', () => {
+    const t = i18n.t.bind(i18n);
+    const slow = { kind: 'reps', sets: 3, reps: 8, slow: true } as const;
+    expect(formatDosage(t, slow, false)).toBe('3 × 8 · baja en 3 s');
+    expect(formatDosage(t, slow, true)).toBe('3 × 8 por lado · baja en 3 s');
+    expect(spokenDosage(t, slow, true)).toBe(
+      '3 series de 8 repeticiones, por lado, bajando en 3 segundos',
+    );
   });
 });
 
@@ -214,13 +233,15 @@ describe('workout session', () => {
     expect(useHistoryStore.getState().logs[0].items.every((i) => !i.completed)).toBe(true);
   });
 
-  it('"It hurts" is big, red and explains what to do for now', async () => {
-    const alert = jest.spyOn(Alert, 'alert');
+  it('"It hurts" pauses the timer and opens the "It hurts" flow', async () => {
+    useSessionStore.getState().completeSet();
+    useSessionStore.getState().skipRest();
     await render(<SessionScreen />);
+    await user.press(screen.getByRole('button', { name: 'Empezar' }));
     await user.press(screen.getByRole('button', { name: 'Me duele' }));
-    expect(alert).toHaveBeenCalledWith('Para y descansa', expect.stringMatching(/911/), [
-      { text: 'Entendido' },
-    ]);
+    expect(mockRouter.push).toHaveBeenCalledWith('/hurt');
+    const phase = useSessionStore.getState().session?.phase;
+    expect(phase?.kind === 'exercise' && phase.timer.status).toBe('paused');
   });
 
   it('the finish screen saves how the user feels', async () => {
@@ -235,6 +256,113 @@ describe('workout session', () => {
     expect(screen.getByText('¡Gracias! Lo guardamos.')).toBeOnTheScreen();
     await user.press(screen.getByRole('button', { name: 'Volver a Hoy' }));
     expect(mockRouter.dismissTo).toHaveBeenCalledWith('/');
+  });
+});
+
+describe('"Too easy"', () => {
+  const item = () => currentItem(useSessionStore.getState().session!)!;
+
+  beforeEach(() => {
+    useSessionStore.getState().start(SHORT, false);
+  });
+
+  it('is a small text button, pauses the timer, counts as "easy" and opens the offer', async () => {
+    useSessionStore.getState().completeSet();
+    useSessionStore.getState().skipRest(); // the timed exercise
+    await render(<SessionScreen />);
+    await user.press(screen.getByRole('button', { name: 'Empezar' }));
+    await user.press(screen.getByRole('button', { name: 'Está muy fácil' }));
+    expect(mockRouter.push).toHaveBeenCalledWith('/workout/harder');
+    const phase = useSessionStore.getState().session?.phase;
+    expect(phase?.kind === 'exercise' && phase.timer.status).toBe('paused');
+    expect(item().rating).toBe('easy');
+  });
+
+  it('offers a harder exercise of the same movement and swaps it in', async () => {
+    await render(<HarderScreen />);
+    expect(screen.getByText('¿Probar uno más difícil?')).toBeOnTheScreen();
+    expect(screen.getByTestId('harder-suggestion')).toHaveTextContent(
+      /Sentarse y pararse con ayuda de las manos/,
+    );
+    await user.press(screen.getByRole('button', { name: 'Cambiar y seguir' }));
+    expect(item()).toMatchObject({
+      exerciseId: 'sit-to-stand-with-hands',
+      swappedFrom: 'seated-knee-extension',
+    });
+    expect(mockRouter.back).toHaveBeenCalled();
+  });
+
+  it('"Keep this one" changes nothing', async () => {
+    await render(<HarderScreen />);
+    await user.press(screen.getByRole('button', { name: 'Seguir con este' }));
+    expect(item().exerciseId).toBe('seated-knee-extension');
+    expect(mockRouter.back).toHaveBeenCalled();
+  });
+
+  it('at the top level, suggests going slower', async () => {
+    useSessionStore.getState().start(
+      {
+        ...SHORT,
+        items: [{ ...SHORT.items[0], exerciseId: 'backpack-reverse-lunge' }],
+      },
+      false,
+    );
+    await render(<HarderScreen />);
+    expect(screen.getByText('Ya estás en el nivel más alto de este ejercicio')).toBeOnTheScreen();
+    expect(screen.getByText(/más lento y controlado/)).toBeOnTheScreen();
+    await user.press(screen.getByRole('button', { name: 'Seguir' }));
+    expect(mockRouter.back).toHaveBeenCalled();
+  });
+});
+
+describe('"How was it?" and progression', () => {
+  beforeEach(() => {
+    useProfileStore.setState({ profile: makeProfile({ levels: levelsAt(2), painAreas: [] }) });
+    useSessionStore.getState().start(SHORT, false);
+  });
+
+  it('asks after the last set of a main exercise, and the answer goes to the log', async () => {
+    await render(<SessionScreen />);
+    expect(screen.queryByTestId('rating')).toBeNull();
+    await user.press(screen.getByRole('button', { name: 'Hecho' }));
+    expect(screen.getByText('¿Cómo estuvo?')).toBeOnTheScreen();
+    await user.press(screen.getByRole('button', { name: 'Difícil' }));
+    expect(screen.getByRole('button', { name: 'Difícil' })).toBeSelected();
+    expect(screen.getByRole('button', { name: 'Muy fácil' })).not.toBeSelected();
+
+    useSessionStore.getState().end();
+    expect(useHistoryStore.getState().logs[0].items[0]).toMatchObject({
+      exerciseId: 'seated-knee-extension',
+      rating: 'hard',
+    });
+  });
+
+  it('is optional: the rest goes on without an answer', async () => {
+    await render(<SessionScreen />);
+    await user.press(screen.getByRole('button', { name: 'Hecho' }));
+    await user.press(screen.getByRole('button', { name: 'Saltar' }));
+    expect(screen.getByText('Ejercicio 2 de 2')).toBeOnTheScreen();
+  });
+
+  it('"Very easy" raises that pattern by 1 when leaving the finish screen, only once', async () => {
+    useSessionStore.getState().completeSet();
+    useSessionStore.getState().rate(0, 'easy');
+    useSessionStore.getState().skipRest();
+    useSessionStore.getState().completeSet();
+    const finish = await render(<FinishScreen />);
+    await user.press(screen.getByRole('button', { name: 'Volver a Hoy' }));
+    expect(useProfileStore.getState().profile?.levels).toEqual({ ...levelsAt(2), squat: 3 });
+    await finish.unmount(); // closing the screen does not apply it again
+    expect(useProfileStore.getState().profile?.levels.squat).toBe(3);
+  });
+
+  it('closing the finish screen also applies the progression', async () => {
+    useSessionStore.getState().completeSet();
+    useSessionStore.getState().rate(0, 'easy');
+    useSessionStore.getState().end();
+    const finish = await render(<FinishScreen />);
+    await finish.unmount();
+    expect(useProfileStore.getState().profile?.levels.squat).toBe(3);
   });
 });
 

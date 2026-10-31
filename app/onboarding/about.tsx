@@ -21,7 +21,7 @@ export default function AboutScreen() {
       step={4}
       title={t('onboarding.about.title')}
       nextDisabled={name.trim() === '' || ageBand === null}
-      onNext={() => router.push('/onboarding/pain-where')}
+      onNext={() => router.push('/onboarding/activity')}
     >
       <Text style={[typography.bodyBold, { color: colors.text }]}>
         {t('onboarding.about.nameLabel')}

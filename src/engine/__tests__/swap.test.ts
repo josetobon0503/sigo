@@ -90,17 +90,13 @@ describe('findSwap: candidates', () => {
   });
 
   it('never offers a harder exercise', () => {
-    const result = findSwap(
-      get('seated-bottle-chest-press'),
-      report('wrist'),
-      makeProfile(),
-      exercises,
-      [],
-      DATE,
-    );
-    expect(result.type).toBe('swap');
-    if (result.type === 'swap') {
-      expect(result.exercise.pattern).toBe('mobility');
+    for (const current of exercises) {
+      for (const area of ALL_AREAS) {
+        const result = findSwap(current, report(area), makeProfile(), exercises, [], DATE);
+        if (result.type === 'swap' && result.exercise.pattern !== 'mobility') {
+          expect(result.exercise.level).toBeLessThanOrEqual(current.level);
+        }
+      }
     }
   });
 
@@ -193,6 +189,92 @@ describe('findSwap: sort order', () => {
     expect(
       swappedId(findSwap(current, report('knee'), makeProfile(), library, ['a-used'], DATE)),
     ).toBe('z-fresh');
+  });
+});
+
+describe('findSwap: sibling pattern', () => {
+  it('a squat with knee pain gets a hip exercise that does not load the knee', () => {
+    const result = findSwap(
+      get('supported-mini-squat'),
+      report('knee'),
+      makeProfile(),
+      exercises,
+      [],
+      DATE,
+    );
+    expect(result.type).toBe('swap');
+    if (result.type === 'swap') {
+      expect(result.exercise.pattern).toBe('hinge');
+      expect(result.exercise.loads).not.toContain('knee');
+      expect(result.reasonKey).toBe('swap.reason.similarMovement');
+    }
+  });
+
+  const current = fakeExercise({ id: 'push', pattern: 'upper_push', level: 2, loads: ['wrist'] });
+  const pull = fakeExercise({ id: 'pull', pattern: 'upper_pull', level: 2, loads: ['elbow'] });
+  const stretch = fakeExercise({ id: 'stretch', pattern: 'mobility', level: 1 });
+
+  it('push goes to pull when no push fits', () => {
+    const library = [current, pull, stretch];
+    expect(swappedId(findSwap(current, report('wrist'), makeProfile(), library, [], DATE))).toBe(
+      'pull',
+    );
+  });
+
+  it('prefers the same pattern over the sibling', () => {
+    const otherPush = fakeExercise({ id: 'other-push', pattern: 'upper_push', level: 1 });
+    const library = [current, pull, otherPush, stretch];
+    expect(swappedId(findSwap(current, report('wrist'), makeProfile(), library, [], DATE))).toBe(
+      'other-push',
+    );
+  });
+
+  it('the sibling follows the same rules: no reported area, no harder level', () => {
+    const sore = fakeExercise({ id: 'pull-wrist', pattern: 'upper_pull', loads: ['wrist'] });
+    const harder = fakeExercise({ id: 'pull-hard', pattern: 'upper_pull', level: 3 });
+    const library = [current, sore, harder, stretch];
+    expect(swappedId(findSwap(current, report('wrist'), makeProfile(), library, [], DATE))).toBe(
+      'stretch',
+    );
+  });
+
+  it('core, balance and calf have no sibling: straight to mobility', () => {
+    const core = fakeExercise({ id: 'core', pattern: 'core', loads: ['lower_back'] });
+    const library = [core, pull, stretch];
+    expect(swappedId(findSwap(core, report('lower_back'), makeProfile(), library, [], DATE))).toBe(
+      'stretch',
+    );
+  });
+});
+
+describe('findSwap: floor', () => {
+  const standing = fakeExercise({
+    id: 'standing',
+    pattern: 'core',
+    level: 3,
+    position: 'standing',
+    loads: ['wrist'],
+  });
+  const floor = fakeExercise({ id: 'floor', pattern: 'core', level: 3, position: 'floor' });
+  const lowFloor = fakeExercise({
+    id: 'z-floor',
+    pattern: 'core',
+    level: 3,
+    position: 'floor',
+    loads: ['wrist'],
+  });
+  const profile = makeProfile({ floorOk: true });
+
+  it('never sends the user down to the floor after a pain report', () => {
+    expect(
+      swappedId(findSwap(standing, report('wrist'), profile, [standing, floor], [], DATE)),
+    ).toBe('rest');
+  });
+
+  it('a floor exercise can be swapped for another floor exercise', () => {
+    expect(
+      swappedId(findSwap(lowFloor, report('wrist'), profile, [lowFloor, floor], [], DATE)),
+    ).toBe('floor');
   });
 });
 

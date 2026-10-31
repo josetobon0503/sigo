@@ -11,3 +11,4 @@ export { Pill, type PillProps } from './Pill';
 export { ReminderEditor, type ReminderEditorProps } from './ReminderEditor';
 export { ScreenContainer, type ScreenContainerProps } from './ScreenContainer';
 export { SwitchRow, type SwitchRowProps } from './SwitchRow';
+export { confirmRemoveArea } from './confirmRemoveArea';

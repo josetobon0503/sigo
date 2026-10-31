@@ -16,6 +16,8 @@ import type {
 const WARMUP_COUNT = 2;
 const COOLDOWN_COUNT = 1;
 const MIN_SECONDS = 15 * 60;
+const MAX_SECONDS = 25 * 60;
+const MIN_MAIN = 5;
 const MAX_SETS = 3;
 
 // FNV-1a: a stable tie-breaker so the same date always gives the same workout.
@@ -138,6 +140,7 @@ export function generateWorkout(
     ...main.map(plan('main')),
     ...cooldown.map(plan('cooldown')),
   ];
+  trimToMaximum(items);
   fillToMinimum(items, ctx);
 
   return { date: dayOf(date), items, skippedPatterns: [...skipped], estimatedSec: total(items) };
@@ -145,6 +148,29 @@ export function generateWorkout(
 
 function total(items: PlannedItem[]): number {
   return items.reduce((sum, item) => sum + estimateSeconds(item.dosage, item.perSide), 0);
+}
+
+// A workout over 25 minutes (3 sets from level 3 on) first loses its second warm-up exercise, then
+// its last main exercise, keeping at least 5 (the first four main slots cover every required
+// group), and last, main exercises go from 3 sets to 2, starting from the end.
+function trimToMaximum(items: PlannedItem[]): void {
+  const count = (section: WorkoutSection) => items.filter((i) => i.section === section).length;
+  if (total(items) > MAX_SECONDS && count('warmup') > 1) {
+    items.splice(
+      items.findIndex((i) => i.section === 'warmup'),
+      1,
+    );
+  }
+  while (total(items) > MAX_SECONDS && count('main') > MIN_MAIN) {
+    const lastMain = items.map((i) => i.section).lastIndexOf('main');
+    items.splice(lastMain, 1);
+  }
+  for (const item of [...items].reverse()) {
+    if (total(items) <= MAX_SECONDS) return;
+    if (item.section === 'main' && item.dosage.sets > 2) {
+      item.dosage = { ...item.dosage, sets: 2 };
+    }
+  }
 }
 
 // A workout under 15 minutes first gets one more set on each main exercise (up to 3 sets),

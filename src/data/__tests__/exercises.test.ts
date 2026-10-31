@@ -1,5 +1,5 @@
 import { ALL_AREAS, ALL_PATTERNS } from '../../engine/__fixtures__/profiles';
-import type { BodyArea, Pattern } from '../../engine/types';
+import type { BodyArea, Dosage, Exercise, Pattern } from '../../engine/types';
 import { FORBIDDEN_WORDS } from '../../i18n/forbiddenWords';
 import { exercises } from '../exercises';
 
@@ -22,7 +22,37 @@ const SINGLE_LEG = [
   'supported-standing-march',
   'supported-heel-to-toe-walk',
   'supported-single-leg-heel-raise',
+  'supported-single-leg-deadlift',
+  'backpack-single-leg-deadlift',
+  'step-up',
+  'single-leg-stand',
+  'single-leg-reach',
+  'single-leg-heel-raise',
+  'backpack-single-leg-heel-raise',
+  'counter-plank-leg-lift',
 ];
+
+// CLAUDE.md section 6: sets, reps and seconds follow the level. Mobility is a 1-set warm-up.
+function expectedDosage(e: Exercise): Dosage {
+  if (e.dosage.kind === 'time') {
+    const [sets, seconds] = [
+      [2, 20],
+      [2, 30],
+      [3, 30],
+      [3, 30],
+      [3, 40],
+    ][e.level - 1];
+    return { kind: 'time', sets, seconds };
+  }
+  if (e.level === 5) return { kind: 'reps', sets: 3, reps: 8, slow: true };
+  if (e.level === 4) return { kind: 'reps', sets: 3, reps: e.perSide ? 8 : 10 };
+  const [sets, reps] = [
+    [2, 8],
+    [2, 10],
+    [3, 10],
+  ][e.level - 1];
+  return { kind: 'reps', sets, reps };
+}
 
 const KEBAB = /^[a-z]+(-[a-z]+)*$/;
 
@@ -81,11 +111,62 @@ describe('exercise library', () => {
     }
   });
 
-  it('keeps balance at level 3 or below seated or supported', () => {
-    for (const e of exercises.filter((x) => x.pattern === 'balance' && x.level <= 3)) {
+  it.each(exercises.filter((e) => e.pattern !== 'mobility').map((e) => [e.id, e] as const))(
+    '%s follows the dosage for its level',
+    (_id, e) => {
+      expect(e.dosage).toEqual(expectedDosage(e));
+    },
+  );
+
+  it('keeps mobility as a short warm-up', () => {
+    for (const e of exercises.filter((x) => x.pattern === 'mobility')) {
+      expect(e.dosage.sets).toBe(1);
+    }
+  });
+
+  it('level 1 is seated, and holding on for balance is level 2 at most', () => {
+    for (const e of exercises) {
+      if (e.position === 'seated')
+        expect({ id: e.id, level: e.level }).toEqual({ id: e.id, level: 1 });
+      if (e.position === 'standing_supported') expect(e.level).toBe(2);
+      if (e.level === 1) expect(e.position).toBe('seated');
+    }
+  });
+
+  it('floor exercises are level 3 or more', () => {
+    const floor = exercises.filter((e) => e.position === 'floor');
+    expect(floor.length).toBeGreaterThan(0);
+    for (const e of floor) expect(e.level).toBeGreaterThanOrEqual(3);
+  });
+
+  it('keeps balance at level 2 or below seated or supported', () => {
+    for (const e of exercises.filter((x) => x.pattern === 'balance' && x.level <= 2)) {
       expect(e.position).not.toBe('standing');
     }
   });
+
+  it('balance without support (level 3+) is done next to a chair, and says so', () => {
+    const free = exercises.filter((x) => x.pattern === 'balance' && x.level >= 3);
+    expect(free.length).toBeGreaterThan(0);
+    for (const e of free) {
+      expect(e.equipment).toContain('chair');
+      expect(e.steps.es.join(' ')).toMatch(/junto a una silla firme por seguridad/);
+      expect(e.steps.en.join(' ')).toMatch(/next to a sturdy chair for safety/);
+    }
+  });
+
+  it.each(ALL_PATTERNS.filter((p) => p !== 'mobility'))(
+    '%s has standing exercises without support at levels 3, 4 and 5',
+    (pattern) => {
+      for (const level of [3, 4, 5]) {
+        expect(
+          exercises.some(
+            (e) => e.pattern === pattern && e.level === level && e.position === 'standing',
+          ),
+        ).toBe(true);
+      }
+    },
+  );
 
   it.each(ALL_PATTERNS)('%s has a seated version and more than one level', (pattern) => {
     const ofPattern = exercises.filter((e) => e.pattern === pattern);

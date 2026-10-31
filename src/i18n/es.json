@@ -32,7 +32,26 @@
   },
   "pain": {
     "title": "Dolor",
-    "placeholder": "Aquí vas a poder decirnos dónde te duele, para cuidar esa zona."
+    "intro": "Marca dónde te duele. Sigo evita o suaviza los ejercicios que cargan esa zona.",
+    "mapHint": "Toca una zona de la figura para agregarla o cambiarla.",
+    "listTitle": "Mis zonas",
+    "empty": "No tienes zonas marcadas. ¡Qué bien!",
+    "summary": "{{intensity}} · {{kind}}",
+    "add": "Agregar zona",
+    "edit": "Editar",
+    "editLabel": "Editar {{area}}",
+    "remove": "Quitar",
+    "removeLabel": "Quitar {{area}}",
+    "removeTitle": "¿Quitar {{area}}?",
+    "removeBody": "Sigo dejará de cuidar esta zona en tus ejercicios.",
+    "removeConfirm": "Quitar",
+    "cancel": "Cancelar",
+    "addTitle": "Agregar zona",
+    "areaLabel": "¿Qué zona?",
+    "sideLabel": "¿De qué lado?",
+    "strengthLabel": "¿Qué tan fuerte es?",
+    "kindLabel": "¿Cómo se siente?",
+    "save": "Guardar"
   },
   "profile": {
     "title": "Perfil",
@@ -45,15 +64,28 @@
     "safetyTips": "Consejos de seguridad",
     "aboutTitle": "Acerca de Sigo",
     "version": "Versión {{version}}",
-    "resetOnboarding": "Reiniciar onboarding (solo desarrollo)"
+    "resetOnboarding": "Reiniciar onboarding (solo desarrollo)",
+    "activityLabel": "Mi nivel de actividad",
+    "activityHint": "Al cambiarlo, todos tus ejercicios empiezan en ese nivel.",
+    "activityDoctor": "Por tus respuestas en las preguntas de salud, habla con tu doctor antes de subir el nivel.",
+    "floorOk": "Ejercicios en el piso",
+    "floorOkHint": "Solo si puedes bajar al piso y levantarte sin ayuda."
   },
   "swap": {
     "reason": {
       "seatedVersion": "Es la versión sentada: mismo trabajo, menos carga.",
       "gentlerVersion": "Es una versión más suave del mismo movimiento.",
       "avoidsArea": "Este ejercicio no carga la zona que te duele.",
+      "similarMovement": "Trabaja la misma parte del cuerpo sin cargar la zona que te duele.",
       "mobility": "Por ahora, un movimiento suave para soltar el cuerpo."
-    }
+    },
+    "title": "Prueba este en su lugar",
+    "accept": "Cambiar y seguir",
+    "preview": "Ver ejercicio",
+    "skip": "Saltar y descansar",
+    "restTitle": "Mejor descansa",
+    "restBody": "Hoy no encontramos otro ejercicio que cuide esa zona. Descansa y pasamos al siguiente.",
+    "restContinue": "Descansar y seguir"
   },
   "bodyArea": {
     "neck": "Cuello",
@@ -96,6 +128,12 @@
     "70-79": "70 a 79 años",
     "80+": "80 años o más"
   },
+  "activity": {
+    "low": "Casi no me muevo",
+    "some": "Camino algunos días",
+    "daily": "Camino casi todos los días",
+    "strength": "Hago ejercicio de fuerza o deporte 2 o más veces por semana"
+  },
   "side": {
     "left": "Izquierdo",
     "right": "Derecho",
@@ -118,7 +156,10 @@
     "wall": "Pared libre",
     "bottles": "Botellas de agua",
     "towel": "Toalla",
-    "light_dumbbells": "Pesas ligeras"
+    "light_dumbbells": "Pesas ligeras",
+    "backpack": "Mochila con libros o botellas",
+    "step": "Escalón o primer peldaño",
+    "band": "Banda elástica"
   },
   "days": {
     "short": {
@@ -182,6 +223,16 @@
       "namePlaceholder": "Tu nombre",
       "ageLabel": "¿Cuántos años tienes?"
     },
+    "activity": {
+      "title": "¿Qué tan activo/a eres?",
+      "hint": "Así empezamos a tu ritmo. Sigo lo va ajustando con el tiempo."
+    },
+    "floor": {
+      "title": "¿Puedes bajar al piso y levantarte sin ayuda?",
+      "hint": "Si dices que sí, a veces te vamos a proponer ejercicios en el piso, sobre una toalla o un tapete.",
+      "yes": "Sí, puedo",
+      "no": "No, prefiero no hacerlo"
+    },
     "painWhere": {
       "title": "¿Dónde te duele?",
       "hint": "Toca la figura o elige en la lista. Puedes marcar varias zonas.",
@@ -242,7 +293,10 @@
     "spokenReps_other": "{{count}} series de {{reps}} repeticiones",
     "spokenTime_one": "{{count}} serie de {{seconds}} segundos",
     "spokenTime_other": "{{count}} series de {{seconds}} segundos",
-    "spokenPerSide": "{{dosage}}, por lado"
+    "spokenPerSide": "{{dosage}}, por lado",
+    "repsSlow": "{{sets}} × {{reps}} · baja en 3 s",
+    "repsSlowPerSide": "{{sets}} × {{reps}} por lado · baja en 3 s",
+    "spokenSlow": "{{dosage}}, bajando en 3 segundos"
   },
   "workout": {
     "exit": "Salir",
@@ -270,15 +324,56 @@
     "secondsLeft_other": "Quedan {{count}} segundos",
     "hurt": "Me duele",
     "hurtHint": "Detiene este ejercicio",
-    "hurtTitle": "Para y descansa",
-    "hurtBody": "Si te duele, no sigas con este ejercicio. Muy pronto Sigo te va a ofrecer otro en su lugar. Si sientes dolor en el pecho, mareo o te falta el aire, llama al 911.",
-    "hurtOk": "Entendido"
+    "tooEasy": "Está muy fácil",
+    "tooEasyHint": "Te ofrece un ejercicio un poco más difícil"
   },
   "rest": {
     "title": "Descansa",
     "skip": "Saltar",
     "skipHint": "Termina el descanso ahora",
-    "upNext": "A continuación"
+    "upNext": "A continuación",
+    "ratingQuestion": "¿Cómo estuvo?",
+    "ratingHint": "Es opcional. Nos ayuda a ajustar tu rutina."
+  },
+  "rating": {
+    "easy": "Muy fácil",
+    "good": "Bien",
+    "hard": "Difícil"
+  },
+  "harder": {
+    "title": "¿Probar uno más difícil?",
+    "accept": "Cambiar y seguir",
+    "keep": "Seguir con este",
+    "topTitle": "Ya estás en el nivel más alto de este ejercicio",
+    "topBody": "Hazlo más lento y controlado: así también se pone más difícil.",
+    "continue": "Seguir"
+  },
+  "hurt": {
+    "title": "¿Dónde te duele?",
+    "areaLabel": "Zona",
+    "otherAreas": "Otra zona",
+    "strengthLabel": "¿Qué tan fuerte?",
+    "sharp": "¿Es un dolor punzante?",
+    "sharpHint": "Como un pinchazo o una punzada.",
+    "redFlag": "¿Dolor de pecho o mareo?",
+    "redFlagHint": "Abre la pantalla de seguridad",
+    "continue": "Continuar",
+    "cancel": "Volver al ejercicio"
+  },
+  "safety": {
+    "title": "Para y descansa",
+    "body": "Siéntate y respira con calma. No sigas con este ejercicio.",
+    "redFlags": "Si sientes dolor en el pecho, mareo o te falta el aire, llama al 911.",
+    "call": "Llamar al 911",
+    "callHint": "Abre el teléfono para llamar al 911",
+    "ok": "Estoy bien, seguir",
+    "okHint": "Descansas y pasas al siguiente ejercicio",
+    "end": "Terminar el entrenamiento"
+  },
+  "preview": {
+    "mistakesTitle": "Cómo NO hacerlo",
+    "use": "Usar este ejercicio",
+    "back": "Volver"
   },
   "finish": {
     "title": "¡Terminaste!",

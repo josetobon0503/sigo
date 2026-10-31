@@ -9,7 +9,7 @@ import {
   useOnboardingStore,
 } from '../onboardingStore';
 import { useHistoryStore } from '../historyStore';
-import { useProfileStore } from '../profileStore';
+import { migrateProfile, useProfileStore } from '../profileStore';
 
 describe('onboarding draft', () => {
   beforeEach(() => useOnboardingStore.getState().reset());
@@ -20,13 +20,25 @@ describe('onboarding draft', () => {
   });
 
   it('is not ready without an age band', () => {
-    expect(toProfileDraft(initialDraft())).toBeNull();
+    expect(toProfileDraft({ ...initialDraft(), activity: 'some', floorOk: false })).toBeNull();
+  });
+
+  it('is not ready without an activity level or the floor answer', () => {
+    const base = { ...initialDraft(), ageBand: '50-59' as const };
+    expect(toProfileDraft({ ...base, floorOk: false })).toBeNull();
+    expect(toProfileDraft({ ...base, activity: 'some' })).toBeNull();
+    expect(toProfileDraft({ ...base, activity: 'some', floorOk: false })).toMatchObject({
+      activity: 'some',
+      floorOk: false,
+    });
   });
 
   it('is not ready while a pain area has no intensity', () => {
     const draft = {
       ...initialDraft(),
       ageBand: '50-59' as const,
+      activity: 'low' as const,
+      floorOk: true,
       painAreas: [
         { area: 'knee' as const, side: 'left' as const, intensity: null, kind: 'achy' as const },
       ],
@@ -42,6 +54,32 @@ describe('onboarding draft', () => {
     useOnboardingStore.getState().update({ name: 'María' });
     useOnboardingStore.getState().reset();
     expect(useOnboardingStore.getState().draft.name).toBe('');
+  });
+});
+
+describe('profile migration', () => {
+  it('version 1 profiles get no activity level, floor off, and keep their levels', () => {
+    const {
+      activity: _a,
+      floorOk: _f,
+      ...old
+    } = makeProfile({
+      levels: { ...makeProfile().levels, squat: 4 },
+    });
+    const migrated = migrateProfile({ profile: old }, 1);
+    expect(migrated.profile?.activity).toBeNull();
+    expect(migrated.profile?.floorOk).toBe(false);
+    expect(migrated.profile?.levels.squat).toBe(4);
+  });
+
+  it('version 2 "regular" becomes "daily" (both level 3)', () => {
+    const { floorOk: _f, ...old } = makeProfile();
+    const migrated = migrateProfile({ profile: { ...old, activity: 'regular' } }, 2);
+    expect(migrated.profile).toMatchObject({ activity: 'daily', floorOk: false });
+  });
+
+  it('keeps an empty profile', () => {
+    expect(migrateProfile({ profile: null }, 1)).toEqual({ profile: null });
   });
 });
 

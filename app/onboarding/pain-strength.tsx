@@ -12,7 +12,7 @@ import { useTheme } from '@/theme/useTheme';
 
 const KINDS: PainKind[] = ['achy', 'sharp', 'stiff'];
 
-// Step 6: how strong (five faces) and what it feels like, for each area.
+// Step 8: how strong (five faces) and what it feels like, for each area.
 export default function PainStrengthScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function PainStrengthScreen() {
 
   return (
     <OnboardingStep
-      step={6}
+      step={8}
       title={t('onboarding.painStrength.title')}
       nextDisabled={painAreas.some((p) => p.intensity === null)}
       onNext={() => router.push('/onboarding/equipment')}
