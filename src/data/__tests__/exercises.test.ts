@@ -19,6 +19,7 @@ const SINGLE_LEG = [
   'supported-hip-extension',
   'supported-hip-abduction',
   'supported-standing-march',
+  'backpack-side-carry', // walking: every step is a moment on one foot
   'supported-heel-to-toe-walk',
   'supported-single-leg-heel-raise',
   'supported-single-leg-deadlift',

@@ -86,7 +86,7 @@ Los ejercicios de equilibrio sin apoyo (nivel 3 o más) se hacen junto a una sil
 | 63 | Brazo y pierna contrarios boca arriba | Abdomen | Acostado | 3 | Cama | 3 × 10 por lado | espalda baja, cadera | Sí | Sí |
 | 64 | Brazo y pierna contrarios en cuatro apoyos | Abdomen | Piso | 3 | Toalla | 3 × 10 por lado | muñeca, rodilla, hombro | Sí | Sí |
 | 65 | Plancha en la encimera | Abdomen | De pie | 3 | — | 3 × 30 s | hombro, codo | No | Sí |
-| 66 | Caminar con la mochila de un lado | Abdomen | De pie | 4 | Mochila con libros o botellas | 3 × 30 s por lado | hombro, codo, muñeca, espalda baja, rodilla, tobillo, pie | Sí | Sí |
+| 66 | Caminar con la mochila de un lado | Abdomen | De pie | 4 | Mochila con libros o botellas | 3 × 30 s por lado | hombro, codo, muñeca, espalda baja, cadera, rodilla, tobillo, pie | Sí | Sí |
 | 67 | Plancha en el piso | Abdomen | Piso | 4 | Toalla | 3 × 30 s | hombro, codo, espalda baja | No | Sí |
 | 68 | Plancha en la encimera levantando un pie | Abdomen | De pie | 5 | — | 3 × 8 por lado, lento (3 s al bajar) | hombro, codo, cadera, rodilla, tobillo, pie | Sí | Sí |
 | 69 | Levantar un pie sentado | Equilibrio | Sentado | 1 | Silla firme | 2 × 8 por lado | cadera | Sí | Sí |

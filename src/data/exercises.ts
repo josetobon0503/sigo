@@ -2313,7 +2313,7 @@ export const exercises: Exercise[] = [
     pattern: 'core',
     position: 'standing',
     level: 4,
-    loads: ['shoulder', 'elbow', 'wrist', 'lower_back', 'knee', 'ankle', 'foot'],
+    loads: ['shoulder', 'elbow', 'wrist', 'lower_back', 'hip', 'knee', 'ankle', 'foot'],
     equipment: ['backpack'],
     dosage: { kind: 'time', sets: 3, seconds: 30 },
     perSide: true,
