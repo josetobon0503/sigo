@@ -19,6 +19,7 @@ const draft: ProfileDraft = {
   ],
   reminder: { enabled: true, hour: 9, minute: 0, days: [1, 3, 5] },
   screeningAnswers: allNo,
+  weeklyGoal: 3,
 };
 
 describe('createProfile', () => {
@@ -61,6 +62,7 @@ describe('createProfile', () => {
       avoided: [],
       reminder: { enabled: true, hour: 9, minute: 0, days: [1, 3, 5] },
       screening: { completedAt: NOW, anyYes: false },
+      weeklyGoal: 3,
     });
   });
 

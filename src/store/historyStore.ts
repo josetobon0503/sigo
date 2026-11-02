@@ -4,13 +4,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import type { Feeling, WorkoutLog } from '@/engine/types';
+import type { Feeling, LevelChange, WorkoutLog } from '@/engine/types';
 
 interface HistoryState {
   logs: WorkoutLog[]; // oldest first
   hydrated: boolean; // true once the saved history has been loaded
   addLog: (log: WorkoutLog) => void;
   setFeeling: (id: string, feeling: Feeling) => void;
+  setLevelChanges: (id: string, levelChanges: LevelChange[]) => void;
   clear: () => void;
 }
 
@@ -24,6 +25,10 @@ export const useHistoryStore = create<HistoryState>()(
       setFeeling: (id, feeling) =>
         set((state) => ({
           logs: state.logs.map((l) => (l.id === id ? { ...l, feeling } : l)),
+        })),
+      setLevelChanges: (id, levelChanges) =>
+        set((state) => ({
+          logs: state.logs.map((l) => (l.id === id ? { ...l, levelChanges } : l)),
         })),
       clear: () => set({ logs: [] }),
     }),

@@ -3,7 +3,15 @@
 import { create } from 'zustand';
 
 import type { ProfileDraft } from '@/engine/profile';
-import type { ActivityLevel, AgeBand, Equipment, Lang, UserProfile } from '@/engine/types';
+import { DEFAULT_WEEKLY_GOAL } from '@/engine/stats';
+import type {
+  ActivityLevel,
+  AgeBand,
+  Equipment,
+  Lang,
+  UserProfile,
+  WeeklyGoal,
+} from '@/engine/types';
 import { getDeviceLanguage } from '@/i18n';
 
 import type { PainSelection } from './painSelection';
@@ -18,6 +26,7 @@ export interface OnboardingDraft {
   painAreas: PainSelection[];
   reminder: UserProfile['reminder'];
   screeningAnswers: Record<string, boolean>;
+  weeklyGoal: WeeklyGoal;
 }
 
 // Almost everyone has a chair, a towel and a bed, so they start checked.
@@ -34,6 +43,7 @@ export function initialDraft(): OnboardingDraft {
     painAreas: [],
     reminder: { enabled: true, hour: 9, minute: 0, days: [1, 2, 3, 4, 5] },
     screeningAnswers: {},
+    weeklyGoal: DEFAULT_WEEKLY_GOAL,
   };
 }
 

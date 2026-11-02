@@ -5,12 +5,11 @@ import { useTranslation } from 'react-i18next';
 
 import { BigButton, Card, FacesScale, ScreenContainer, type FaceOption } from '@/components';
 import { completedExercises } from '@/engine/session';
+import { FEELINGS } from '@/engine/stats';
 import type { Feeling } from '@/engine/types';
 import { useHistoryStore } from '@/store/historyStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { useTheme } from '@/theme/useTheme';
-
-const FEELINGS: Feeling[] = ['great', 'good', 'ok', 'tired', 'sore'];
 
 // The log is already saved when this screen opens; the feeling is added to it. Leaving the screen
 // updates the levels once, with the feeling if the user gave one.

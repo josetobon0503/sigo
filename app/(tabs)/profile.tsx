@@ -19,6 +19,7 @@ import {
   setActivity,
   toggleEquipment,
 } from '@/engine/profile';
+import { WEEKLY_GOALS } from '@/engine/stats';
 import { SUPPORTED_LANGUAGES } from '@/i18n';
 import { formatDay } from '@/i18n/format';
 import { useDevStore, useToday } from '@/store/devStore';
@@ -101,6 +102,23 @@ export default function ProfileScreen() {
             {t('profile.activityDoctor')}
           </Text>
         ) : null}
+      </Card>
+
+      <Card style={{ gap: spacing.sm }}>
+        <ChipGroup label={t('profile.goalLabel')}>
+          {WEEKLY_GOALS.map((goal) => (
+            <Chip
+              key={goal}
+              label={t('weeklyGoal.days', { count: goal })}
+              selected={profile.weeklyGoal === goal}
+              onPress={() => updateProfile({ weeklyGoal: goal })}
+              testID={`goal-${goal}`}
+            />
+          ))}
+        </ChipGroup>
+        <Text style={[typography.caption, { color: colors.textSecondary }]}>
+          {t('profile.goalHint')}
+        </Text>
       </Card>
 
       <Card>

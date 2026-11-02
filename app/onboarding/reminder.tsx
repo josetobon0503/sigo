@@ -15,7 +15,7 @@ export default function ReminderScreen() {
     <OnboardingStep
       step={10}
       title={t('onboarding.reminder.title')}
-      onNext={() => router.push('/onboarding/ready')}
+      onNext={() => router.push('/onboarding/goal')}
     >
       <ReminderEditor
         value={reminder}

@@ -412,6 +412,71 @@ describe('"How was it?" and progression', () => {
     await finish.unmount();
     expect(useProfileStore.getState().profile?.levels.squat).toBe(3);
   });
+
+  it('saves the weekly goal and the level changes on the log, and Today shows them', async () => {
+    useProfileStore.getState().updateProfile({ weeklyGoal: 3 });
+    useSessionStore.getState().completeSet();
+    useSessionStore.getState().rate(0, 'easy');
+    useSessionStore.getState().end();
+    const finish = await render(<FinishScreen />);
+    await finish.unmount();
+    expect(useHistoryStore.getState().logs[0]).toMatchObject({
+      weeklyGoal: 3,
+      levelChanges: [{ pattern: 'squat', from: 2, to: 3 }],
+    });
+    await render(<TodayScreen />);
+    expect(screen.getByTestId('level-up')).toHaveTextContent('¡Subiste de nivel en Piernas!');
+  });
+});
+
+describe('level-change notice on Today', () => {
+  const lastLog = (levelChanges: WorkoutLog['levelChanges']): WorkoutLog => ({
+    id: 'last',
+    date: '2026-10-27',
+    durationSec: 900,
+    items: [{ exerciseId: 'seated-marching', completed: true }],
+    levelChanges,
+  });
+
+  it('says which patterns went up and, kindly, which went down', async () => {
+    useProfileStore.setState({
+      profile: makeProfile({ levels: { ...levelsAt(3), squat: 4, balance: 4, core: 2 } }),
+    });
+    useHistoryStore.setState({
+      logs: [
+        lastLog([
+          { pattern: 'squat', from: 3, to: 4 },
+          { pattern: 'balance', from: 3, to: 4 },
+          { pattern: 'core', from: 3, to: 2 },
+        ]),
+      ],
+    });
+    await render(<TodayScreen />);
+    expect(screen.getByTestId('level-up')).toHaveTextContent(
+      '¡Subiste de nivel en Piernas y Equilibrio!',
+    );
+    expect(screen.getByTestId('level-down')).toHaveTextContent(
+      'Bajamos un poco Abdomen para cuidarte.',
+    );
+  });
+
+  it('goes away with the next workout', async () => {
+    useProfileStore.setState({ profile: makeProfile({ levels: { ...levelsAt(3), squat: 4 } }) });
+    useHistoryStore.setState({
+      logs: [
+        lastLog([{ pattern: 'squat', from: 3, to: 4 }]),
+        { ...lastLog(undefined), id: 'next', date: TODAY },
+      ],
+    });
+    await render(<TodayScreen />);
+    expect(screen.queryByTestId('level-up')).toBeNull();
+  });
+
+  it('is hidden when the level was changed again in Profile', async () => {
+    useHistoryStore.setState({ logs: [lastLog([{ pattern: 'squat', from: 3, to: 4 }])] });
+    await render(<TodayScreen />); // the profile is back at level 3
+    expect(screen.queryByTestId('level-up')).toBeNull();
+  });
 });
 
 describe('simulate another day (development)', () => {

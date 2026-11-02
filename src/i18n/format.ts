@@ -40,6 +40,12 @@ export function joinList(t: TFunction, items: string[]): string {
   return t('list.and', { first: items.slice(0, -1).join(', '), last: items[items.length - 1] });
 }
 
+// "28 oct" for a 'YYYY-MM-DD' day.
+export function formatShortDay(day: string, lang: Lang): string {
+  const [y, m, d] = day.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(lang, { day: 'numeric', month: 'short' });
+}
+
 // "Miércoles, 28 de octubre" for a 'YYYY-MM-DD' day.
 export function formatDay(day: string, lang: Lang): string {
   const [y, m, d] = day.split('-').map(Number);

@@ -6,6 +6,7 @@ import { create } from 'zustand';
 import { exercises } from '@/data/exercises';
 import { avoidExercise, raisePainArea } from '@/engine/pain';
 import { updateLevels } from '@/engine/progression';
+import { levelChanges } from '@/engine/stats';
 import * as session from '@/engine/session';
 import type { Exercise, Feeling, GeneratedWorkout, ItemRating, PainReport } from '@/engine/types';
 
@@ -44,7 +45,10 @@ export const useSessionStore = create<SessionState>()((set, get) => {
     if (next === current) return;
     if (next.phase.kind === 'finished' && !logId) {
       const id = `${next.date}-${next.startedAt}`;
-      useHistoryStore.getState().addLog(session.buildLog(next, id, now));
+      // The goal is kept on the log, so changing it later never changes past weeks.
+      const weeklyGoal = useProfileStore.getState().profile?.weeklyGoal;
+      const log = session.buildLog(next, id, now);
+      useHistoryStore.getState().addLog(weeklyGoal ? { ...log, weeklyGoal } : log);
       set({ session: next, logId: id, updatedAt: now });
       return;
     }
@@ -89,10 +93,13 @@ export const useSessionStore = create<SessionState>()((set, get) => {
     applyProgression: () => {
       const { logId, progressed } = get();
       const { profile, updateProfile } = useProfileStore.getState();
-      const { logs } = useHistoryStore.getState();
+      const { logs, setLevelChanges } = useHistoryStore.getState();
       const log = logs.find((l) => l.id === logId);
       if (progressed || !log || !profile) return;
-      updateProfile({ levels: updateLevels(profile, log, logs, exercises) });
+      const levels = updateLevels(profile, log, logs, exercises);
+      updateProfile({ levels });
+      // Shown on Today until the next workout.
+      setLevelChanges(log.id, levelChanges(profile.levels, levels));
       set({ progressed: true });
     },
     tick: () => apply(session.tick),

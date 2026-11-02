@@ -7,6 +7,7 @@ import AboutScreen from '../../app/onboarding/about';
 import ActivityScreen from '../../app/onboarding/activity';
 import FloorScreen from '../../app/onboarding/floor';
 import EquipmentScreen from '../../app/onboarding/equipment';
+import GoalScreen from '../../app/onboarding/goal';
 import PainStrengthScreen from '../../app/onboarding/pain-strength';
 import PainWhereScreen from '../../app/onboarding/pain-where';
 import ReadyScreen from '../../app/onboarding/ready';
@@ -122,6 +123,28 @@ describe('equipment step', () => {
     await user.press(screen.getByRole('button', { name: 'Toalla' }));
     expect(screen.getByRole('button', { name: 'Toalla' })).not.toBeSelected();
     expect(draft().equipment).toEqual(['chair', 'bed']);
+  });
+});
+
+describe('weekly goal step', () => {
+  it('starts at 2 days, offers 2, 3 and 4, and the profile keeps the choice', async () => {
+    const user = userEvent.setup();
+    const goal = await render(<GoalScreen />);
+    expect(screen.getByText('¿Cuántos días por semana quieres moverte?')).toBeOnTheScreen();
+    expect(screen.getByText('Paso 11 de 12')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: '2 días por semana' })).toBeSelected();
+    await user.press(screen.getByRole('button', { name: '3 días por semana' }));
+    expect(draft().weeklyGoal).toBe(3);
+    expect(screen.getByRole('button', { name: '2 días por semana' })).not.toBeSelected();
+    expect(screen.getByRole('button', { name: '4 días por semana' })).toBeOnTheScreen();
+    await user.press(screen.getByRole('button', { name: 'Continuar' }));
+    expect(mockRouter.push).toHaveBeenLastCalledWith('/onboarding/ready');
+    await goal.unmount();
+
+    update({ name: 'María', ageBand: '50-59', activity: 'some', floorOk: false });
+    await render(<ReadyScreen />);
+    await user.press(screen.getByRole('button', { name: 'Ir a mi rutina' }));
+    expect(useProfileStore.getState().profile?.weeklyGoal).toBe(3);
   });
 });
 
@@ -275,6 +298,15 @@ describe('profile screen', () => {
     await render(<ProfileScreen />);
     await user.press(screen.getByRole('switch', { name: 'Solo ejercicios sentados' }));
     expect(useProfileStore.getState().profile?.seatedOnly).toBe(true);
+  });
+
+  it('can change the weekly goal', async () => {
+    const user = userEvent.setup();
+    await render(<ProfileScreen />);
+    expect(screen.getByText('Mi meta semanal')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: '2 días por semana' })).toBeSelected();
+    await user.press(screen.getByRole('button', { name: '4 días por semana' }));
+    expect(useProfileStore.getState().profile?.weeklyGoal).toBe(4);
   });
 
   it('can change the age band to "Under 50"', async () => {

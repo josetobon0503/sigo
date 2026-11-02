@@ -11,6 +11,7 @@ import type {
   PainArea,
   Pattern,
   UserProfile,
+  WeeklyGoal,
 } from './types';
 
 export const PATTERNS: Pattern[] = [
@@ -98,6 +99,7 @@ export interface ProfileDraft {
   painAreas: Omit<PainArea, 'updatedAt'>[];
   reminder: UserProfile['reminder'];
   screeningAnswers: Record<string, boolean>;
+  weeklyGoal: WeeklyGoal;
 }
 
 export function createProfile(draft: ProfileDraft, completedAt: string): UserProfile {
@@ -114,6 +116,7 @@ export function createProfile(draft: ProfileDraft, completedAt: string): UserPro
     avoided: [],
     reminder: { ...draft.reminder, days: [...draft.reminder.days] },
     screening: null,
+    weeklyGoal: draft.weeklyGoal,
   };
   // A "yes" in the screening wins over the activity level: level 1 and seated only.
   return applyScreening(profile, draft.screeningAnswers, completedAt);

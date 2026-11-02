@@ -85,6 +85,9 @@ export type AgeBand = 'under-50' | '50-59' | '60-69' | '70-79' | '80+';
 // "How active are you?" from onboarding. Sets the starting level of every pattern.
 export type ActivityLevel = 'low' | 'some' | 'daily' | 'strength';
 
+// Days a week the user wants to train. The streak counts weeks that reach it.
+export type WeeklyGoal = 2 | 3 | 4;
+
 export interface UserProfile {
   name: string;
   language: Lang;
@@ -98,6 +101,7 @@ export interface UserProfile {
   avoided: { exerciseId: string; until: string }[]; // exercises that caused pain
   reminder: { enabled: boolean; hour: number; minute: number; days: number[] };
   screening: { completedAt: string; anyYes: boolean } | null;
+  weeklyGoal: WeeklyGoal;
 }
 
 // What the user reports from the "It hurts" flow.
@@ -124,6 +128,21 @@ export interface WorkoutLog {
   durationSec: number;
   items: WorkoutItem[];
   feeling?: Feeling;
+  weeklyGoal?: WeeklyGoal; // the goal when the workout was done; older logs have none
+  levelChanges?: LevelChange[]; // set once the levels are updated after the workout
+}
+
+export interface LevelChange {
+  pattern: Pattern;
+  from: Level;
+  to: Level;
+}
+
+// One point of the pain history: the intensity of an area from that moment on (1 = removed).
+export interface PainHistoryEntry {
+  date: string;
+  area: BodyArea;
+  intensity: PainIntensity;
 }
 
 // Engine results.

@@ -75,6 +75,7 @@ export function makeProfile(overrides: Partial<UserProfile> = {}): UserProfile {
     avoided: [],
     reminder: { enabled: false, hour: 9, minute: 0, days: [] },
     screening: null,
+    weeklyGoal: 2,
     ...overrides,
   };
 }

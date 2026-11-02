@@ -47,6 +47,14 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="progress"
+        options={{
+          title: t('tabs.progress'),
+          tabBarAccessibilityLabel: t('tabs.progress'),
+          tabBarIcon: tabIcon('stats-chart', 'stats-chart-outline'),
+        }}
+      />
+      <Tabs.Screen
         name="pain"
         options={{
           title: t('tabs.pain'),

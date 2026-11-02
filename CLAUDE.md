@@ -75,10 +75,11 @@ Secondary persona: Roberto, 72, retired, lower-back and shoulder pain, light dum
 ```
 app/                      # Expo Router routes
   _layout.tsx
-  onboarding/             # first-run flow
+  onboarding/             # first-run flow (goal.tsx: weekly goal)
   (tabs)/
-    _layout.tsx           # tabs: Today, Pain, Profile (Progress added in a later phase)
+    _layout.tsx           # tabs: Today, Progress, Pain, Profile
     index.tsx             # Today
+    progress.tsx
     pain.tsx
     profile.tsx
   workout/                # modal stack: session (with rest), harder ("Too easy"), finish
@@ -96,10 +97,11 @@ src/
     today.ts              # Today screen helpers (considered areas, skip reasons, equipment)
     pain.ts               # pain report side effects and Pain tab edits (raise area, avoid 14 days)
     profile.ts            # createProfile, activity levels
+    stats.ts              # Progress tab numbers: weeks, streak, minutes, feelings, pain history, level changes
     __tests__/
   data/
     exercises.ts          # exercise library (typed)
-  store/                  # Zustand stores (profile, pain, history, session)
+  store/                  # Zustand stores (profile, pain history, history, session)
   i18n/                   # i18n setup + es.json + en.json
   theme/                  # tokens.ts (colors, type, spacing)
   components/             # BigButton, Card, Chip, FacesScale, BodyMap, VideoChapters, etc.
@@ -177,6 +179,7 @@ interface PainArea {
 type Feeling = 'great' | 'good' | 'ok' | 'tired' | 'sore';
 
 type ActivityLevel = 'low' | 'some' | 'daily' | 'strength'; // "How active are you?" in onboarding
+type WeeklyGoal = 2 | 3 | 4; // days a week; the streak counts weeks that reach it
 
 interface UserProfile {
   name: string;
@@ -191,6 +194,7 @@ interface UserProfile {
   avoided: { exerciseId: string; until: string }[]; // exercises that caused pain
   reminder: { enabled: boolean; hour: number; minute: number; days: number[] };
   screening: { completedAt: string; anyYes: boolean } | null;
+  weeklyGoal: WeeklyGoal;       // default 2 (profile v5)
 }
 
 interface WorkoutItem {
@@ -207,7 +211,11 @@ interface WorkoutLog {
   durationSec: number;
   items: WorkoutItem[];
   feeling?: Feeling;
+  weeklyGoal?: WeeklyGoal;      // the goal when the workout was done
+  levelChanges?: { pattern: Pattern; from: Level; to: Level }[]; // set by the progression
 }
+
+interface PainHistoryEntry { date: string; area: BodyArea; intensity: PainIntensity } // 1 = removed
 ```
 
 ## 6. Engine rules
@@ -323,6 +331,23 @@ An area is **caution** if intensity = 2 (allowed, but prefer seated / supported 
   6. Otherwise unchanged.
 - Never move more than 1 level per pattern per workout.
 
+### Progress (`src/engine/stats.ts`)
+- Weeks run Monday to Sunday and are named by their Monday, so a week that crosses New Year is one week.
+- A day is trained when it has a workout with at least one completed item (two workouts = one day). Minutes add
+  up every log. Workouts after today ("Simulate another day") are left out.
+- Weekly goal (2, 3 or 4 days, default 2): chosen in onboarding after the reminder, editable in Profile. Each log
+  keeps the goal of that moment; a week is judged by the goal of its last workout (the current goal if it has
+  none), so changing the goal never breaks past weeks.
+- Streak = weeks in a row that reached their goal. This week adds 1 once met; while it can still be met (days
+  left, today included unless already trained) it does not break the streak; once it cannot, the streak is 0 and
+  the UI shows a neutral "fresh start" text plus the best streak, never "0". `best` = longest streak ever.
+  Never guilt messages.
+- Pain history: every change of `painAreas` (onboarding, Pain tab, It hurts) is saved in `painHistoryStore`; the
+  first change of an area also keeps its value before. An area with no history shows its current value.
+- Level changes: `applyProgression` saves them on the log; Today shows the ones of the last log ("You leveled
+  up in Legs!" / "We eased Legs back a little to take care of you") until the next workout, hidden once the
+  level is something else. Mobility is never shown.
+
 ### Safety and screening
 - Onboarding asks a short readiness screening inspired by PAR-Q+ (heart condition, chest pain, dizziness / fainting,
   bone or joint problem made worse by activity, recent surgery, a fall in the last year, doctor said to limit
@@ -350,13 +375,16 @@ Symbols. Feeling and pain scales use five colored faces (green to red) **plus te
 
 **Onboarding (first run):** Welcome + language -> Disclaimer -> Readiness screening -> Name and age band ->
 How active are you (4 options) -> Floor yes / no -> Where does it hurt (body map + chips) -> How strong
-(faces 1-5) -> Equipment I have -> Reminder time -> Ready.
+(faces 1-5) -> Equipment I have -> Reminder time -> Weekly goal (2 / 3 / 4 days) -> Ready.
 
-**Tabs:** Today | Pain | Profile.
+**Tabs:** Today | Progress | Pain | Profile.
 - Today: workout summary (day, minutes, number of exercises), "Knee and lower back considered" pill,
-  exercise list, Equipment needed, big Start Workout button, skipped-pattern note.
+  exercise list, Equipment needed, big Start Workout button, skipped-pattern note, level-change notice.
+- Progress: this week (X of goal, days marked), streak of weeks + best streak, minutes, "Your levels" (7 patterns,
+  bars 1-5, simple names), how you have felt (last 10, faces + words), pain by area over time.
 - Pain: body map, my painful areas (area, side, intensity), add / edit / remove.
-- Profile: name, age band, equipment, language, reminders, seated-only switch, Safety Tips, About + disclaimer.
+- Profile: name, age band, activity, weekly goal, equipment, language, reminders, seated-only switch, Safety Tips,
+  About + disclaimer.
 
 **Workout session (modal):** Exercise screen (video with 3 chapter buttons: What it's for / How to do it /
 How NOT to do it, name, short steps, set x reps or timer, Done, big red It hurts) -> Rest (countdown, up next,
@@ -414,7 +442,9 @@ screens; non-personalized ads only; no health data ever passed to an ad SDK; res
 - [x] Phase 5b: "Too easy" (findHarder), "How was it?" rating, progression applied after each workout
 - [x] Lying exercises: position 'lying' (bed or floor), 'bed' equipment (profile v4), 12 new + 3 converted from
   floor (84 exercises), lying block at the end, max 3, lying <-> lying swaps
-- [ ] Phase 6: Progress tab (history) and "you leveled up" message (progression itself is done in 5b)
+- [x] Phase 6: Progress tab (week, streak by weeks with a weekly goal kept on each log, best streak, minutes,
+  levels, feelings, pain history store) and the level-change notice on Today; weekly goal in onboarding and Profile
+  (profile v5)
 - [ ] Phase 7: Video chapters + distance mode with spoken guidance
 - [ ] Phase 8: Reminders, accessibility pass, polish
 - [ ] Phase 9: EAS build, TestFlight, privacy policy, App Store listing

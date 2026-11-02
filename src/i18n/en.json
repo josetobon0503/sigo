@@ -7,7 +7,8 @@
   "tabs": {
     "today": "Today",
     "pain": "Pain",
-    "profile": "Profile"
+    "profile": "Profile",
+    "progress": "Progress"
   },
   "today": {
     "title": "Today",
@@ -30,7 +31,9 @@
     "doneBody": "Great job. Rest and see you tomorrow.",
     "repeat": "Do the workout again",
     "lyingNotice": "Now to the bed (or the floor)",
-    "lyingNoticeBed": "Now to the bed"
+    "lyingNoticeBed": "Now to the bed",
+    "levelUp": "You leveled up in {{patterns}}!",
+    "levelDown": "We eased {{patterns}} back a little to take care of you."
   },
   "pain": {
     "title": "Pain",
@@ -71,7 +74,9 @@
     "activityHint": "Changing it starts all your exercises at that level.",
     "activityDoctor": "Based on your health questions, talk to your doctor before raising the level.",
     "floorOk": "Floor exercises",
-    "floorOkHint": "Only if you can get down to the floor and back up without help."
+    "floorOkHint": "Only if you can get down to the floor and back up without help.",
+    "goalLabel": "My weekly goal",
+    "goalHint": "Your streak counts the weeks you reach your goal."
   },
   "swap": {
     "reason": {
@@ -261,6 +266,10 @@
       "title": "You're all set, {{name}}!",
       "body": "Today's workout is waiting for you. Go at your own pace.",
       "start": "Go to my workout"
+    },
+    "goal": {
+      "title": "How many days a week do you want to move?",
+      "hint": "Start small. You can change it anytime in Profile."
     }
   },
   "safetyTips": {
@@ -402,5 +411,67 @@
     "prevDay": "Previous day",
     "nextDay": "Next day",
     "realToday": "Back to today"
+  },
+  "weeklyGoal": {
+    "days_one": "{{count}} day a week",
+    "days_other": "{{count}} days a week"
+  },
+  "progress": {
+    "title": "Progress",
+    "empty": "When you finish your first workout, you will see your progress here.",
+    "weekTitle": "This week",
+    "weekCount": "{{count}} of {{goal}} days",
+    "weekMet": "You reached your goal this week!",
+    "dayTrained": "{{day}}: you trained",
+    "dayRest": "{{day}}: no workout",
+    "streakTitle": "Your streak",
+    "streak_one": "{{count}} week in a row reaching your goal",
+    "streak_other": "{{count}} weeks in a row reaching your goal",
+    "streakStart": "Reach your goal this week to start a streak.",
+    "streakOpen": "You can still reach your goal this week.",
+    "streakFresh": "Every week is a fresh start. Next week you begin a new streak.",
+    "best_one": "Your best streak: {{count}} week",
+    "best_other": "Your best streak: {{count}} weeks",
+    "minutesTitle": "Minutes of exercise",
+    "minutesWeek": "This week: {{count}} min",
+    "minutesTotal": "In total: {{count}} min",
+    "levelsTitle": "Your levels",
+    "level": "Level {{level}} of 5",
+    "feelingsTitle": "How you have felt",
+    "feelingsEmpty": "When you finish a workout, tell us how you feel.",
+    "painTitle": "Your pain by area",
+    "painEmpty": "You have no painful areas saved.",
+    "painNow": "Now: {{now}}",
+    "painBeforeNow": "Before: {{before}} · Now: {{now}}",
+    "painPoint": "{{day}}: {{intensity}}"
+  },
+  "levelName": {
+    "squat": "Legs",
+    "hinge": "Hips and glutes",
+    "upper_push": "Arms: push",
+    "upper_pull": "Arms: pull",
+    "core": "Core",
+    "balance": "Balance",
+    "calf": "Calves"
+  },
+  "weekday": {
+    "short": {
+      "0": "M",
+      "1": "T",
+      "2": "W",
+      "3": "T",
+      "4": "F",
+      "5": "S",
+      "6": "S"
+    },
+    "long": {
+      "0": "Monday",
+      "1": "Tuesday",
+      "2": "Wednesday",
+      "3": "Thursday",
+      "4": "Friday",
+      "5": "Saturday",
+      "6": "Sunday"
+    }
   }
 }

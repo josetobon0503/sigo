@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { BigButton, Card, Pill, ScreenContainer } from '@/components';
 import { exercises } from '@/data/exercises';
 import { generateWorkout } from '@/engine/generator';
+import { visibleLevelChanges } from '@/engine/stats';
 import { consideredAreas, equipmentNeeded, skipReasons, trainedOn } from '@/engine/today';
 import type { BodyArea, Exercise, PlannedItem, WorkoutSection } from '@/engine/types';
 import { formatDay, formatDosage, joinList, spokenDosage } from '@/i18n/format';
@@ -43,6 +44,13 @@ export default function TodayScreen() {
   const trained = trainedOn(logs, today);
   const minutes = Math.round(workout.estimatedSec / 60);
   const hasItems = workout.items.length > 0;
+  // From the last workout, until the next one.
+  const changed = visibleLevelChanges(logs, profile.levels);
+  const levelNames = (patterns: typeof changed.up) =>
+    joinList(
+      t,
+      patterns.map((p) => t(`levelName.${p}`)),
+    );
 
   const start = () => {
     startSession(workout, profile.seatedOnly);
@@ -69,6 +77,24 @@ export default function TodayScreen() {
           </Text>
         ) : null}
       </View>
+
+      {changed.up.length > 0 ? (
+        <Card style={[styles.row, { gap: spacing.sm }]} testID="level-up">
+          <Ionicons name="trending-up" size={26} color={colors.primary} />
+          <Text style={[typography.bodyBold, styles.flex, { color: colors.text }]}>
+            {t('today.levelUp', { patterns: levelNames(changed.up) })}
+          </Text>
+        </Card>
+      ) : null}
+
+      {changed.down.length > 0 ? (
+        <Card style={[styles.row, { gap: spacing.sm }]} testID="level-down">
+          <Ionicons name="heart-outline" size={26} color={colors.primary} />
+          <Text style={[typography.body, styles.flex, { color: colors.text }]}>
+            {t('today.levelDown', { patterns: levelNames(changed.down) })}
+          </Text>
+        </Card>
+      ) : null}
 
       {considered.length > 0 ? (
         <Pill

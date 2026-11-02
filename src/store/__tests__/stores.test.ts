@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { makeProfile } from '@/engine/__fixtures__/profiles';
+import { makeProfile, pain } from '@/engine/__fixtures__/profiles';
 
 import {
   DEFAULT_EQUIPMENT,
@@ -9,6 +9,8 @@ import {
   useOnboardingStore,
 } from '../onboardingStore';
 import { useHistoryStore } from '../historyStore';
+import { useDevStore } from '../devStore';
+import { usePainHistoryStore } from '../painHistoryStore';
 import { migrateProfile, useProfileStore } from '../profileStore';
 
 describe('onboarding draft', () => {
@@ -89,6 +91,14 @@ describe('profile migration', () => {
     expect(migrated.profile).toMatchObject({ activity: 'daily', floorOk: false });
   });
 
+  it('version 4 profiles get a weekly goal of 2, and keep one they have', () => {
+    const { weeklyGoal: _g, ...old } = makeProfile();
+    expect(migrateProfile({ profile: old }, 4).profile?.weeklyGoal).toBe(2);
+    expect(migrateProfile({ profile: makeProfile({ weeklyGoal: 4 }) }, 4).profile?.weeklyGoal).toBe(
+      4,
+    );
+  });
+
   it('keeps an empty profile', () => {
     expect(migrateProfile({ profile: null }, 1)).toEqual({ profile: null });
   });
@@ -124,6 +134,26 @@ describe('profile store', () => {
     useProfileStore.getState().completeOnboarding(makeProfile());
     useProfileStore.getState().updateProfile({ seatedOnly: true });
     expect(useProfileStore.getState().profile?.seatedOnly).toBe(true);
+  });
+
+  it('keeps every pain change in the pain history, on the device', async () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(2026, 9, 28, 10, 0, 0));
+    useDevStore.setState({ dayOffset: 0 });
+    usePainHistoryStore.getState().clear();
+    useProfileStore.getState().completeOnboarding(makeProfile({ painAreas: [pain('knee', 3)] }));
+    useProfileStore.getState().updateProfile({ seatedOnly: true }); // not a pain change
+    useProfileStore.getState().updateProfile({ painAreas: [pain('knee', 2), pain('neck', 2)] });
+    useProfileStore.getState().updateProfile({ painAreas: [pain('neck', 2)] });
+    expect(usePainHistoryStore.getState().entries).toEqual([
+      { date: '2026-10-28', area: 'knee', intensity: 3 },
+      { date: '2026-10-28', area: 'knee', intensity: 2 },
+      { date: '2026-10-28', area: 'neck', intensity: 2 },
+      { date: '2026-10-28', area: 'knee', intensity: 1 },
+    ]);
+    const saved = JSON.parse((await AsyncStorage.getItem('sigo-pain-history')) ?? '{}');
+    expect(saved.state.entries).toHaveLength(4);
+    jest.useRealTimers();
   });
 
   it('resetOnboarding removes the profile', () => {

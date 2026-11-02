@@ -7,7 +7,8 @@
   "tabs": {
     "today": "Hoy",
     "pain": "Dolor",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "progress": "Progreso"
   },
   "today": {
     "title": "Hoy",
@@ -30,7 +31,9 @@
     "doneBody": "Buen trabajo. Descansa y nos vemos mañana.",
     "repeat": "Repetir la rutina",
     "lyingNotice": "Ahora a la cama (o al piso)",
-    "lyingNoticeBed": "Ahora a la cama"
+    "lyingNoticeBed": "Ahora a la cama",
+    "levelUp": "¡Subiste de nivel en {{patterns}}!",
+    "levelDown": "Bajamos un poco {{patterns}} para cuidarte."
   },
   "pain": {
     "title": "Dolor",
@@ -71,7 +74,9 @@
     "activityHint": "Al cambiarlo, todos tus ejercicios empiezan en ese nivel.",
     "activityDoctor": "Por tus respuestas en las preguntas de salud, habla con tu doctor antes de subir el nivel.",
     "floorOk": "Ejercicios en el piso",
-    "floorOkHint": "Solo si puedes bajar al piso y levantarte sin ayuda."
+    "floorOkHint": "Solo si puedes bajar al piso y levantarte sin ayuda.",
+    "goalLabel": "Mi meta semanal",
+    "goalHint": "Tu racha cuenta las semanas en que llegas a tu meta."
   },
   "swap": {
     "reason": {
@@ -261,6 +266,10 @@
       "title": "¡Todo listo, {{name}}!",
       "body": "Tu rutina de hoy ya te está esperando. Ve a tu ritmo.",
       "start": "Ir a mi rutina"
+    },
+    "goal": {
+      "title": "¿Cuántos días por semana quieres moverte?",
+      "hint": "Empieza con poco. Puedes cambiarlo cuando quieras en Perfil."
     }
   },
   "safetyTips": {
@@ -402,5 +411,67 @@
     "prevDay": "Día anterior",
     "nextDay": "Día siguiente",
     "realToday": "Volver a hoy"
+  },
+  "weeklyGoal": {
+    "days_one": "{{count}} día por semana",
+    "days_other": "{{count}} días por semana"
+  },
+  "progress": {
+    "title": "Progreso",
+    "empty": "Cuando termines tu primer entrenamiento, aquí vas a ver tu progreso.",
+    "weekTitle": "Esta semana",
+    "weekCount": "{{count}} de {{goal}} días",
+    "weekMet": "¡Llegaste a tu meta de esta semana!",
+    "dayTrained": "{{day}}: entrenaste",
+    "dayRest": "{{day}}: sin entrenamiento",
+    "streakTitle": "Tu racha",
+    "streak_one": "{{count}} semana seguida llegando a tu meta",
+    "streak_other": "{{count}} semanas seguidas llegando a tu meta",
+    "streakStart": "Llega a tu meta esta semana para empezar una racha.",
+    "streakOpen": "Esta semana todavía puedes llegar a tu meta.",
+    "streakFresh": "Cada semana es un nuevo comienzo. La próxima empiezas una racha nueva.",
+    "best_one": "Tu mejor racha: {{count}} semana",
+    "best_other": "Tu mejor racha: {{count}} semanas",
+    "minutesTitle": "Minutos de ejercicio",
+    "minutesWeek": "Esta semana: {{count}} min",
+    "minutesTotal": "En total: {{count}} min",
+    "levelsTitle": "Tus niveles",
+    "level": "Nivel {{level}} de 5",
+    "feelingsTitle": "Cómo te has sentido",
+    "feelingsEmpty": "Al terminar un entrenamiento, cuéntanos cómo te sientes.",
+    "painTitle": "Tu dolor por zona",
+    "painEmpty": "No tienes zonas con dolor guardadas.",
+    "painNow": "Ahora: {{now}}",
+    "painBeforeNow": "Antes: {{before}} · Ahora: {{now}}",
+    "painPoint": "{{day}}: {{intensity}}"
+  },
+  "levelName": {
+    "squat": "Piernas",
+    "hinge": "Cadera y glúteos",
+    "upper_push": "Brazos: empujar",
+    "upper_pull": "Brazos: jalar",
+    "core": "Abdomen",
+    "balance": "Equilibrio",
+    "calf": "Pantorrillas"
+  },
+  "weekday": {
+    "short": {
+      "0": "L",
+      "1": "M",
+      "2": "M",
+      "3": "J",
+      "4": "V",
+      "5": "S",
+      "6": "D"
+    },
+    "long": {
+      "0": "Lunes",
+      "1": "Martes",
+      "2": "Miércoles",
+      "3": "Jueves",
+      "4": "Viernes",
+      "5": "Sábado",
+      "6": "Domingo"
+    }
   }
 }

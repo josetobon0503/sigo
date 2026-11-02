@@ -4,7 +4,7 @@ export { BodyMap, type BodyMapProps } from './BodyMap';
 export { Card, type CardProps } from './Card';
 export { Chip, type ChipProps } from './Chip';
 export { ChipGroup, type ChipGroupProps } from './ChipGroup';
-export { FacesScale, type FaceOption, type FacesScaleProps } from './FacesScale';
+export { Face, FacesScale, type FaceOption, type FacesScaleProps } from './FacesScale';
 export { Notice, type NoticeProps } from './Notice';
 export { ONBOARDING_TOTAL_STEPS, OnboardingStep, type OnboardingStepProps } from './OnboardingStep';
 export { Pill, type PillProps } from './Pill';

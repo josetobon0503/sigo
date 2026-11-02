@@ -71,15 +71,7 @@ export function FacesScale<T extends string | number = PainIntensity>({
               },
             ]}
           >
-            <View
-              importantForAccessibility="no-hide-descendants"
-              accessibilityElementsHidden
-              style={[styles.face, { backgroundColor: faceScale[i] }]}
-            >
-              <Text style={styles.emoji} allowFontScaling={false}>
-                {FACES[i]}
-              </Text>
-            </View>
+            <Face index={i} />
             <Text
               style={[
                 selected ? typography.bodyBold : typography.body,
@@ -95,6 +87,21 @@ export function FacesScale<T extends string | number = PainIntensity>({
           </Pressable>
         );
       })}
+    </View>
+  );
+}
+
+// One colored face, 0 = green ... 4 = red. Decorative: always shown next to a text label.
+export function Face({ index }: { index: number }) {
+  return (
+    <View
+      importantForAccessibility="no-hide-descendants"
+      accessibilityElementsHidden
+      style={[styles.face, { backgroundColor: faceScale[index] }]}
+    >
+      <Text style={styles.emoji} allowFontScaling={false}>
+        {FACES[index]}
+      </Text>
     </View>
   );
 }
