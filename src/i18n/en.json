@@ -408,7 +408,16 @@
     "minutes_other": "{{count}} minutes",
     "feelingQuestion": "How do you feel?",
     "thanks": "Thanks! We saved it.",
-    "backHome": "Back to Today"
+    "backHome": "Back to Today",
+    "greatJob": "Great job, {{name}}!",
+    "weekCount_one": "You've done {{count}} of {{goal}} days this week",
+    "weekCount_other": "You've done {{count}} of {{goal}} days this week",
+    "statExercises_one": "exercise",
+    "statExercises_other": "exercises",
+    "statMinutes_one": "minute",
+    "statMinutes_other": "minutes",
+    "statWeeks_one": "week in a row",
+    "statWeeks_other": "weeks in a row"
   },
   "feeling": {
     "great": "Great",

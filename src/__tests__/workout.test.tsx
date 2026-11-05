@@ -306,8 +306,9 @@ describe('workout session', () => {
     useSessionStore.getState().skipRest();
     useSessionStore.getState().completeSet();
     await render(<FinishScreen />);
-    expect(screen.getByText('¡Terminaste!')).toBeOnTheScreen();
-    expect(screen.getByTestId('finish-summary')).toHaveTextContent(/2 ejercicios/);
+    expect(screen.getByText(/^¡Buen trabajo, .+!$/)).toBeOnTheScreen();
+    expect(screen.getByLabelText('2 ejercicios')).toBeOnTheScreen();
+    expect(screen.getByText('Llevas 1 de 2 días esta semana')).toBeOnTheScreen();
     await user.press(screen.getByRole('radio', { name: 'Bien, 2 de 5' }));
     expect(useHistoryStore.getState().logs[0].feeling).toBe('good');
     expect(screen.getByText('¡Gracias! Lo guardamos.')).toBeOnTheScreen();

@@ -408,7 +408,16 @@
     "minutes_other": "{{count}} minutos",
     "feelingQuestion": "¿Cómo te sientes?",
     "thanks": "¡Gracias! Lo guardamos.",
-    "backHome": "Volver a Hoy"
+    "backHome": "Volver a Hoy",
+    "greatJob": "¡Buen trabajo, {{name}}!",
+    "weekCount_one": "Llevas {{count}} de {{goal}} días esta semana",
+    "weekCount_other": "Llevas {{count}} de {{goal}} días esta semana",
+    "statExercises_one": "ejercicio",
+    "statExercises_other": "ejercicios",
+    "statMinutes_one": "minuto",
+    "statMinutes_other": "minutos",
+    "statWeeks_one": "semana seguida",
+    "statWeeks_other": "semanas seguidas"
   },
   "feeling": {
     "great": "Excelente",
