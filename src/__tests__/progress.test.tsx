@@ -1,6 +1,6 @@
 // Screen tests for the Progress tab.
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { render, screen, within } from '@testing-library/react-native';
+import { act, render, screen, within } from '@testing-library/react-native';
 
 import ProgressScreen from '../../app/(tabs)/progress';
 import { levelsAt, makeProfile, pain } from '@/engine/__fixtures__/profiles';
@@ -73,7 +73,7 @@ describe('Progress tab', () => {
     );
     expect(screen.getByLabelText('Lunes: entrenaste')).toBeOnTheScreen();
     expect(screen.getByLabelText('Martes: entrenaste')).toBeOnTheScreen();
-    expect(screen.getByLabelText('Miércoles: sin entrenamiento')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Miércoles: sin entrenamiento. Hoy')).toBeOnTheScreen();
     expect(screen.queryByTestId('progress-empty')).toBeNull();
   });
 
@@ -131,6 +131,32 @@ describe('Progress tab', () => {
     expect(screen.queryByText('Soltar el cuerpo')).toBeNull();
   });
 
+  it('marks in orange only the levels raised this week', async () => {
+    useProfileStore.setState({
+      profile: makeProfile({ levels: { ...levelsAt(3), squat: 4, core: 2 } }),
+    });
+    useHistoryStore.setState({
+      logs: [
+        {
+          ...log('2026-10-20'), // last week: not shown
+          levelChanges: [{ pattern: 'balance', from: 2, to: 3 }],
+        },
+        {
+          ...log('2026-10-26'),
+          levelChanges: [
+            { pattern: 'squat', from: 3, to: 4 },
+            { pattern: 'core', from: 3, to: 2 },
+          ],
+        },
+      ],
+    });
+    await render(<ProgressScreen />);
+    expect(screen.getByLabelText('Piernas, Nivel 4 de 5, subiste esta semana')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Equilibrio, Nivel 3 de 5')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Abdomen, Nivel 2 de 5')).toBeOnTheScreen();
+    expect(screen.getByText('Naranja = subiste esta semana')).toBeOnTheScreen();
+  });
+
   it('shows the last 10 feelings with faces and neutral words', async () => {
     const feelings: Feeling[] = ['great', 'good', 'ok', 'tired', 'sore'];
     useHistoryStore.setState({
@@ -171,11 +197,11 @@ describe('Progress tab', () => {
     await setLanguage('en');
     useHistoryStore.setState({ logs: [log('2026-10-26', 'tired')] });
     await render(<ProgressScreen />);
-    expect(screen.getByText('Progress')).toBeOnTheScreen();
+    expect(screen.getByText('Your progress')).toBeOnTheScreen();
     expect(screen.getByTestId('progress-week')).toHaveTextContent(/1 of 2 days/);
     expect(screen.getByLabelText('Monday: you trained')).toBeOnTheScreen();
     expect(screen.getByLabelText('Legs, Level 3 of 5')).toBeOnTheScreen();
     expect(screen.getByText('Tired')).toBeOnTheScreen();
-    await setLanguage('es');
+    await act(() => setLanguage('es')); // the screen is still mounted and re-renders
   });
 });

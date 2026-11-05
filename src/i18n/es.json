@@ -438,7 +438,7 @@
     "days_other": "{{count}} días por semana"
   },
   "progress": {
-    "title": "Progreso",
+    "title": "Tu progreso",
     "empty": "Cuando termines tu primer entrenamiento, aquí vas a ver tu progreso.",
     "weekTitle": "Esta semana",
     "weekCount": "{{count}} de {{goal}} días",
@@ -467,7 +467,11 @@
     "painPoint": "{{day}}: {{intensity}}",
     "today": "Hoy",
     "weeks_one": "{{count}} semana",
-    "weeks_other": "{{count}} semanas"
+    "weeks_other": "{{count}} semanas",
+    "remaining_one": "Te falta {{count}}",
+    "remaining_other": "Te faltan {{count}}",
+    "raisedThisWeek": "subiste esta semana",
+    "levelsLegend": "Naranja = subiste esta semana"
   },
   "levelName": {
     "squat": "Piernas",
