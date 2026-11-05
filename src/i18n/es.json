@@ -33,7 +33,12 @@
     "lyingNotice": "Ahora a la cama (o al piso)",
     "lyingNoticeBed": "Ahora a la cama",
     "levelUp": "¡Subiste de nivel en {{patterns}}!",
-    "levelDown": "Bajamos un poco {{patterns}} para cuidarte."
+    "levelDown": "Bajamos un poco {{patterns}} para cuidarte.",
+    "greeting": "Hola, {{name}}",
+    "weekCount": "Esta semana: {{count}} de {{goal}}",
+    "heroLabel": "Tu rutina de hoy",
+    "level": "nivel {{level}}",
+    "listTitle": "Ejercicios de hoy"
   },
   "pain": {
     "title": "Dolor",

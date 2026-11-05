@@ -33,7 +33,11 @@ export function ScreenContainer({
     </>
   );
 
-  const padding = { paddingHorizontal: spacing.md, paddingVertical: spacing.md, gap: spacing.md };
+  const padding = {
+    paddingHorizontal: spacing.screen,
+    paddingVertical: spacing.md,
+    gap: spacing.cardGap,
+  };
 
   return (
     <SafeAreaView

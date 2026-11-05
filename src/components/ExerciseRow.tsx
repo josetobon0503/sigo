@@ -7,17 +7,24 @@ export interface ExerciseRowProps {
   name: string;
   meta: string; // "Piernas · 3 × 10"
   divider?: boolean;
+  accessibilityLabel?: string; // defaults to "name, meta"
   testID?: string;
 }
 
 // 48 pt thumbnail (placeholder until videos exist), name and meta line.
-export function ExerciseRow({ name, meta, divider = true, testID }: ExerciseRowProps) {
+export function ExerciseRow({
+  name,
+  meta,
+  divider = true,
+  accessibilityLabel,
+  testID,
+}: ExerciseRowProps) {
   const { colors, typography, spacing, radius } = useTheme();
 
   return (
     <View
       accessible
-      accessibilityLabel={`${name}, ${meta}`}
+      accessibilityLabel={accessibilityLabel ?? `${name}, ${meta}`}
       testID={testID}
       style={{
         flexDirection: 'row',
