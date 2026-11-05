@@ -14,7 +14,17 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-import { BigButton, BigNumber, Card } from '@/components';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
+import {
+  BigButton,
+  BigNumber,
+  Card,
+  ProgressSegments,
+  SetDots,
+  VideoBox,
+  type VideoChapter,
+} from '@/components';
 import { exercises } from '@/data/exercises';
 import {
   completedSets,
@@ -111,31 +121,49 @@ export default function SessionScreen() {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.bg }]}>
-      <View style={[styles.topBar, { paddingHorizontal: spacing.md, gap: spacing.md }]}>
-        <Pressable
-          onPress={confirmExit}
-          accessibilityRole="button"
-          accessibilityLabel={t('workout.exit')}
-          testID="exit-workout"
-          style={({ pressed }) => [
-            styles.exit,
-            {
-              minHeight: sizes.minTapTarget,
-              paddingHorizontal: spacing.md,
-              borderRadius: radius.chip,
-              borderColor: colors.primary,
-              opacity: pressed ? 0.85 : 1,
-            },
-          ]}
-        >
-          <Text style={[typography.bodyBold, { color: colors.primary }]}>{t('workout.exit')}</Text>
-        </Pressable>
-        <Text style={[typography.bodyBold, styles.progress, { color: colors.text }]}>
-          {t('workout.exerciseProgress', {
-            current: session.index + 1,
-            total: session.items.length,
-          })}
-        </Text>
+      {/* Opaque and above the scroll view, so content never shows through it when scrolling. */}
+      <View
+        style={[
+          styles.topBar,
+          {
+            backgroundColor: colors.bg,
+            paddingHorizontal: spacing.screen,
+            paddingBottom: spacing.ms,
+            gap: spacing.ms,
+          },
+        ]}
+      >
+        <View style={[styles.topRow, { gap: spacing.ms }]}>
+          <Pressable
+            onPress={confirmExit}
+            accessibilityRole="button"
+            accessibilityLabel={t('workout.exit')}
+            testID="exit-workout"
+            style={({ pressed }) => [
+              styles.exit,
+              {
+                minHeight: sizes.minTapTarget,
+                paddingHorizontal: spacing.ms,
+                gap: spacing.xs,
+                borderRadius: radius.secondary,
+                borderColor: colors.borderStrong,
+                opacity: pressed ? 0.8 : 1,
+              },
+            ]}
+          >
+            <Ionicons name="close" size={22} color={colors.primary} />
+            <Text style={[typography.bodyBold, { color: colors.primary }]}>
+              {t('workout.exit')}
+            </Text>
+          </Pressable>
+          <Text style={[typography.calloutBold, styles.progress, { color: colors.textSecondary }]}>
+            {t('workout.exerciseProgress', {
+              current: session.index + 1,
+              total: session.items.length,
+            })}
+          </Text>
+        </View>
+        <ProgressSegments total={session.items.length} current={session.index} />
       </View>
       {session.phase.kind === 'rest' ? (
         <RestView session={session} now={now} lang={lang} />
@@ -159,8 +187,9 @@ function ExerciseView({
 }) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { colors, typography, spacing, sizes } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { completeSet, startTimer, pauseTimer, tooEasy } = useSessionStore.getState();
+  const [chapter, setChapter] = useState<VideoChapter | null>(null);
   const exercise = byId.get(item.exerciseId);
   if (!exercise) return null;
 
@@ -196,7 +225,7 @@ function ExerciseView({
       <View style={{ gap: spacing.xs }}>
         {perSide ? (
           <Text
-            style={[typography.title, styles.center, { color: colors.primary }]}
+            style={[typography.headline, styles.center, { color: colors.primary }]}
             testID="side-label"
           >
             {view.switching
@@ -237,29 +266,46 @@ function ExerciseView({
 
   return (
     <>
-      <ScrollView contentContainerStyle={{ padding: spacing.md, gap: spacing.md }}>
-        <Text style={[typography.body, { color: colors.textSecondary }]} testID="set-progress">
-          {t('workout.setProgress', { current: session.set, total: dosage.sets })}
-        </Text>
-        <Text accessibilityRole="header" style={[typography.largeTitle, { color: colors.text }]}>
-          {exercise.name[lang]}
-        </Text>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={{ paddingHorizontal: spacing.screen, gap: spacing.md }}
+      >
+        <VideoBox
+          chapter={chapter}
+          onChapter={(c) => setChapter((current) => (current === c ? null : c))}
+        />
+        {/* Until the videos arrive (phase 7), a chapter tab shows its written text. */}
+        {chapter ? (
+          <Card style={{ gap: spacing.sm }} testID="chapter-text">
+            {chapter === 'purpose' ? (
+              <Text style={[typography.body, { color: colors.text }]}>
+                {exercise.purpose[lang]}
+              </Text>
+            ) : (
+              (chapter === 'howTo' ? exercise.steps : exercise.mistakes)[lang].map((line, i) => (
+                <Text key={line} style={[typography.body, { color: colors.text }]}>
+                  {chapter === 'howTo' ? `${i + 1}. ${line}` : `• ${line}`}
+                </Text>
+              ))
+            )}
+          </Card>
+        ) : null}
+        <View style={{ gap: spacing.sm }}>
+          <Text
+            accessibilityRole="header"
+            style={[typography.title, styles.center, { color: colors.text }]}
+          >
+            {exercise.name[lang]}
+          </Text>
+          <Text
+            style={[typography.callout, styles.center, { color: colors.textSecondary }]}
+            testID="set-progress"
+          >
+            {t('workout.setProgress', { current: session.set, total: dosage.sets })}
+          </Text>
+          <SetDots total={dosage.sets} current={session.set - 1} />
+        </View>
         {bigNumber}
-        {/* Video area: the written purpose and steps until the videos arrive (phase 7). */}
-        <Card style={{ gap: spacing.sm }}>
-          <Text accessibilityRole="header" style={[typography.bodyBold, { color: colors.text }]}>
-            {t('workout.purposeTitle')}
-          </Text>
-          <Text style={[typography.body, { color: colors.text }]}>{exercise.purpose[lang]}</Text>
-          <Text accessibilityRole="header" style={[typography.bodyBold, { color: colors.text }]}>
-            {t('workout.stepsTitle')}
-          </Text>
-          {exercise.steps[lang].map((step, i) => (
-            <Text key={step} style={[typography.body, { color: colors.text }]}>
-              {`${i + 1}. ${step}`}
-            </Text>
-          ))}
-        </Card>
         {dosage.kind === 'time' ? (
           <BigButton
             label={t('workout.done')}
@@ -271,30 +317,29 @@ function ExerciseView({
           />
         ) : null}
         {/* Less prominent than "Done" and "It hurts": a text button, not in the footer. */}
-        <Pressable
+        <BigButton
+          label={t('workout.tooEasy')}
+          variant="text"
+          icon="arrow-up"
+          accessibilityHint={t('workout.tooEasyHint')}
           onPress={() => {
             pauseTimer();
             tooEasy();
             router.push('/workout/harder');
           }}
-          accessibilityRole="button"
-          accessibilityLabel={t('workout.tooEasy')}
-          accessibilityHint={t('workout.tooEasyHint')}
           testID="too-easy"
-          style={({ pressed }) => [
-            styles.textButton,
-            { minHeight: sizes.minTapTarget, opacity: pressed ? 0.6 : 1 },
-          ]}
-        >
-          <Text style={[typography.bodyBold, { color: colors.primary }]}>
-            {t('workout.tooEasy')}
-          </Text>
-        </Pressable>
+        />
       </ScrollView>
       <View
         style={[
           styles.footer,
-          { padding: spacing.md, gap: spacing.sm, borderTopColor: colors.border },
+          {
+            backgroundColor: colors.bg,
+            paddingHorizontal: spacing.screen,
+            paddingVertical: spacing.ms,
+            gap: spacing.sm,
+            borderTopColor: colors.border,
+          },
         ]}
       >
         {mainAction}
@@ -399,11 +444,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topBar: {
+    paddingTop: 8,
+    zIndex: 1,
+    elevation: 1,
+  },
+  topRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 8,
+  },
+  scroll: {
+    flex: 1,
+    overflow: 'hidden',
   },
   exit: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 2,
     justifyContent: 'center',
   },
@@ -413,11 +468,6 @@ const styles = StyleSheet.create({
   },
   center: {
     textAlign: 'center',
-  },
-  textButton: {
-    alignSelf: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
   },
   footer: {
     borderTopWidth: StyleSheet.hairlineWidth,

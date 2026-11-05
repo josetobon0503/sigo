@@ -8,7 +8,7 @@ export type VideoChapter = 'purpose' | 'howTo' | 'mistakes';
 const CHAPTERS: VideoChapter[] = ['purpose', 'howTo', 'mistakes'];
 
 export interface VideoBoxProps {
-  chapter: VideoChapter;
+  chapter: VideoChapter | null; // null = no chapter open
   onChapter: (chapter: VideoChapter) => void;
 }
 

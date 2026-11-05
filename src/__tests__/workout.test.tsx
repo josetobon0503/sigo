@@ -203,6 +203,15 @@ describe('workout session', () => {
     useSessionStore.getState().start(SHORT, false);
   });
 
+  it('opens and closes the written text of a video chapter', async () => {
+    await render(<SessionScreen />);
+    expect(screen.queryByTestId('chapter-text')).toBeNull();
+    await user.press(screen.getByRole('tab', { name: 'Cómo NO hacerlo' }));
+    expect(screen.getByTestId('chapter-text')).toBeOnTheScreen();
+    await user.press(screen.getByRole('tab', { name: 'Cómo NO hacerlo' }));
+    expect(screen.queryByTestId('chapter-text')).toBeNull();
+  });
+
   it('runs a whole workout and saves the log', async () => {
     await render(<SessionScreen />);
     expect(screen.getByText('Ejercicio 1 de 2')).toBeOnTheScreen();
