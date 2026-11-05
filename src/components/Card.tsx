@@ -20,7 +20,7 @@ export function Card({ children, style, testID }: CardProps) {
         {
           backgroundColor: colors.surface,
           borderColor: colors.border,
-          borderRadius: radius.chip,
+          borderRadius: radius.card,
           padding: spacing.md,
         },
         style,

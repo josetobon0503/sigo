@@ -26,7 +26,7 @@ export default function SafetyTipsScreen() {
       <Card>
         <Text style={[typography.bodyBold, { color: colors.text }]}>{t('app.disclaimer')}</Text>
       </Card>
-      <BigButton label={t('safetyTips.close')} variant="secondary" onPress={() => router.back()} />
+      <BigButton label={t('safetyTips.close')} variant="outline" onPress={() => router.back()} />
     </ScreenContainer>
   );
 }

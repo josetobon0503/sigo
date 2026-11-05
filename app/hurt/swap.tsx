@@ -60,14 +60,14 @@ export default function SwapScreen() {
       />
       <BigButton
         label={t('swap.preview')}
-        variant="secondary"
+        variant="outline"
         icon="eye-outline"
         onPress={() => router.push('/hurt/preview')}
         testID="swap-preview"
       />
       <BigButton
         label={t('swap.skip')}
-        variant="secondary"
+        variant="outline"
         icon="play-skip-forward"
         onPress={rest}
         testID="swap-skip"

@@ -65,7 +65,7 @@ export default function PainScreen() {
           <BigButton
             label={t('pain.edit')}
             accessibilityLabel={t('pain.editLabel', { area: t(`bodyArea.${p.area}`) })}
-            variant="secondary"
+            variant="outline"
             icon="create-outline"
             onPress={() => openEditor(p.area)}
             testID={`pain-edit-${p.area}`}
@@ -73,7 +73,7 @@ export default function PainScreen() {
           <BigButton
             label={t('pain.remove')}
             accessibilityLabel={t('pain.removeLabel', { area: t(`bodyArea.${p.area}`) })}
-            variant="secondary"
+            variant="outline"
             icon="trash-outline"
             onPress={() => confirmRemove(p)}
             testID={`pain-remove-${p.area}`}

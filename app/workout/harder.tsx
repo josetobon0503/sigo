@@ -65,7 +65,7 @@ export default function HarderScreen() {
       />
       <BigButton
         label={t('harder.keep')}
-        variant="secondary"
+        variant="outline"
         onPress={() => router.back()}
         testID="harder-keep"
       />

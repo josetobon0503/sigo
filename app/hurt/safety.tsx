@@ -53,7 +53,7 @@ export default function SafetyScreen() {
       />
       <BigButton
         label={t('safety.end')}
-        variant="secondary"
+        variant="outline"
         onPress={() => leave(useSessionStore.getState().end)}
         testID="safety-end"
       />

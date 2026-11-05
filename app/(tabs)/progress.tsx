@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { Card, Face, ScreenContainer } from '@/components';
+import { Card, FaceIcon, ScreenContainer } from '@/components';
 import {
   FEELINGS,
   PROGRESS_PATTERNS,
@@ -178,7 +178,7 @@ export default function ProgressScreen() {
         ) : (
           felt.map(({ id, day, feeling }) => (
             <View key={id} accessible style={[styles.row, { gap: spacing.md }]}>
-              <Face index={FEELINGS.indexOf(feeling)} />
+              <FaceIcon index={FEELINGS.indexOf(feeling)} size={40} />
               <Text style={[typography.body, styles.flex, { color: colors.text }]}>
                 {t(`feeling.${feeling}`)}
               </Text>

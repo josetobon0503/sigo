@@ -3,11 +3,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import type { PainIntensity } from '@/engine/types';
-import { faceScale } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
 
+import { FaceIcon } from './FaceIcon';
+
 const VALUES: PainIntensity[] = [1, 2, 3, 4, 5];
-const FACES = ['😀', '🙂', '😐', '😟', '😣'];
 
 export interface FaceOption<T> {
   value: T;
@@ -20,6 +20,7 @@ export interface FacesScaleProps<T extends string | number = PainIntensity> {
   accessibilityLabel: string; // what is being rated, e.g. "Knee, left side"
   // Five options, from the green face to the red one. Defaults to the pain scale (None ... Worst).
   options?: readonly FaceOption<T>[];
+  layout?: 'list' | 'row'; // row = the 5 faces side by side with the label under each one
   testID?: string;
 }
 
@@ -29,10 +30,12 @@ export function FacesScale<T extends string | number = PainIntensity>({
   onChange,
   accessibilityLabel,
   options,
+  layout = 'list',
   testID,
 }: FacesScaleProps<T>) {
   const { t } = useTranslation();
   const { colors, typography, spacing, radius, sizes } = useTheme();
+  const row = layout === 'row';
   // Without options, T is the default PainIntensity.
   const choices =
     options ??
@@ -46,10 +49,14 @@ export function FacesScale<T extends string | number = PainIntensity>({
       accessibilityRole="radiogroup"
       accessibilityLabel={accessibilityLabel}
       testID={testID}
-      style={{ gap: spacing.sm }}
+      style={row ? [styles.row, { gap: spacing.xs }] : { gap: spacing.sm }}
     >
       {choices.map(({ value: v, label }, i) => {
         const selected = value === v;
+        const textStyle = [
+          selected ? typography.captionBold : typography.caption,
+          { color: colors.text },
+        ];
         return (
           <Pressable
             key={String(v)}
@@ -58,32 +65,42 @@ export function FacesScale<T extends string | number = PainIntensity>({
             accessibilityLabel={t('faces.option', { label, value: i + 1 })}
             accessibilityState={{ checked: selected }}
             style={({ pressed }) => [
-              styles.option,
-              {
-                minHeight: sizes.primaryButton,
-                gap: spacing.md,
-                paddingHorizontal: spacing.md,
-                borderRadius: radius.chip,
-                borderWidth: selected ? 3 : 2,
-                borderColor: selected ? colors.primary : colors.border,
-                backgroundColor: colors.surface,
-                opacity: pressed ? 0.85 : 1,
-              },
+              row
+                ? [styles.column, { gap: spacing.xs, minHeight: sizes.minTapTarget }]
+                : [
+                    styles.option,
+                    {
+                      minHeight: sizes.primaryButton,
+                      gap: spacing.ms,
+                      paddingHorizontal: spacing.ms,
+                      borderRadius: radius.chip,
+                      borderWidth: 2,
+                      borderColor: selected ? colors.primary : colors.border,
+                      backgroundColor: selected ? colors.primarySoft : colors.surface,
+                    },
+                  ],
+              { opacity: pressed ? 0.8 : 1 },
             ]}
           >
-            <Face index={i} />
-            <Text
-              style={[
-                selected ? typography.bodyBold : typography.body,
-                styles.label,
-                { color: colors.text },
-              ]}
-            >
-              {label}
-            </Text>
-            {selected ? (
-              <Ionicons name="checkmark-circle" size={28} color={colors.primary} />
-            ) : null}
+            <FaceIcon index={i} size={row ? 52 : 40} selected={row && selected} />
+            {row ? (
+              <Text style={[textStyle, styles.center]}>{label}</Text>
+            ) : (
+              <>
+                <Text
+                  style={[
+                    selected ? typography.bodyBold : typography.body,
+                    styles.label,
+                    { color: colors.text },
+                  ]}
+                >
+                  {label}
+                </Text>
+                {selected ? (
+                  <Ionicons name="checkmark-circle" size={28} color={colors.primary} />
+                ) : null}
+              </>
+            )}
           </Pressable>
         );
       })}
@@ -91,37 +108,23 @@ export function FacesScale<T extends string | number = PainIntensity>({
   );
 }
 
-// One colored face, 0 = green ... 4 = red. Decorative: always shown next to a text label.
-export function Face({ index }: { index: number }) {
-  return (
-    <View
-      importantForAccessibility="no-hide-descendants"
-      accessibilityElementsHidden
-      style={[styles.face, { backgroundColor: faceScale[index] }]}
-    >
-      <Text style={styles.emoji} allowFontScaling={false}>
-        {FACES[index]}
-      </Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  column: {
+    flex: 1,
+    alignItems: 'center',
+  },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  face: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emoji: {
-    fontSize: 24,
-  },
   label: {
     flex: 1,
+  },
+  center: {
+    textAlign: 'center',
   },
 });

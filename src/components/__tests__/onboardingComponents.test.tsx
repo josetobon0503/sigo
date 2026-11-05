@@ -55,9 +55,7 @@ describe('OnboardingStep', () => {
     const user = userEvent.setup();
     await render(<OnboardingStep step={3} title="Hola" onNext={jest.fn()} onBack={onBack} />);
     const back = screen.getByRole('button', { name: 'Atrás' });
-    expect(StyleSheet.flatten(back.props.style).minHeight).toBeGreaterThanOrEqual(
-      sizes.primaryButton,
-    );
+    expect(StyleSheet.flatten(back.props.style).minHeight).toBeGreaterThanOrEqual(56);
     await user.press(back);
     expect(onBack).toHaveBeenCalled();
     expect(screen.getByRole('button', { name: 'Continuar' })).toBeOnTheScreen();

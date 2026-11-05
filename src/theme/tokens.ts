@@ -143,6 +143,7 @@ export const radius = {
 export const sizes = {
   minTapTarget: 44,
   chip: 52,
+  secondaryButton: 56,
   primaryButton: 64,
   hurtButton: 64,
 } as const;

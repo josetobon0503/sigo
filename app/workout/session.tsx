@@ -263,7 +263,7 @@ function ExerciseView({
         {dosage.kind === 'time' ? (
           <BigButton
             label={t('workout.done')}
-            variant="secondary"
+            variant="outline"
             icon="checkmark"
             accessibilityHint={t('workout.doneHint')}
             onPress={completeSet}
@@ -353,7 +353,7 @@ function RestView({ session, now, lang }: { session: Session; now: number; lang:
               <BigButton
                 key={rating}
                 label={t(`rating.${rating}`)}
-                variant={rated === rating ? 'primary' : 'secondary'}
+                variant={rated === rating ? 'primary' : 'outline'}
                 icon={rated === rating ? 'checkmark' : undefined}
                 selected={rated === rating}
                 onPress={() => rate(session.index, rating)}

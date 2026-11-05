@@ -6,13 +6,16 @@ import { useTheme } from '@/theme/useTheme';
 
 export interface PillProps {
   label: string;
+  tone?: 'default' | 'hero'; // hero = on heroBg
   icon?: ComponentProps<typeof Ionicons>['name'];
   testID?: string;
 }
 
 // Rounded, non-interactive tag, e.g. "Consideramos: rodilla y espalda baja".
-export function Pill({ label, icon, testID }: PillProps) {
+export function Pill({ label, icon, tone = 'default', testID }: PillProps) {
   const { colors, typography, spacing, radius } = useTheme();
+  const fg = tone === 'hero' ? colors.onHero : colors.text;
+  const iconColor = tone === 'hero' ? colors.onHero : colors.primary;
 
   return (
     <View
@@ -20,17 +23,17 @@ export function Pill({ label, icon, testID }: PillProps) {
       style={[
         styles.pill,
         {
-          borderColor: colors.primary,
-          backgroundColor: colors.surface,
+          borderColor: tone === 'hero' ? colors.onHeroMuted : colors.primary,
+          backgroundColor: tone === 'hero' ? 'transparent' : colors.surface,
           borderRadius: radius.pill,
-          paddingHorizontal: spacing.md,
-          paddingVertical: spacing.sm,
+          paddingHorizontal: spacing.ms,
+          paddingVertical: 6,
           gap: spacing.sm,
         },
       ]}
     >
-      {icon ? <Ionicons name={icon} size={22} color={colors.primary} /> : null}
-      <Text style={[typography.bodyBold, styles.label, { color: colors.text }]}>{label}</Text>
+      {icon ? <Ionicons name={icon} size={20} color={iconColor} /> : null}
+      <Text style={[typography.calloutBold, styles.label, { color: fg }]}>{label}</Text>
     </View>
   );
 }
@@ -40,7 +43,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 1.5,
     maxWidth: '100%',
   },
   label: {

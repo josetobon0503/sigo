@@ -74,7 +74,7 @@ export function OnboardingStep({
         {step > 1 ? (
           <BigButton
             label={t('common.back')}
-            variant="secondary"
+            variant="outline"
             icon="arrow-back"
             onPress={onBack ?? (() => router.back())}
             testID="onboarding-back"

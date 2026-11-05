@@ -22,18 +22,22 @@ describe('BigButton', () => {
     expect(screen.getByRole('button', { name: 'Start workout' })).toBeTruthy();
   });
 
-  it('is at least 56 pt tall for primary and secondary', async () => {
+  it('is at least 56 pt tall for primary, outline and inverse, 44 pt for text', async () => {
     await render(
       <>
         <BigButton label="Primary" onPress={jest.fn()} testID="primary" />
-        <BigButton label="Secondary" variant="secondary" onPress={jest.fn()} testID="secondary" />
+        <BigButton label="Outline" variant="outline" onPress={jest.fn()} testID="outline" />
+        <BigButton label="Inverse" variant="inverse" onPress={jest.fn()} testID="inverse" />
+        <BigButton label="Link" variant="text" onPress={jest.fn()} testID="text" />
       </>,
     );
 
-    for (const id of ['primary', 'secondary']) {
-      const style = StyleSheet.flatten(screen.getByTestId(id).props.style);
-      expect(style.minHeight).toBeGreaterThanOrEqual(sizes.primaryButton);
-    }
+    const minHeight = (id: string) =>
+      StyleSheet.flatten(screen.getByTestId(id).props.style).minHeight;
+    expect(minHeight('primary')).toBeGreaterThanOrEqual(sizes.primaryButton);
+    expect(minHeight('outline')).toBeGreaterThanOrEqual(56);
+    expect(minHeight('inverse')).toBeGreaterThanOrEqual(56);
+    expect(minHeight('text')).toBeGreaterThanOrEqual(sizes.minTapTarget);
   });
 
   it('is at least 64 pt tall for the alert variant', async () => {

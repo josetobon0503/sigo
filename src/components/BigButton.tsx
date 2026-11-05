@@ -4,7 +4,9 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 
 import { useTheme } from '@/theme/useTheme';
 
-export type BigButtonVariant = 'primary' | 'secondary' | 'alert';
+// primary / alert: filled, 64 pt. inverse: white with heroBg text, for heroBg and restBg.
+// outline: borderStrong 2 pt. text: link style, 44 pt min.
+export type BigButtonVariant = 'primary' | 'alert' | 'inverse' | 'outline' | 'text';
 
 export interface BigButtonProps {
   label: string;
@@ -19,7 +21,8 @@ export interface BigButtonProps {
   testID?: string;
 }
 
-// Large, full-width button. Primary and secondary are 56 pt tall; alert ("It hurts") is 64 pt.
+const INVERSE_BG = '#FFFFFF'; // DESIGN.md: white in both modes
+
 export function BigButton({
   label,
   onPress,
@@ -36,11 +39,18 @@ export function BigButton({
 
   const palette = {
     primary: { background: colors.primary, foreground: colors.onPrimary, border: colors.primary },
-    secondary: { background: colors.surface, foreground: colors.primary, border: colors.primary },
     alert: { background: colors.alert, foreground: colors.onAlert, border: colors.alert },
+    inverse: { background: INVERSE_BG, foreground: colors.heroBg, border: INVERSE_BG },
+    outline: { background: 'transparent', foreground: colors.primary, border: colors.borderStrong },
+    text: { background: 'transparent', foreground: colors.primary, border: 'transparent' },
   }[variant];
 
-  const minHeight = variant === 'alert' ? sizes.hurtButton : sizes.primaryButton;
+  const filled = variant === 'primary' || variant === 'alert';
+  const minHeight = filled
+    ? sizes.primaryButton
+    : variant === 'text'
+      ? sizes.minTapTarget
+      : sizes.secondaryButton;
 
   return (
     <Pressable
@@ -57,23 +67,16 @@ export function BigButton({
           minHeight,
           backgroundColor: palette.background,
           borderColor: palette.border,
-          borderRadius: radius.chip,
-          paddingHorizontal: spacing.lg,
+          borderRadius: filled ? radius.button : radius.secondary,
+          paddingHorizontal: spacing.ml,
           paddingVertical: spacing.sm,
-          opacity: disabled ? 0.5 : pressed ? 0.85 : 1,
+          opacity: disabled ? 0.5 : pressed ? 0.8 : 1,
         },
         style,
       ]}
     >
-      <View style={styles.content}>
-        {icon ? (
-          <Ionicons
-            name={icon}
-            size={26}
-            color={palette.foreground}
-            style={{ marginRight: spacing.sm }}
-          />
-        ) : null}
+      <View style={[styles.content, { gap: spacing.sm }]}>
+        {icon ? <Ionicons name={icon} size={24} color={palette.foreground} /> : null}
         <Text style={[typography.button, styles.label, { color: palette.foreground }]}>
           {label}
         </Text>

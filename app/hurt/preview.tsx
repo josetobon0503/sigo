@@ -46,7 +46,7 @@ export default function PreviewScreen() {
       <BigButton label={t('preview.use')} icon="checkmark" onPress={use} testID="preview-use" />
       <BigButton
         label={t('preview.back')}
-        variant="secondary"
+        variant="outline"
         icon="arrow-back"
         onPress={() => router.back()}
         testID="preview-back"

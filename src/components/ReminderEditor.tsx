@@ -110,7 +110,7 @@ export function ReminderEditor({
           ) : (
             <BigButton
               label={t('time.change')}
-              variant="secondary"
+              variant="outline"
               icon="time-outline"
               onPress={openAndroidPicker}
             />

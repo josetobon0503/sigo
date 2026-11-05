@@ -125,7 +125,7 @@ export default function TodayScreen() {
           </View>
           <BigButton
             label={t('today.repeat')}
-            variant="secondary"
+            variant="outline"
             icon="refresh"
             onPress={start}
             testID="repeat-workout"

@@ -337,7 +337,12 @@
     "hurt": "It hurts",
     "hurtHint": "Stops this exercise",
     "tooEasy": "Too easy",
-    "tooEasyHint": "Offers you a slightly harder exercise"
+    "tooEasyHint": "Offers you a slightly harder exercise",
+    "chapter": {
+      "purpose": "What it's for",
+      "howTo": "How to do it",
+      "mistakes": "How NOT to do it"
+    }
   },
   "rest": {
     "title": "Rest",
@@ -443,7 +448,10 @@
     "painEmpty": "You have no painful areas saved.",
     "painNow": "Now: {{now}}",
     "painBeforeNow": "Before: {{before}} · Now: {{now}}",
-    "painPoint": "{{day}}: {{intensity}}"
+    "painPoint": "{{day}}: {{intensity}}",
+    "today": "Today",
+    "weeks_one": "{{count}} week",
+    "weeks_other": "{{count}} weeks"
   },
   "levelName": {
     "squat": "Legs",

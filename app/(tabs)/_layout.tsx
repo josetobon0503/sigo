@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
-import type { ColorValue } from 'react-native';
+import { Text, type ColorValue } from 'react-native';
 import { Tabs } from 'expo-router/js-tabs';
 import { useTranslation } from 'react-i18next';
 
@@ -9,17 +9,9 @@ import { useTheme } from '@/theme/useTheme';
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
 function tabIcon(active: IconName, inactive: IconName) {
-  return function TabIcon({
-    color,
-    focused,
-    size,
-  }: {
-    color: ColorValue;
-    focused: boolean;
-    size: number;
-  }) {
+  return function TabIcon({ color, focused }: { color: ColorValue; focused: boolean }) {
     // Tint colors come from our tokens, so they are always plain strings.
-    return <Ionicons name={focused ? active : inactive} color={color as string} size={size + 2} />;
+    return <Ionicons name={focused ? active : inactive} color={color as string} size={26} />;
   };
 }
 
@@ -34,7 +26,12 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
-        tabBarLabelStyle: { ...typography.captionBold },
+        // Active tab: primary + bold (color alone is never the only cue).
+        tabBarLabel: ({ focused, color, children }) => (
+          <Text style={[focused ? typography.captionBold : typography.caption, { color }]}>
+            {children}
+          </Text>
+        ),
         sceneStyle: { backgroundColor: colors.bg },
       }}
     >

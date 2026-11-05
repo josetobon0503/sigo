@@ -150,13 +150,13 @@ export default function PainAreaScreen() {
         <BigButton
           label={t('pain.remove')}
           accessibilityLabel={t('pain.removeLabel', { area: t(`bodyArea.${existing.area}`) })}
-          variant="secondary"
+          variant="outline"
           icon="trash-outline"
           onPress={() => confirmRemoveArea(t, existing.area, () => removeAndClose(existing.area))}
           testID="pain-remove"
         />
       ) : null}
-      <BigButton label={t('pain.cancel')} variant="secondary" onPress={() => router.back()} />
+      <BigButton label={t('pain.cancel')} variant="outline" onPress={() => router.back()} />
     </ScreenContainer>
   );
 }

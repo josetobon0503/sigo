@@ -10,7 +10,7 @@ export interface ChipProps {
   testID?: string;
 }
 
-// Selectable pill (body areas, equipment, etc.). Selection is shown with color AND a border/weight change.
+// Selectable chip (body areas, equipment, etc.). Selection is shown with color AND a border/weight change.
 export function Chip({ label, selected = false, onPress, accessibilityLabel, testID }: ChipProps) {
   const { colors, typography, spacing, radius, sizes } = useTheme();
 
@@ -24,13 +24,13 @@ export function Chip({ label, selected = false, onPress, accessibilityLabel, tes
       style={({ pressed }) => [
         styles.chip,
         {
-          minHeight: sizes.minTapTarget,
+          minHeight: sizes.chip,
           minWidth: sizes.minTapTarget,
-          borderRadius: radius.pill,
+          borderRadius: radius.chip,
           paddingHorizontal: spacing.md,
-          paddingVertical: spacing.xs,
-          backgroundColor: selected ? colors.primary : colors.surface,
-          borderColor: selected ? colors.primary : colors.border,
+          paddingVertical: spacing.sm,
+          backgroundColor: selected ? colors.primarySoft : colors.surface,
+          borderColor: selected ? colors.primary : colors.borderStrong,
           opacity: pressed ? 0.85 : 1,
         },
       ]}
@@ -38,7 +38,7 @@ export function Chip({ label, selected = false, onPress, accessibilityLabel, tes
       <Text
         style={[
           selected ? typography.bodyBold : typography.body,
-          { color: selected ? colors.onPrimary : colors.text },
+          { color: selected ? colors.primaryPressed : colors.text },
         ]}
       >
         {label}

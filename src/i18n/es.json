@@ -337,7 +337,12 @@
     "hurt": "Me duele",
     "hurtHint": "Detiene este ejercicio",
     "tooEasy": "Está muy fácil",
-    "tooEasyHint": "Te ofrece un ejercicio un poco más difícil"
+    "tooEasyHint": "Te ofrece un ejercicio un poco más difícil",
+    "chapter": {
+      "purpose": "Para qué sirve",
+      "howTo": "Cómo hacerlo",
+      "mistakes": "Cómo NO hacerlo"
+    }
   },
   "rest": {
     "title": "Descansa",
@@ -443,7 +448,10 @@
     "painEmpty": "No tienes zonas con dolor guardadas.",
     "painNow": "Ahora: {{now}}",
     "painBeforeNow": "Antes: {{before}} · Ahora: {{now}}",
-    "painPoint": "{{day}}: {{intensity}}"
+    "painPoint": "{{day}}: {{intensity}}",
+    "today": "Hoy",
+    "weeks_one": "{{count}} semana",
+    "weeks_other": "{{count}} semanas"
   },
   "levelName": {
     "squat": "Piernas",

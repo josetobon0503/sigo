@@ -117,7 +117,7 @@ export default function HurtScreen() {
       />
       <BigButton
         label={t('hurt.cancel')}
-        variant="secondary"
+        variant="outline"
         onPress={() => router.back()}
         testID="hurt-cancel"
       />

@@ -180,7 +180,7 @@ export default function ProfileScreen() {
 
       <BigButton
         label={t('profile.safetyTips')}
-        variant="secondary"
+        variant="outline"
         icon="shield-checkmark-outline"
         onPress={() => router.push('/safety-tips')}
       />
@@ -209,14 +209,14 @@ export default function ProfileScreen() {
             </Text>
             <BigButton
               label={t('profileDev.nextDay')}
-              variant="secondary"
+              variant="outline"
               icon="arrow-forward"
               onPress={() => setDayOffset(dayOffset + 1)}
               testID="next-day"
             />
             <BigButton
               label={t('profileDev.prevDay')}
-              variant="secondary"
+              variant="outline"
               icon="arrow-back"
               onPress={() => setDayOffset(dayOffset - 1)}
               testID="prev-day"
@@ -224,7 +224,7 @@ export default function ProfileScreen() {
             {dayOffset !== 0 ? (
               <BigButton
                 label={t('profileDev.realToday')}
-                variant="secondary"
+                variant="outline"
                 icon="today-outline"
                 onPress={() => setDayOffset(0)}
                 testID="real-today"
@@ -233,7 +233,7 @@ export default function ProfileScreen() {
           </Card>
           <BigButton
             label={t('profile.resetOnboarding')}
-            variant="secondary"
+            variant="outline"
             icon="refresh"
             onPress={() => {
               resetDraft();
