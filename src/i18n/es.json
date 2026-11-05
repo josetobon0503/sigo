@@ -351,11 +351,13 @@
   },
   "rest": {
     "title": "Descansa",
-    "skip": "Saltar",
+    "skip": "Saltar descanso",
     "skipHint": "Termina el descanso ahora",
     "upNext": "A continuación",
     "ratingQuestion": "¿Cómo estuvo?",
-    "ratingHint": "Es opcional. Nos ayuda a ajustar tu rutina."
+    "ratingHint": "Es opcional. Nos ayuda a ajustar tu rutina.",
+    "subtitle": "Respira con calma y toma agua",
+    "position": "{{current}} de {{total}}"
   },
   "rating": {
     "easy": "Muy fácil",

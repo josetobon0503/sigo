@@ -164,10 +164,10 @@ describe('"Now to the bed"', () => {
     await render(<SessionScreen />);
     await user.press(screen.getByRole('button', { name: 'Hecho' }));
     expect(screen.getByTestId('up-next')).toHaveTextContent(/Ahora a la cama \(o al piso\)/);
-    await user.press(screen.getByRole('button', { name: 'Saltar' }));
+    await user.press(screen.getByRole('button', { name: 'Saltar descanso' }));
     for (let i = 0; i < 2; i++) {
       await user.press(screen.getByRole('button', { name: 'Hecho' }));
-      if (screen.queryByRole('button', { name: 'Saltar' })) break;
+      if (screen.queryByRole('button', { name: 'Saltar descanso' })) break;
     }
     // From lying down to lying down: no notice.
     expect(screen.queryByTestId('lying-notice')).toBeNull();
@@ -257,7 +257,7 @@ describe('workout session', () => {
   it('can skip the rest', async () => {
     await render(<SessionScreen />);
     await user.press(screen.getByRole('button', { name: 'Hecho' }));
-    await user.press(screen.getByRole('button', { name: 'Saltar' }));
+    await user.press(screen.getByRole('button', { name: 'Saltar descanso' }));
     expect(screen.getByText('Ejercicio 2 de 2')).toBeOnTheScreen();
   });
 
@@ -397,7 +397,7 @@ describe('"How was it?" and progression', () => {
   it('is optional: the rest goes on without an answer', async () => {
     await render(<SessionScreen />);
     await user.press(screen.getByRole('button', { name: 'Hecho' }));
-    await user.press(screen.getByRole('button', { name: 'Saltar' }));
+    await user.press(screen.getByRole('button', { name: 'Saltar descanso' }));
     expect(screen.getByText('Ejercicio 2 de 2')).toBeOnTheScreen();
   });
 

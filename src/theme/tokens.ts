@@ -18,6 +18,7 @@ export interface ColorTokens {
   heroBg: string; // hero card background
   onHero: string; // text and icons on heroBg and restBg
   onHeroMuted: string; // secondary text on heroBg and restBg
+  inverseBg: string; // inverse button and selected choice on heroBg / restBg (white in both modes)
   accent: string; // level-up icon bg, streak flame, "raised this week" segment
   onAccent: string; // icons on accent
   accentSoft: string; // level-up banner, streak card
@@ -46,6 +47,7 @@ export const colors: Record<ColorScheme, ColorTokens> = {
     heroBg: '#0B6E7A',
     onHero: '#FFFFFF',
     onHeroMuted: '#CDE7EA',
+    inverseBg: '#FFFFFF',
     accent: '#E07A2E',
     onAccent: '#13201F',
     accentSoft: '#FCEBDD',
@@ -72,6 +74,7 @@ export const colors: Record<ColorScheme, ColorTokens> = {
     heroBg: '#0B5560',
     onHero: '#FFFFFF',
     onHeroMuted: '#B9DDE1',
+    inverseBg: '#FFFFFF',
     accent: '#F29A57',
     onAccent: '#13201F',
     accentSoft: '#3A2414',

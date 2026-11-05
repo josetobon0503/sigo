@@ -66,7 +66,7 @@ describe('theme tokens', () => {
     });
 
     it('inverse button: heroBg text on white', () => {
-      expect(contrastRatio(palette.heroBg, '#FFFFFF')).toBeGreaterThanOrEqual(TEXT);
+      expect(contrastRatio(palette.heroBg, palette.inverseBg)).toBeGreaterThanOrEqual(TEXT);
     });
   });
 

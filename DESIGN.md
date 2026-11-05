@@ -42,6 +42,7 @@
 | heroBg | #0B6E7A | #0B5560 | hero card background (darker teal in dark mode, no glare) |
 | onHero | #FFFFFF | #FFFFFF | text/icons on heroBg and restBg |
 | onHeroMuted | #CDE7EA | #B9DDE1 | secondary text on heroBg and restBg |
+| inverseBg | #FFFFFF | #FFFFFF | inverse button / selected choice on heroBg and restBg |
 | accent | #E07A2E | #F29A57 | level-up icon bg, streak flame, "raised this week" segment |
 | onAccent | #13201F | #13201F | icons on accent (white on accent is under 3:1) |
 | accentSoft | #FCEBDD | #3A2414 | level-up banner, streak card |

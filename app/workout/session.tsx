@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { useTranslation } from 'react-i18next';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -20,6 +21,8 @@ import {
   BigButton,
   BigNumber,
   Card,
+  CountdownRing,
+  ExerciseRow,
   ProgressSegments,
   SetDots,
   VideoBox,
@@ -33,6 +36,7 @@ import {
   nextStep,
   ratingAsked,
   restRemainingMs,
+  restSeconds,
   timerView,
   type Session,
   type SessionItem,
@@ -118,15 +122,18 @@ export default function SessionScreen() {
   if (!session || finished) return null;
   const item = currentItem(session);
   if (!item) return null;
+  const resting = session.phase.kind === 'rest';
+  const bg = resting ? colors.restBg : colors.bg;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.bg }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: bg }]}>
+      {resting ? <StatusBar style="light" /> : null}
       {/* Opaque and above the scroll view, so content never shows through it when scrolling. */}
       <View
         style={[
           styles.topBar,
           {
-            backgroundColor: colors.bg,
+            backgroundColor: bg,
             paddingHorizontal: spacing.screen,
             paddingBottom: spacing.ms,
             gap: spacing.ms,
@@ -146,26 +153,34 @@ export default function SessionScreen() {
                 paddingHorizontal: spacing.ms,
                 gap: spacing.xs,
                 borderRadius: radius.secondary,
-                borderColor: colors.borderStrong,
+                borderColor: resting ? colors.onHeroMuted : colors.borderStrong,
                 opacity: pressed ? 0.8 : 1,
               },
             ]}
           >
-            <Ionicons name="close" size={22} color={colors.primary} />
-            <Text style={[typography.bodyBold, { color: colors.primary }]}>
+            <Ionicons name="close" size={22} color={resting ? colors.onHero : colors.primary} />
+            <Text
+              style={[typography.bodyBold, { color: resting ? colors.onHero : colors.primary }]}
+            >
               {t('workout.exit')}
             </Text>
           </Pressable>
-          <Text style={[typography.calloutBold, styles.progress, { color: colors.textSecondary }]}>
+          <Text
+            style={[
+              typography.calloutBold,
+              styles.progress,
+              { color: resting ? colors.onHeroMuted : colors.textSecondary },
+            ]}
+          >
             {t('workout.exerciseProgress', {
               current: session.index + 1,
               total: session.items.length,
             })}
           </Text>
         </View>
-        <ProgressSegments total={session.items.length} current={session.index} />
+        {resting ? null : <ProgressSegments total={session.items.length} current={session.index} />}
       </View>
-      {session.phase.kind === 'rest' ? (
+      {resting ? (
         <RestView session={session} now={now} lang={lang} />
       ) : (
         <ExerciseView session={session} item={item} now={now} lang={lang} />
@@ -358,77 +373,132 @@ function ExerciseView({
 
 function RestView({ session, now, lang }: { session: Session; now: number; lang: Lang }) {
   const { t } = useTranslation();
-  const { colors, typography, spacing } = useTheme();
+  const { colors, typography, spacing, radius, sizes } = useTheme();
   const skipRest = useSessionStore((s) => s.skipRest);
   const rate = useSessionStore((s) => s.rate);
-  const seconds = displaySeconds(restRemainingMs(session, now));
-  const rated = session.items[session.index]?.rating;
+  const remainingMs = restRemainingMs(session, now);
+  const seconds = displaySeconds(remainingMs);
+  const current = session.items[session.index];
+  const totalMs = current ? restSeconds(current, session.seatedOnly) * 1000 : remainingMs;
+  const rated = current?.rating;
   const next = nextStep(session);
   const nextItem = session.items[next.index];
   const nextExercise = nextItem ? byId.get(nextItem.exerciseId) : undefined;
-  const currentExercise = byId.get(session.items[session.index]?.exerciseId ?? '');
+  const currentExercise = byId.get(current?.exerciseId ?? '');
   const floorOk = useProfileStore((s) => s.profile?.floorOk ?? false);
   // Going from standing or sitting to lying down: say where to go.
   const toBed = nextExercise?.position === 'lying' && currentExercise?.position !== 'lying';
 
   return (
     <>
-      <ScrollView contentContainerStyle={{ padding: spacing.md, gap: spacing.md }}>
-        <Text
-          accessibilityRole="header"
-          style={[typography.largeTitle, styles.center, { color: colors.text }]}
-        >
-          {t('rest.title')}
-        </Text>
-        <BigNumber
-          value={String(seconds)}
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={{ paddingHorizontal: spacing.screen, gap: spacing.lg }}
+      >
+        <View style={{ gap: spacing.xs }}>
+          <Text
+            accessibilityRole="header"
+            style={[typography.title, styles.center, { color: colors.onHero }]}
+          >
+            {t('rest.title')}
+          </Text>
+          <Text style={[typography.body, styles.center, { color: colors.onHeroMuted }]}>
+            {t('rest.subtitle')}
+          </Text>
+        </View>
+        <CountdownRing
+          seconds={seconds}
+          progress={totalMs > 0 ? remainingMs / totalMs : 0}
           label={t('workout.secondsLabel')}
           accessibilityLabel={t('workout.secondsLeft', { count: seconds })}
           testID="rest-timer"
         />
         {ratingAsked(session) ? (
-          <Card style={{ gap: spacing.sm }} testID="rating">
-            <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
+          <View style={{ gap: spacing.sm }} testID="rating">
+            <Text
+              accessibilityRole="header"
+              style={[typography.headline, styles.center, { color: colors.onHero }]}
+            >
               {t('rest.ratingQuestion')}
             </Text>
-            <Text style={[typography.caption, { color: colors.textSecondary }]}>
+            {currentExercise ? (
+              <Text style={[typography.callout, styles.center, { color: colors.onHeroMuted }]}>
+                {currentExercise.name[lang]}
+              </Text>
+            ) : null}
+            <View style={[styles.choices, { gap: spacing.sm }]}>
+              {RATINGS.map((rating) => {
+                const selected = rated === rating;
+                return (
+                  <Pressable
+                    key={rating}
+                    onPress={() => rate(session.index, rating)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t(`rating.${rating}`)}
+                    accessibilityState={{ selected }}
+                    testID={`rating-${rating}`}
+                    style={({ pressed }) => [
+                      styles.choice,
+                      {
+                        minHeight: sizes.secondaryButton,
+                        borderRadius: radius.secondary,
+                        paddingHorizontal: spacing.xs,
+                        borderColor: colors.onHero,
+                        // Selected = inverse fill (white in both modes).
+                        backgroundColor: selected ? colors.inverseBg : 'transparent',
+                        opacity: pressed ? 0.8 : 1,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        selected ? typography.bodyBold : typography.body,
+                        styles.center,
+                        { color: selected ? colors.heroBg : colors.onHero },
+                      ]}
+                    >
+                      {t(`rating.${rating}`)}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+            <Text style={[typography.caption, styles.center, { color: colors.onHeroMuted }]}>
               {t('rest.ratingHint')}
             </Text>
-            {RATINGS.map((rating) => (
-              <BigButton
-                key={rating}
-                label={t(`rating.${rating}`)}
-                variant={rated === rating ? 'primary' : 'outline'}
-                icon={rated === rating ? 'checkmark' : undefined}
-                selected={rated === rating}
-                onPress={() => rate(session.index, rating)}
-                testID={`rating-${rating}`}
-              />
-            ))}
-          </Card>
+          </View>
         ) : null}
         {nextItem && nextExercise ? (
-          <Card style={{ gap: spacing.xs }} testID="up-next">
-            <Text style={[typography.body, { color: colors.textSecondary }]}>
-              {t('rest.upNext')}
+          <Card style={{ gap: spacing.sm }} testID="up-next">
+            <Text style={[typography.calloutBold, { color: colors.textSecondary }]}>
+              {`${t('rest.upNext')} \u00b7 ${t('rest.position', { current: next.index + 1, total: session.items.length })}`}
             </Text>
             {toBed ? (
               <Text style={[typography.bodyBold, { color: colors.primary }]} testID="lying-notice">
                 {t(floorOk ? 'today.lyingNotice' : 'today.lyingNoticeBed')}
               </Text>
             ) : null}
-            <Text style={[typography.title, { color: colors.text }]}>
-              {nextExercise.name[lang]}
-            </Text>
-            <Text style={[typography.body, { color: colors.text }]}>
-              {`${t('workout.setProgress', { current: next.set, total: nextItem.dosage.sets })} · ${formatDosage(t, nextItem.dosage, nextItem.perSide)}`}
-            </Text>
+            <ExerciseRow
+              name={nextExercise.name[lang]}
+              meta={`${t('workout.setProgress', { current: next.set, total: nextItem.dosage.sets })} \u00b7 ${formatDosage(t, nextItem.dosage, nextItem.perSide)}`}
+              divider={false}
+            />
           </Card>
         ) : null}
       </ScrollView>
-      <View style={[styles.footer, { padding: spacing.md, borderTopColor: colors.border }]}>
+      <View
+        style={[
+          styles.footer,
+          {
+            paddingHorizontal: spacing.screen,
+            paddingVertical: spacing.ms,
+            borderTopColor: colors.restTrack,
+          },
+        ]}
+      >
         <BigButton
           label={t('rest.skip')}
+          variant="inverse"
           icon="play-skip-forward"
           accessibilityHint={t('rest.skipHint')}
           onPress={skipRest}
@@ -471,5 +541,13 @@ const styles = StyleSheet.create({
   },
   footer: {
     borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  choices: {
+    flexDirection: 'row',
+  },
+  choice: {
+    flex: 1,
+    borderWidth: 2,
+    justifyContent: 'center',
   },
 });

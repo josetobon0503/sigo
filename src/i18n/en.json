@@ -351,11 +351,13 @@
   },
   "rest": {
     "title": "Rest",
-    "skip": "Skip",
+    "skip": "Skip rest",
     "skipHint": "Ends the rest now",
     "upNext": "Up next",
     "ratingQuestion": "How was it?",
-    "ratingHint": "It's optional. It helps us adjust your workout."
+    "ratingHint": "It's optional. It helps us adjust your workout.",
+    "subtitle": "Breathe slowly and have some water",
+    "position": "{{current}} of {{total}}"
   },
   "rating": {
     "easy": "Too easy",

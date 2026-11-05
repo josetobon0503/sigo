@@ -21,8 +21,6 @@ export interface BigButtonProps {
   testID?: string;
 }
 
-const INVERSE_BG = '#FFFFFF'; // DESIGN.md: white in both modes
-
 export function BigButton({
   label,
   onPress,
@@ -40,7 +38,7 @@ export function BigButton({
   const palette = {
     primary: { background: colors.primary, foreground: colors.onPrimary, border: colors.primary },
     alert: { background: colors.alert, foreground: colors.onAlert, border: colors.alert },
-    inverse: { background: INVERSE_BG, foreground: colors.heroBg, border: INVERSE_BG },
+    inverse: { background: colors.inverseBg, foreground: colors.heroBg, border: colors.inverseBg },
     outline: { background: 'transparent', foreground: colors.primary, border: colors.borderStrong },
     text: { background: 'transparent', foreground: colors.primary, border: 'transparent' },
   }[variant];
