@@ -186,7 +186,7 @@ export default function ProfileScreen() {
       />
 
       <Card style={{ gap: spacing.xs }}>
-        <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
+        <Text accessibilityRole="header" style={[typography.headline, { color: colors.text }]}>
           {t('profile.aboutTitle')}
         </Text>
         <Text style={[typography.body, { color: colors.text }]}>{t('app.tagline')}</Text>

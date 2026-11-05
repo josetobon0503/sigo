@@ -44,7 +44,7 @@ export default function SwapScreen() {
   return (
     <ScreenContainer title={t('swap.title')}>
       <Card style={{ gap: spacing.sm }} testID="swap-suggestion">
-        <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
+        <Text accessibilityRole="header" style={[typography.title2, { color: colors.text }]}>
           {exercise.name[lang]}
         </Text>
         <Text style={[typography.bodyBold, { color: colors.primary }]} testID="swap-reason">

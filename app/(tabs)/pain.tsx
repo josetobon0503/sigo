@@ -45,7 +45,7 @@ export default function PainScreen() {
         onZonePress={(area, side) => openEditor(area, side ?? undefined)}
       />
 
-      <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
+      <Text accessibilityRole="header" style={[typography.title2, { color: colors.text }]}>
         {t('pain.listTitle')}
       </Text>
       {painAreas.length === 0 ? (
@@ -55,7 +55,7 @@ export default function PainScreen() {
       ) : null}
       {painAreas.map((p) => (
         <Card key={p.area} style={{ gap: spacing.sm }} testID={`pain-card-${p.area}`}>
-          <Text style={[typography.title, { color: colors.text }]}>{title(p)}</Text>
+          <Text style={[typography.headline, { color: colors.text }]}>{title(p)}</Text>
           <Text style={[typography.body, { color: colors.text }]}>
             {t('pain.summary', {
               intensity: t(`painIntensity.${p.intensity}`),

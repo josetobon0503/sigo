@@ -75,7 +75,7 @@ export function BodyMap({ value, onChange, onZonePress }: BodyMapProps) {
             key={i}
             importantForAccessibility="no"
             accessibilityElementsHidden
-            style={[styles.shape, shape, { backgroundColor: colors.border }]}
+            style={[styles.shape, shape, { backgroundColor: colors.borderStrong }]}
           />
         ))}
         {ZONES.map(({ area, side, x, y }) => {

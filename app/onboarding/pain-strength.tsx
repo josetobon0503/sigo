@@ -16,7 +16,7 @@ const KINDS: PainKind[] = ['achy', 'sharp', 'stiff'];
 export default function PainStrengthScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const painAreas = useOnboardingStore((s) => s.draft.painAreas);
   const update = useOnboardingStore((s) => s.update);
   const setPainAreas = (next: PainSelection[]) => update({ painAreas: next });
@@ -38,8 +38,8 @@ export default function PainStrengthScreen() {
       onNext={() => router.push('/onboarding/equipment')}
     >
       {painAreas.map((p) => (
-        <Card key={p.area} style={{ gap: 16 }}>
-          <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
+        <Card key={p.area} style={{ gap: spacing.md }}>
+          <Text accessibilityRole="header" style={[typography.headline, { color: colors.text }]}>
             {title(p)}
           </Text>
           <FacesScale

@@ -49,7 +49,7 @@ export default function HarderScreen() {
   return (
     <ScreenContainer title={t('harder.title')}>
       <Card style={{ gap: spacing.sm }} testID="harder-suggestion">
-        <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
+        <Text accessibilityRole="header" style={[typography.title2, { color: colors.text }]}>
           {exercise.name[lang]}
         </Text>
         <Text style={[typography.body, { color: colors.text }]}>{exercise.purpose[lang]}</Text>

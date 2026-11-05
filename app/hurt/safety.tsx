@@ -25,7 +25,7 @@ export default function SafetyScreen() {
   return (
     <ScreenContainer>
       <View style={[styles.header, { gap: spacing.sm }]}>
-        <Ionicons name="hand-left" size={40} color={colors.alert} />
+        <Ionicons name="hand-left" size={40} color={colors.alertText} />
         <Text
           accessibilityRole="header"
           style={[typography.largeTitle, styles.title, { color: colors.text }]}
