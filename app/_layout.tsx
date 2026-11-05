@@ -1,3 +1,8 @@
+import {
+  AtkinsonHyperlegible_400Regular,
+  AtkinsonHyperlegible_700Bold,
+  useFonts,
+} from '@expo-google-fonts/atkinson-hyperlegible';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -8,14 +13,19 @@ import { useHistoryStore } from '@/store/historyStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useTheme } from '@/theme/useTheme';
 
-// Keep the splash screen up until the saved profile and history are loaded.
+// Keep the splash screen up until the saved profile, history and fonts are loaded.
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const { colors } = useTheme();
   const profileHydrated = useProfileStore((s) => s.hydrated);
   const historyHydrated = useHistoryStore((s) => s.hydrated);
-  const hydrated = profileHydrated && historyHydrated;
+  // A font error falls back to the system font instead of blocking the app.
+  const [fontsLoaded, fontError] = useFonts({
+    AtkinsonHyperlegible_400Regular,
+    AtkinsonHyperlegible_700Bold,
+  });
+  const hydrated = profileHydrated && historyHydrated && (fontsLoaded || fontError !== null);
   const onboarded = useProfileStore((s) => s.profile !== null);
   const language = useProfileStore((s) => s.profile?.language);
 
@@ -33,7 +43,7 @@ export default function RootLayout() {
     <>
       <StatusBar style="auto" />
       <Stack
-        screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}
+        screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}
       >
         <Stack.Protected guard={onboarded}>
           <Stack.Screen name="(tabs)" />

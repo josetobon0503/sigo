@@ -96,7 +96,7 @@ export function BodyMap({ value, onChange, onZonePress }: BodyMapProps) {
                 {
                   left: x - ZONE / 2,
                   top: y - ZONE / 2,
-                  backgroundColor: selected ? colors.primary : colors.card,
+                  backgroundColor: selected ? colors.primary : colors.surface,
                   borderColor: colors.primary,
                   opacity: pressed ? 0.8 : 1,
                 },

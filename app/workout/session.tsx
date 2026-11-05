@@ -110,7 +110,7 @@ export default function SessionScreen() {
   if (!item) return null;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.bg }]}>
       <View style={[styles.topBar, { paddingHorizontal: spacing.md, gap: spacing.md }]}>
         <Pressable
           onPress={confirmExit}
@@ -122,7 +122,7 @@ export default function SessionScreen() {
             {
               minHeight: sizes.minTapTarget,
               paddingHorizontal: spacing.md,
-              borderRadius: radius.md,
+              borderRadius: radius.chip,
               borderColor: colors.primary,
               opacity: pressed ? 0.85 : 1,
             },

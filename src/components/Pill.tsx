@@ -21,7 +21,7 @@ export function Pill({ label, icon, testID }: PillProps) {
         styles.pill,
         {
           borderColor: colors.primary,
-          backgroundColor: colors.card,
+          backgroundColor: colors.surface,
           borderRadius: radius.pill,
           paddingHorizontal: spacing.md,
           paddingVertical: spacing.sm,

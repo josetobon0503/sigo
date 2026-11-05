@@ -33,9 +33,9 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
-        tabBarStyle: { backgroundColor: colors.card, borderTopColor: colors.border },
-        tabBarLabelStyle: { fontSize: typography.caption.fontSize, fontWeight: '600' },
-        sceneStyle: { backgroundColor: colors.background },
+        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
+        tabBarLabelStyle: { ...typography.captionBold },
+        sceneStyle: { backgroundColor: colors.bg },
       }}
     >
       <Tabs.Screen

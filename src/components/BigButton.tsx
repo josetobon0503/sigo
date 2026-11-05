@@ -36,7 +36,7 @@ export function BigButton({
 
   const palette = {
     primary: { background: colors.primary, foreground: colors.onPrimary, border: colors.primary },
-    secondary: { background: colors.card, foreground: colors.primary, border: colors.primary },
+    secondary: { background: colors.surface, foreground: colors.primary, border: colors.primary },
     alert: { background: colors.alert, foreground: colors.onAlert, border: colors.alert },
   }[variant];
 
@@ -57,7 +57,7 @@ export function BigButton({
           minHeight,
           backgroundColor: palette.background,
           borderColor: palette.border,
-          borderRadius: radius.md,
+          borderRadius: radius.chip,
           paddingHorizontal: spacing.lg,
           paddingVertical: spacing.sm,
           opacity: disabled ? 0.5 : pressed ? 0.85 : 1,

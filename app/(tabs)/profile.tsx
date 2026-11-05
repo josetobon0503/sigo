@@ -62,7 +62,7 @@ export default function ProfileScreen() {
               color: colors.text,
               borderColor: colors.border,
               borderWidth: 2,
-              borderRadius: radius.md,
+              borderRadius: radius.chip,
               paddingHorizontal: spacing.md,
             },
           ]}

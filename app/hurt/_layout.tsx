@@ -14,7 +14,7 @@ export default function HurtLayout() {
       screenOptions={{
         headerShown: false,
         gestureEnabled: false,
-        contentStyle: { backgroundColor: colors.background },
+        contentStyle: { backgroundColor: colors.bg },
       }}
     />
   );

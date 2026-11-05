@@ -38,7 +38,7 @@ export function ScreenContainer({
   return (
     <SafeAreaView
       edges={['top', 'left', 'right']}
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[styles.root, { backgroundColor: colors.bg }]}
     >
       {scroll ? (
         <ScrollView contentContainerStyle={[padding, contentStyle]}>{content}</ScrollView>

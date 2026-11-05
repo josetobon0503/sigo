@@ -41,10 +41,10 @@ export default function AboutScreen() {
           {
             minHeight: sizes.primaryButton,
             color: colors.text,
-            backgroundColor: colors.card,
+            backgroundColor: colors.surface,
             borderColor: colors.border,
             borderWidth: 2,
-            borderRadius: radius.md,
+            borderRadius: radius.chip,
             paddingHorizontal: spacing.md,
           },
         ]}

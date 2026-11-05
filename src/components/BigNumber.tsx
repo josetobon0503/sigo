@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { BIG_NUMBER_MAX_SCALE } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
 
 export interface BigNumberProps {
@@ -23,8 +24,8 @@ export function BigNumber({ value, label, accessibilityLabel, testID }: BigNumbe
       style={styles.root}
     >
       <Text
-        style={[styles.value, { color: colors.text }]}
-        maxFontSizeMultiplier={1.2}
+        style={[typography.display, styles.value, { color: colors.text }]}
+        maxFontSizeMultiplier={BIG_NUMBER_MAX_SCALE}
         adjustsFontSizeToFit
         numberOfLines={1}
       >
@@ -42,9 +43,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   value: {
-    fontSize: 120,
-    lineHeight: 132,
-    fontWeight: '700',
     fontVariant: ['tabular-nums'],
     textAlign: 'center',
   },

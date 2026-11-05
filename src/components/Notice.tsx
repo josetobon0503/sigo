@@ -16,7 +16,7 @@ export function Notice({ title, body, testID }: NoticeProps) {
   const { colors, typography, spacing } = useTheme();
 
   return (
-    <Card testID={testID} style={{ borderColor: colors.secondary, borderWidth: 2 }}>
+    <Card testID={testID} style={{ borderColor: colors.accent, borderWidth: 2 }}>
       <View
         accessible
         accessibilityRole="alert"
@@ -24,7 +24,7 @@ export function Notice({ title, body, testID }: NoticeProps) {
         accessibilityLabel={`${title}. ${body}`}
         style={[styles.row, { gap: spacing.sm }]}
       >
-        <Ionicons name="medkit-outline" size={28} color={colors.secondary} />
+        <Ionicons name="medkit-outline" size={28} color={colors.accent} />
         <View style={[styles.text, { gap: spacing.xs }]}>
           <Text style={[typography.bodyBold, { color: colors.text }]}>{title}</Text>
           <Text style={[typography.body, { color: colors.text }]}>{body}</Text>

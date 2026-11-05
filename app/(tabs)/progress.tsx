@@ -86,7 +86,7 @@ export default function ProgressScreen() {
                   {
                     borderRadius: radius.pill,
                     borderColor: colors.primary,
-                    backgroundColor: trained ? colors.primary : colors.card,
+                    backgroundColor: trained ? colors.primary : colors.surface,
                   },
                 ]}
               >
@@ -156,9 +156,9 @@ export default function ProgressScreen() {
                     style={[
                       styles.segment,
                       {
-                        borderRadius: radius.sm,
+                        borderRadius: radius.chip,
                         borderColor: colors.primary,
-                        backgroundColor: n <= level ? colors.primary : colors.card,
+                        backgroundColor: n <= level ? colors.primary : colors.surface,
                       },
                     ]}
                   />
@@ -239,7 +239,7 @@ function PainRow({ history, lang }: { history: AreaHistory; lang: 'es' | 'en' })
               style={{
                 width: 24,
                 height: p.intensity * BAR_STEP,
-                borderRadius: radius.sm,
+                borderRadius: radius.chip,
                 backgroundColor: faceScale[p.intensity - 1],
               }}
             />

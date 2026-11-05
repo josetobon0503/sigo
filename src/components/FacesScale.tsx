@@ -63,10 +63,10 @@ export function FacesScale<T extends string | number = PainIntensity>({
                 minHeight: sizes.primaryButton,
                 gap: spacing.md,
                 paddingHorizontal: spacing.md,
-                borderRadius: radius.md,
+                borderRadius: radius.chip,
                 borderWidth: selected ? 3 : 2,
                 borderColor: selected ? colors.primary : colors.border,
-                backgroundColor: colors.card,
+                backgroundColor: colors.surface,
                 opacity: pressed ? 0.85 : 1,
               },
             ]}

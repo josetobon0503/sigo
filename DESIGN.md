@@ -43,12 +43,15 @@
 | onHero | #FFFFFF | #FFFFFF | text/icons on heroBg and restBg |
 | onHeroMuted | #CDE7EA | #B9DDE1 | secondary text on heroBg and restBg |
 | accent | #E07A2E | #F29A57 | level-up icon bg, streak flame, "raised this week" segment |
+| onAccent | #13201F | #13201F | icons on accent (white on accent is under 3:1) |
 | accentSoft | #FCEBDD | #3A2414 | level-up banner, streak card |
 | onAccentSoft | #7A3A0C | #F7C9A3 | text on accentSoft |
 | alert | #D70015 | #D70015 | ONLY Me duele / Safety |
 | onAlert | #FFFFFF | #FFFFFF | text on alert |
+| alertText | #D70015 | #FF6B6B | red text / icons on bg or surface, e.g. the chest-pain link (#D70015 is 3.1:1 on dark surface) |
 | restBg | #0B6E7A | #0B5560 | full-screen rest background |
 | restTrack | #2B8893 | #2B7A84 | countdown ring track |
+| videoBg | #0E3B40 | #0A2A2E | video box placeholder |
 
 Faces (both modes): excelente #3E9B48 · bien #8CC152 · regular #F6C343 · cansancio #F08A3C · molestias #E5574F;
 eyes and mouth #13201F.

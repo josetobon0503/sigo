@@ -29,7 +29,7 @@ export function Chip({ label, selected = false, onPress, accessibilityLabel, tes
           borderRadius: radius.pill,
           paddingHorizontal: spacing.md,
           paddingVertical: spacing.xs,
-          backgroundColor: selected ? colors.primary : colors.card,
+          backgroundColor: selected ? colors.primary : colors.surface,
           borderColor: selected ? colors.primary : colors.border,
           opacity: pressed ? 0.85 : 1,
         },
