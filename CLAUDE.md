@@ -105,7 +105,7 @@ src/
   store/                  # Zustand stores (profile, pain history, history, session)
   i18n/                   # i18n setup + es.json + en.json
   theme/                  # tokens.ts (colors, type, spacing)
-  components/             # BigButton, Card, Chip, FacesScale, BodyMap, VideoChapters, etc.
+  components/             # BigButton, Card, HeroCard, Chip, FacesScale, FaceIcon, BodyMap, VideoBox, etc.
 docs/
   biblioteca-ejercicios.md # generated: every exercise in a Spanish table (npm run export:library)
 scripts/
@@ -356,21 +356,13 @@ An area is **caution** if intensity = 2 (allowed, but prefer seated / supported 
 - Any "yes" -> show "Please talk to your doctor before starting", set all levels to 1 and `seatedOnly = true`.
   The user may continue (it is their decision) and can change `seatedOnly` later in Profile.
 
-## 7. Design system (from Jose's style guide)
+## 7. Design system
 
-Personality: calm, clear, encouraging.
-
-| Token | Value | Use |
-|---|---|---|
-| primary | `#0B6E7A` | buttons, selected tabs, links |
-| secondary | `#C2410C` | small highlights only |
-| alert | `#D70015` | ONLY the "It hurts" button and safety screens |
-| background | `#F2F2F7` | screen background (light) |
-| card | `#FFFFFF` | cards |
-
-Support dark mode with equivalent tokens. Type scale: largeTitle 34 bold, title 22 bold, body 17, caption 15
-(minimum on screen). Side margins 16. Icons: `@expo/vector-icons` (Ionicons) as a cross-platform stand-in for SF
-Symbols. Feeling and pain scales use five colored faces (green to red) **plus text labels** (never color alone).
+**DESIGN.md is the source of truth** for typography (Atkinson Hyperlegible), color tokens (light and dark),
+spacing, radii, components and the redesigned screens. Tokens live in `src/theme/tokens.ts`; screens never use hex
+values. Personality: calm, clear, encouraging. The brand teal `#0B6E7A` and the alert red `#D70015` (ONLY "It hurts"
+and safety) stay. Icons: `@expo/vector-icons` (Ionicons). Feeling and pain faces are drawn with react-native-svg
+(`FaceIcon`), green to red, **plus text labels** (never color alone, never emoji).
 
 ## 8. Screens (MVP)
 
@@ -446,6 +438,10 @@ screens; non-personalized ads only; no health data ever passed to an ad SDK; res
 - [x] Phase 6: Progress tab (week, streak by weeks with a weekly goal kept on each log, best streak, minutes,
   levels, feelings, pain history store) and the level-change notice on Today; weekly goal in onboarding and Profile
   (profile v5)
+- [x] Visual redesign (DESIGN.md): Atkinson Hyperlegible, light / dark tokens with a contrast test for every pair,
+  new components (HeroCard, WeekStrip, StreakBadge, LevelUpBanner, ProgressSegments, SetDots, CountdownRing,
+  FaceIcon, LevelBars, ExerciseRow, VideoBox), redesigned Today, Exercise, Rest, Finish and Progress; tokens on the
+  other screens (react-native-svg added)
 - [ ] Phase 7: Video chapters + distance mode with spoken guidance
 - [ ] Phase 8: Reminders, accessibility pass, polish
 - [ ] Phase 9: EAS build, TestFlight, privacy policy, App Store listing
