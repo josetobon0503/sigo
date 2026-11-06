@@ -15,7 +15,12 @@ import type {
 } from './types';
 
 export const GENTLE_REST_SECONDS = 45; // after a level 1 exercise, or for seated-only users
-export const SWITCH_SIDE_SECONDS = 5; // time to change sides in a timed perSide set
+export const SWITCH_SIDE_SECONDS = 5; // time to change sides in a perSide set
+// Distance mode counts the reps out loud: a few seconds to announce the set, one number per rep,
+// and after the last rep "Well done!" with a short wait before the rest.
+export const LEAD_MS = 3000;
+export const WELL_DONE_MS = 3000;
+export const REP_MS = { normal: 3000, slow: 5000 } as const;
 
 export interface SessionItem extends PlannedItem {
   level: Exercise['level'];
@@ -44,6 +49,7 @@ export interface Session {
   set: number; // current set, 1-based
   side: 1 | 2; // current side of a timed perSide set
   seatedOnly: boolean;
+  countMs: number | null; // distance mode: time per rep, so rep sets run on a timer; null = off
   phase: SessionPhase;
 }
 
@@ -70,6 +76,7 @@ export function startSession(
     set: 1,
     side: 1,
     seatedOnly,
+    countMs: null,
     phase: items.length === 0 ? { kind: 'finished' } : { kind: 'exercise', timer: IDLE },
   };
 }
@@ -82,21 +89,39 @@ export function restSeconds(item: Pick<SessionItem, 'level'>, seatedOnly: boolea
   return item.level === 1 || seatedOnly ? GENTLE_REST_SECONDS : REST_SECONDS;
 }
 
-// Total length of the current timed set from where the timer starts: one side, or for side 2
-// of a perSide set, the side switch plus the second side.
-function setDurationMs(item: SessionItem, side: 1 | 2): number {
-  if (item.dosage.kind !== 'time') return 0;
-  const switchSec = side === 2 ? SWITCH_SIDE_SECONDS : 0;
-  return (switchSec + item.dosage.seconds) * 1000;
+// Time per rep in distance mode. Level 5 (slow tempo) always gets the slow pace.
+export function repMs(item: SessionItem, countMs: number): number {
+  return item.level === 5 || (item.dosage.kind === 'reps' && item.dosage.slow)
+    ? REP_MS.slow
+    : countMs;
+}
+
+// Whether the current set runs on a timer: timed sets always, rep sets in distance mode.
+function timed(session: Session, item: SessionItem): boolean {
+  return item.dosage.kind === 'time' || session.countMs !== null;
+}
+
+// Total length of the current set from where the timer starts: one side, or for side 2 of a
+// perSide set, the side switch plus the second side. A rep set in distance mode starts with the
+// announcement on side 1 and ends with "Well done!" on its last side.
+export function setDurationMs(session: Session, item: SessionItem, side: 1 | 2): number {
+  const switchMs = side === 2 ? SWITCH_SIDE_SECONDS * 1000 : 0;
+  if (item.dosage.kind === 'time') return switchMs + item.dosage.seconds * 1000;
+  if (session.countMs === null) return 0;
+  const reps = item.dosage.reps * repMs(item, session.countMs);
+  const lastSide = !item.perSide || side === 2;
+  return (side === 1 ? LEAD_MS : switchMs) + reps + (lastSide ? WELL_DONE_MS : 0);
 }
 
 export function startTimer(session: Session, now: number): Session {
   const item = currentItem(session);
   const { phase } = session;
-  if (!item || item.dosage.kind !== 'time' || phase.kind !== 'exercise') return session;
+  if (!item || !timed(session, item) || phase.kind !== 'exercise') return session;
   if (phase.timer.status === 'running') return session;
   const remaining =
-    phase.timer.status === 'paused' ? phase.timer.remainingMs : setDurationMs(item, session.side);
+    phase.timer.status === 'paused'
+      ? phase.timer.remainingMs
+      : setDurationMs(session, item, session.side);
   return {
     ...session,
     phase: { kind: 'exercise', timer: { status: 'running', endsAt: now + remaining } },
@@ -204,7 +229,7 @@ export function tick(session: Session, now: number): Session {
       if (now < endsAt) return s;
       if (item.perSide && s.side === 1) {
         // Side 1 is done: change sides, then the timer goes on for side 2 by itself.
-        const timer: Timer = { status: 'running', endsAt: endsAt + setDurationMs(item, 2) };
+        const timer: Timer = { status: 'running', endsAt: endsAt + setDurationMs(s, item, 2) };
         s = { ...s, side: 2, phase: { kind: 'exercise', timer } };
       } else {
         s = completeSet(s, endsAt);
@@ -236,7 +261,7 @@ export function timerView(
       ? Math.max(0, timer.endsAt - now)
       : timer.status === 'paused'
         ? timer.remainingMs
-        : setDurationMs(item, session.side);
+        : setDurationMs(session, item, session.side);
   const sideMs = item.dosage.seconds * 1000;
   const switching = session.side === 2 && total > sideMs;
   return {
@@ -244,6 +269,44 @@ export function timerView(
     running: timer.status === 'running',
     switching,
   };
+}
+
+// Distance mode on (time per rep) or off (null). Turning it off stops a running rep count; the set
+// is then done by hand again.
+export function setCountMs(session: Session, countMs: number | null): Session {
+  if (session.countMs === countMs) return session;
+  const item = currentItem(session);
+  const { phase } = session;
+  const repsCounting = !!item && item.dosage.kind === 'reps' && phase.kind === 'exercise';
+  return {
+    ...session,
+    countMs,
+    ...(repsCounting
+      ? { side: 1 as const, phase: { kind: 'exercise' as const, timer: IDLE } }
+      : {}),
+  };
+}
+
+// Where a rep set is in distance mode: ms into the current side's timer, or null when it is not counting.
+export function segmentElapsedMs(session: Session, now: number): number | null {
+  const item = currentItem(session);
+  const { phase } = session;
+  if (!item || phase.kind !== 'exercise' || phase.timer.status === 'idle') return null;
+  const total = setDurationMs(session, item, session.side);
+  const left =
+    phase.timer.status === 'running' ? phase.timer.endsAt - now : phase.timer.remainingMs;
+  return Math.min(total, Math.max(0, total - left));
+}
+
+// Reps counted so far on the current side of a rep set in distance mode.
+export function repsCounted(session: Session, now: number): number {
+  const item = currentItem(session);
+  const elapsed = segmentElapsedMs(session, now);
+  if (!item || item.dosage.kind !== 'reps' || session.countMs === null || elapsed === null)
+    return 0;
+  const start = session.side === 1 ? LEAD_MS : SWITCH_SIDE_SECONDS * 1000;
+  const count = Math.floor((elapsed - start) / repMs(item, session.countMs));
+  return Math.max(0, Math.min(item.dosage.reps, count));
 }
 
 export function restRemainingMs(session: Session, now: number): number {

@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { defaultCountSpeed } from '@/engine/profile';
 import { DEFAULT_WEEKLY_GOAL, painChanges } from '@/engine/stats';
 import type { PainArea, UserProfile } from '@/engine/types';
 
@@ -17,6 +18,7 @@ type Persisted = { profile: UserProfile | null };
 // Version 4 added exercises lying down: the bed is checked, as it is in onboarding.
 // Version 5 added the weekly goal: 2 days, the same default as onboarding.
 // Version 6 added the body figure of the muscle map: female, the same default as a new profile.
+// Version 7 added distance mode (off) and its count speed (slow for seated-only or 70+).
 export function migrateProfile(persisted: unknown, version: number): Persisted {
   const state = (persisted ?? { profile: null }) as Persisted;
   if (!state.profile) return state;
@@ -31,6 +33,13 @@ export function migrateProfile(persisted: unknown, version: number): Persisted {
   }
   if (version < 5) profile = { ...profile, weeklyGoal: profile.weeklyGoal ?? DEFAULT_WEEKLY_GOAL };
   if (version < 6) profile = { ...profile, bodyFigure: profile.bodyFigure ?? 'female' };
+  if (version < 7) {
+    profile = {
+      ...profile,
+      distanceMode: profile.distanceMode ?? false,
+      countSpeed: profile.countSpeed ?? defaultCountSpeed(profile),
+    };
+  }
   return { profile };
 }
 
@@ -68,7 +77,7 @@ export const useProfileStore = create<ProfileState>()(
     }),
     {
       name: 'sigo-profile',
-      version: 6,
+      version: 7,
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({ profile: state.profile }),
       migrate: (persisted, version) => migrateProfile(persisted, version),

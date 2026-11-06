@@ -126,6 +126,10 @@ VideoBox → name (title, centered) + "Serie 1 de 3" + SetDots → giant reps nu
 "repeticiones" (or a timer for timed sets) → text button "Está muy fácil" (arrow-up icon) → bottom,
 fixed: primary "Hecho" (check) and alert "Me duele" (hand). The header must be opaque and never overlap
 content when scrolling (current bug: the big number scrolls under the header).
+Distance mode adds, under the counter: outline "Hecho", outline "Silenciar voz" / "Activar voz", and the
+"Modo distancia" SwitchRow (always there, above "Está muy fácil"). The footer's primary button becomes
+"Pausa" / "Seguir" (64 pt). Rep sets show the reps counted so far ("4" + "de 10"). In landscape: two columns
+(VideoBox left, everything else right) and the footer's two buttons side by side, "Me duele" always visible.
 
 **Descanso**: whole screen restBg, onHero text (onHeroMuted for secondary): "Descansa" (title) + "Respira con calma y toma
 agua" → CountdownRing → "¿Cómo estuvo {ejercicio}?" with 3 equal choices (Muy fácil / Bien / Difícil;

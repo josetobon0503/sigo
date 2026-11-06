@@ -106,6 +106,16 @@ describe('profile migration', () => {
     expect(migrateProfile({ profile: male }, 5).profile?.bodyFigure).toBe('male');
   });
 
+  it('version 6 profiles get distance mode off and a count speed for their age', () => {
+    const { distanceMode: _d, countSpeed: _c, ...old } = makeProfile({ ageBand: '70-79' });
+    expect(migrateProfile({ profile: old }, 6).profile).toMatchObject({
+      distanceMode: false,
+      countSpeed: 'slow',
+    });
+    const { distanceMode: _d2, countSpeed: _c2, ...young } = makeProfile();
+    expect(migrateProfile({ profile: young }, 6).profile?.countSpeed).toBe('normal');
+  });
+
   it('keeps an empty profile', () => {
     expect(migrateProfile({ profile: null }, 1)).toEqual({ profile: null });
   });

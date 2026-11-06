@@ -123,7 +123,11 @@ export interface UserProfile {
   screening: { completedAt: string; anyYes: boolean } | null;
   weeklyGoal: WeeklyGoal;
   bodyFigure: BodyFigure; // MuscleMap drawing only (profile v6)
+  distanceMode: boolean; // phone propped up away: spoken guidance, reps counted out loud (profile v7)
+  countSpeed: CountSpeed; // distance mode: 3 s or 5 s per rep (level 5 is always 5 s)
 }
+
+export type CountSpeed = 'normal' | 'slow';
 
 export type BodyFigure = 'female' | 'male';
 

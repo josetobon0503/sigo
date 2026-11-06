@@ -87,6 +87,12 @@
     "bodyFigure": {
       "female": "Woman",
       "male": "Man"
+    },
+    "countSpeedLabel": "Counting speed",
+    "countSpeedHint": "In distance mode, the time for each rep. Level 5 is always slow.",
+    "countSpeed": {
+      "normal": "Normal (3 s)",
+      "slow": "Slow (5 s)"
     }
   },
   "swap": {
@@ -353,7 +359,13 @@
       "purpose": "What it's for",
       "howTo": "How to do it",
       "mistakes": "How NOT to do it"
-    }
+    },
+    "distanceMode": "Distance mode",
+    "distanceModeHint": "For when your phone is far away: I guide you out loud and count for you.",
+    "muteVoice": "Mute voice",
+    "unmuteVoice": "Turn voice on",
+    "repsOf": "of {{count}}",
+    "repsCountedLabel": "{{count}} of {{total}} reps"
   },
   "rest": {
     "title": "Rest",
@@ -541,5 +553,13 @@
     "musclesHint": "Shows the muscle map bigger",
     "close": "Close",
     "musclesTitle": "Muscles it works"
+  },
+  "voice": {
+    "announce": "{{name}}. Set {{set}} of {{sets}}",
+    "wellDone": "Well done!",
+    "switchSides": "Switch sides",
+    "tenLeft": "10 seconds left",
+    "rest": "Rest",
+    "next": "Next: {{name}}"
   }
 }

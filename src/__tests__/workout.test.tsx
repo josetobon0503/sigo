@@ -552,3 +552,65 @@ describe('simulate another day (development)', () => {
     expect(useDevStore.getState().dayOffset).toBe(0);
   });
 });
+
+describe('distance mode', () => {
+  const Speech = jest.requireMock('expo-speech') as { speak: jest.Mock; stop: jest.Mock };
+  const Orientation = jest.requireMock('expo-screen-orientation') as { unlockAsync: jest.Mock };
+  const spoken = () => Speech.speak.mock.calls.map((c) => c[0] as string);
+
+  beforeEach(() => {
+    useSessionStore.getState().start(SHORT, false);
+  });
+
+  it('the switch is saved in the profile, unlocks landscape and starts the spoken count', async () => {
+    await render(<SessionScreen />);
+    await user.press(screen.getByRole('switch', { name: 'Modo distancia' }));
+    expect(useProfileStore.getState().profile?.distanceMode).toBe(true);
+    expect(Orientation.unlockAsync).toHaveBeenCalled();
+    await advance(500);
+    expect(spoken()).toEqual(['Estirar la rodilla sentado. Serie 1 de 1']);
+    expect(Speech.speak.mock.calls[0][1]).toMatchObject({ language: 'es-US' });
+    await advance(6000); // 3 s announcement + 1 rep of 3 s
+    expect(spoken()).toContain('1');
+    expect(screen.getByTestId('big-reps')).toHaveTextContent(/1de 10/);
+  });
+
+  it('Pause freezes the count and the voice; Resume goes on', async () => {
+    useProfileStore.getState().updateProfile({ distanceMode: true });
+    await render(<SessionScreen />);
+    await advance(6500);
+    await user.press(screen.getByRole('button', { name: 'Pausa' }));
+    const before = spoken().length;
+    await advance(10_000);
+    expect(spoken()).toHaveLength(before);
+    expect(screen.getByTestId('big-reps')).toHaveTextContent(/^1/);
+    await user.press(screen.getByRole('button', { name: 'Seguir' }));
+    await advance(3000);
+    expect(spoken()).toContain('2');
+  });
+
+  it('mute silences the voice without leaving distance mode', async () => {
+    useProfileStore.getState().updateProfile({ distanceMode: true });
+    await render(<SessionScreen />);
+    await advance(500);
+    await user.press(screen.getByRole('button', { name: 'Silenciar voz' }));
+    expect(Speech.stop).toHaveBeenCalled();
+    const before = spoken().length;
+    await advance(9000);
+    expect(spoken()).toHaveLength(before);
+    expect(screen.getByTestId('big-reps')).toHaveTextContent(/^2/); // the count goes on
+    expect(screen.getByRole('button', { name: 'Activar voz' })).toBeOnTheScreen();
+  });
+
+  it('"It hurts" stops the voice and pauses the count', async () => {
+    useProfileStore.getState().updateProfile({ distanceMode: true });
+    await render(<SessionScreen />);
+    await advance(500);
+    Speech.stop.mockClear();
+    await user.press(screen.getByRole('button', { name: 'Me duele' }));
+    expect(Speech.stop).toHaveBeenCalled();
+    expect(mockRouter.push).toHaveBeenCalledWith('/hurt');
+    const phase = useSessionStore.getState().session?.phase;
+    expect(phase).toMatchObject({ kind: 'exercise', timer: { status: 'paused' } });
+  });
+});

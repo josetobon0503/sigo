@@ -30,6 +30,7 @@ interface SessionState {
   tooEasy: () => void; // "Too easy" on the current exercise counts as rating it "easy"
   applyProgression: () => void; // updates the profile levels once, from the saved log
   tick: () => void; // applies timers that ended, e.g. after coming back from the background
+  setDistance: (countMs: number | null) => void; // distance mode: time per rep, or null when off
   end: () => void; // the user leaves early
   setFeeling: (feeling: Feeling) => void;
   clear: () => void;
@@ -103,6 +104,7 @@ export const useSessionStore = create<SessionState>()((set, get) => {
       set({ progressed: true });
     },
     tick: () => apply(session.tick),
+    setDistance: (countMs) => apply((s) => session.setCountMs(s, countMs)),
     end: () => apply(session.endSession),
     setFeeling: (feeling) => {
       const { logId } = get();

@@ -87,6 +87,12 @@
     "bodyFigure": {
       "female": "Mujer",
       "male": "Hombre"
+    },
+    "countSpeedLabel": "Velocidad de la cuenta",
+    "countSpeedHint": "En modo distancia, el tiempo de cada repetición. El nivel 5 siempre va lento.",
+    "countSpeed": {
+      "normal": "Normal (3 s)",
+      "slow": "Lenta (5 s)"
     }
   },
   "swap": {
@@ -353,7 +359,13 @@
       "purpose": "Para qué sirve",
       "howTo": "Cómo hacerlo",
       "mistakes": "Cómo NO hacerlo"
-    }
+    },
+    "distanceMode": "Modo distancia",
+    "distanceModeHint": "Para cuando el teléfono está lejos: te guío con la voz y cuento por ti.",
+    "muteVoice": "Silenciar voz",
+    "unmuteVoice": "Activar voz",
+    "repsOf": "de {{count}}",
+    "repsCountedLabel": "{{count}} de {{total}} repeticiones"
   },
   "rest": {
     "title": "Descansa",
@@ -541,5 +553,13 @@
     "musclesHint": "Muestra el mapa de músculos más grande",
     "close": "Cerrar",
     "musclesTitle": "Músculos que trabaja"
+  },
+  "voice": {
+    "announce": "{{name}}. Serie {{set}} de {{sets}}",
+    "wellDone": "¡Bien hecho!",
+    "switchSides": "Cambia de lado",
+    "tenLeft": "Faltan 10 segundos",
+    "rest": "Descanso",
+    "next": "Siguiente: {{name}}"
   }
 }

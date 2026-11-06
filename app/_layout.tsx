@@ -1,5 +1,6 @@
 import { Lexend_400Regular, Lexend_700Bold, useFonts } from '@expo-google-fonts/lexend';
 import { Stack } from 'expo-router';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -11,6 +12,8 @@ import { useTheme } from '@/theme/useTheme';
 
 // Keep the splash screen up until the saved profile, history and fonts are loaded.
 void SplashScreen.preventAutoHideAsync();
+// Portrait everywhere; only the workout in distance mode unlocks landscape.
+void ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
 
 export default function RootLayout() {
   const { colors } = useTheme();

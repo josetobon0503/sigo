@@ -138,6 +138,23 @@ export default function ProfileScreen() {
         </Text>
       </Card>
 
+      <Card style={{ gap: spacing.sm }}>
+        <ChipGroup label={t('profile.countSpeedLabel')}>
+          {(['normal', 'slow'] as const).map((speed) => (
+            <Chip
+              key={speed}
+              label={t(`profile.countSpeed.${speed}`)}
+              selected={profile.countSpeed === speed}
+              onPress={() => updateProfile({ countSpeed: speed })}
+              testID={`count-${speed}`}
+            />
+          ))}
+        </ChipGroup>
+        <Text style={[typography.caption, { color: colors.textSecondary }]}>
+          {t('profile.countSpeedHint')}
+        </Text>
+      </Card>
+
       <Card>
         <ChipGroup label={t('language.label')}>
           {SUPPORTED_LANGUAGES.map((lang) => (

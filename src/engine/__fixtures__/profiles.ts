@@ -77,6 +77,8 @@ export function makeProfile(overrides: Partial<UserProfile> = {}): UserProfile {
     screening: null,
     weeklyGoal: 2,
     bodyFigure: 'female',
+    distanceMode: false,
+    countSpeed: 'normal',
     ...overrides,
   };
 }

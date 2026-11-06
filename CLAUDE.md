@@ -99,6 +99,7 @@ src/
     pain.ts               # pain report side effects and Pain tab edits (raise area, avoid 14 days)
     profile.ts            # createProfile, activity levels
     stats.ts              # Progress tab numbers: weeks, streak, minutes, feelings, pain history, level changes
+    voice.ts              # distance mode: what to say and when (cues timed from the session timers)
     __tests__/
   data/
     exercises.ts          # exercise library (typed)
@@ -212,6 +213,8 @@ interface UserProfile {
   screening: { completedAt: string; anyYes: boolean } | null;
   weeklyGoal: WeeklyGoal;       // default 2 (profile v5)
   bodyFigure: 'female' | 'male'; // MuscleMap drawing only, default female (profile v6)
+  distanceMode: boolean;        // remembered from the exercise screen switch, default off (profile v7)
+  countSpeed: 'normal' | 'slow'; // 3 s / 5 s per rep; default slow with seatedOnly or age 70+ (profile v7)
 }
 
 interface WorkoutItem {
@@ -399,9 +402,17 @@ How active are you (4 options) -> Floor yes / no -> Where does it hurt (body map
 How NOT to do it, name, short steps, set x reps or timer, Done, big red It hurts) -> Rest (countdown, up next,
 skip) -> ... -> Finish (summary + How do you feel faces).
 
-**Distance mode:** a toggle on the exercise screen. Landscape-friendly, huge reps / timer, video large,
-`expo-speech` announces the exercise, counts reps at a slow pace and announces "rest" and "next". Keep the screen
-awake.
+**Distance mode** (phone propped up ~2 m away): "Modo distancia" switch on the exercise screen, saved in the
+profile. While on, the workout screen may turn to landscape (`expo-screen-orientation`; the rest of the app is
+locked to portrait): video left, giant counter right. Every set starts by itself. `expo-speech` in the user's
+language says, from `src/engine/voice.ts`: "<exercise>. Serie 1 de 3"; for reps, after 3 s one number per rep
+(Profile "Velocidad de la cuenta": 3 s or 5 s; level 5 and slow tempo always 5 s), then "¡Bien hecho!" and 3 s
+later the set is done and the rest starts; for timed sets "Faltan 10 segundos" (holds over 10 s) and 3, 2, 1;
+"Cambia de lado" on perSide sets; "Descanso" and, 10 s before the end, "Siguiente: …". Rep sets in distance
+mode run on the same `endsAt` timer as timed sets, so a big "Pausa / Seguir" button (64 pt, both orientations)
+freezes count and voice, and cues that passed in the background are skipped, never repeated. "Silenciar voz"
+mutes without leaving the mode; "Hecho" and "Me duele" stay. The voice stops when another screen covers the
+workout (It hurts, Safety, Too easy). Keep the screen awake.
 
 **It hurts flow (modal):** Where (chips, preselected with the areas the current exercise loads) + How strong +
 "Is it sharp?" switch + red link "Chest pain or dizziness?" -> Safety screen OR Swap suggestion (new exercise +
@@ -466,7 +477,8 @@ screens; non-personalized ads only; no health data ever passed to an ad SDK; res
 - [x] Phase 7a: video pipeline (videos:compress, videos.ts, clip state in lista-videos.md, dev test clip),
   VideoBox with expo-video (silent loop, "Evita esto", Listen), muscles on the 84 exercises + MuscleMap
   (react-native-body-highlighter), body figure in Profile (profile v6)
-- [ ] Phase 7b: distance mode with spoken guidance
+- [x] Phase 7b: distance mode (profile v7): spoken guidance from `voice.ts`, rep count on the session timer,
+  Pausa / Seguir, mute, landscape only in the workout, count speed in Profile
 - [ ] Phase 8: Reminders, accessibility pass, polish
 - [ ] Phase 9: EAS build, TestFlight, privacy policy, App Store listing
 

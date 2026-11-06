@@ -1,4 +1,6 @@
 import * as Haptics from 'expo-haptics';
+import * as ScreenOrientation from 'expo-screen-orientation';
+import * as Speech from 'expo-speech';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -14,6 +16,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -26,8 +29,10 @@ import {
   ExerciseRow,
   ProgressSegments,
   SetDots,
+  SwitchRow,
   VideoBox,
 } from '@/components';
+import { speechLanguage } from '@/components/VideoBox';
 import { exercises } from '@/data/exercises';
 import {
   completedSets,
@@ -35,6 +40,8 @@ import {
   displaySeconds,
   nextStep,
   ratingAsked,
+  REP_MS,
+  repsCounted,
   restRemainingMs,
   restSeconds,
   timerView,
@@ -42,6 +49,7 @@ import {
   type SessionItem,
 } from '@/engine/session';
 import type { ItemRating, Lang } from '@/engine/types';
+import { dueCues, nextExerciseId, voiceCues, voiceSegment, type Cue } from '@/engine/voice';
 import { formatDosage } from '@/i18n/format';
 import { useProfileStore } from '@/store/profileStore';
 import { useSessionStore } from '@/store/sessionStore';
@@ -78,6 +86,35 @@ function useSessionClock(): number {
   return Math.max(now, updatedAt);
 }
 
+// Distance mode: says the cues of the voice engine as they come due. Muted or off screen, it stays silent
+// but keeps its place, so turning the voice back on never repeats what already passed.
+function useVoiceGuide(session: Session | null, now: number, lang: Lang, on: boolean) {
+  const { t } = useTranslation();
+  const last = useRef<{ id: string; elapsed: number } | null>(null);
+
+  useEffect(() => {
+    const segment = session ? voiceSegment(session, now) : null;
+    if (!session || !segment) return;
+    const from = last.current?.id === segment.id ? last.current.elapsed : -1;
+    last.current = segment;
+    if (!on) return;
+    const name = (id?: string) => (id ? byId.get(id)?.name[lang] : undefined);
+    const item = currentItem(session);
+    const cues = voiceCues(session, name(item?.exerciseId) ?? '', name(nextExerciseId(session)));
+    for (const cue of dueCues(cues, from, segment.elapsed)) {
+      Speech.speak(cueText(t, cue), { language: speechLanguage(lang) });
+    }
+  }, [session, now, lang, on, t]);
+
+  useEffect(() => {
+    if (!on) void Speech.stop();
+  }, [on]);
+}
+
+function cueText(t: TFunction, cue: Cue): string {
+  return cue.key === 'number' ? String(cue.params?.n) : t(`voice.${cue.key}`, cue.params);
+}
+
 export default function SessionScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
@@ -86,6 +123,37 @@ export default function SessionScreen() {
   const end = useSessionStore((s) => s.end);
   const now = useSessionClock();
   const lang: Lang = i18n.language === 'en' ? 'en' : 'es';
+  const distance = useProfileStore((s) => s.profile?.distanceMode ?? false);
+  const countSpeed = useProfileStore((s) => s.profile?.countSpeed ?? 'normal');
+  const setDistance = useSessionStore((s) => s.setDistance);
+  const [muted, setMuted] = useState(false);
+  const [focused, setFocused] = useState(true);
+
+  useEffect(() => {
+    setDistance(distance ? REP_MS[countSpeed] : null);
+  }, [distance, countSpeed, setDistance]);
+
+  // Turning the phone on its side is only allowed here, with distance mode on.
+  useEffect(() => {
+    if (distance) void ScreenOrientation.unlockAsync();
+    else void ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+  }, [distance]);
+  useEffect(
+    () => () => void ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP),
+    [],
+  );
+
+  // The voice stops as soon as another screen (It hurts, Safety, Too easy) covers this one.
+  useFocusEffect(
+    useCallback(() => {
+      setFocused(true);
+      return () => {
+        setFocused(false);
+        void Speech.stop();
+      };
+    }, []),
+  );
+  useVoiceGuide(session, now, lang, distance && !muted && focused);
 
   // A soft haptic tap for every finished set, timed or not.
   const setsDone = session ? completedSets(session) : 0;
@@ -184,7 +252,15 @@ export default function SessionScreen() {
       {resting ? (
         <RestView session={session} now={now} lang={lang} />
       ) : (
-        <ExerciseView session={session} item={item} now={now} lang={lang} />
+        <ExerciseView
+          session={session}
+          item={item}
+          now={now}
+          lang={lang}
+          distance={distance}
+          muted={muted}
+          onMute={setMuted}
+        />
       )}
     </SafeAreaView>
   );
@@ -195,25 +271,69 @@ function ExerciseView({
   item,
   now,
   lang,
+  distance,
+  muted,
+  onMute,
 }: {
   session: Session;
   item: SessionItem;
   now: number;
   lang: Lang;
+  distance: boolean;
+  muted: boolean;
+  onMute: (muted: boolean) => void;
 }) {
   const { t } = useTranslation();
   const router = useRouter();
   const { colors, typography, spacing } = useTheme();
+  const window = useWindowDimensions();
   const { completeSet, startTimer, pauseTimer, tooEasy } = useSessionStore.getState();
+  const updateProfile = useProfileStore((s) => s.updateProfile);
+  const timerStatus = session.phase.kind === 'exercise' ? session.phase.timer.status : 'idle';
+  const counting = session.countMs !== null; // distance mode is on in the session
+
+  // Distance mode goes on by itself: every set starts when it appears (a paused one waits for "Resume").
+  useEffect(() => {
+    if (counting && timerStatus === 'idle') startTimer();
+  }, [counting, timerStatus, session.index, session.set, startTimer]);
+
   const exercise = byId.get(item.exerciseId);
   if (!exercise) return null;
 
   const { dosage, perSide } = item;
+  const landscape = distance && window.width > window.height;
+  const pauseButton = (
+    <BigButton
+      label={t(timerStatus === 'running' ? 'workout.pause' : 'workout.resume')}
+      icon={timerStatus === 'running' ? 'pause' : 'play'}
+      onPress={timerStatus === 'running' ? pauseTimer : startTimer}
+      style={landscape ? styles.grow : undefined}
+      testID="distance-pause"
+    />
+  );
+  const doneOutline = (
+    <BigButton
+      label={t('workout.done')}
+      variant="outline"
+      icon="checkmark"
+      accessibilityHint={t('workout.doneHint')}
+      onPress={completeSet}
+      testID="set-done"
+    />
+  );
   let bigNumber;
   let mainAction;
   if (dosage.kind === 'reps') {
     const label = t(perSide ? 'workout.repsPerSideLabel' : 'workout.repsLabel');
-    bigNumber = (
+    const count = repsCounted(session, now);
+    bigNumber = counting ? (
+      <BigNumber
+        value={String(count)}
+        label={t('workout.repsOf', { count: dosage.reps })}
+        accessibilityLabel={t('workout.repsCountedLabel', { count, total: dosage.reps })}
+        testID="big-reps"
+      />
+    ) : (
       <BigNumber
         value={String(dosage.reps)}
         label={label}
@@ -221,7 +341,9 @@ function ExerciseView({
         testID="big-reps"
       />
     );
-    mainAction = (
+    mainAction = counting ? (
+      pauseButton
+    ) : (
       <BigButton
         label={t('workout.done')}
         icon="checkmark"
@@ -256,8 +378,9 @@ function ExerciseView({
         />
       </View>
     );
-    const timerStatus = session.phase.kind === 'exercise' ? session.phase.timer.status : 'idle';
-    mainAction = (
+    mainAction = counting ? (
+      pauseButton
+    ) : (
       <BigButton
         label={t(
           timerStatus === 'running'
@@ -273,58 +396,93 @@ function ExerciseView({
     );
   }
 
-  // The timer waits while the user tells us what hurts.
+  // The timer and the voice wait while the user tells us what hurts.
   const showHurt = () => {
     pauseTimer();
+    void Speech.stop();
     router.push('/hurt');
   };
+
+  const video = (
+    <VideoBox
+      key={exercise.id}
+      exercise={exercise}
+      lang={lang}
+      width={landscape ? (window.width - spacing.screen * 2 - spacing.md) / 2 : undefined}
+    />
+  );
+  const details = (
+    <>
+      <View style={{ gap: spacing.sm }}>
+        <Text
+          accessibilityRole="header"
+          style={[typography.title, styles.center, { color: colors.text }]}
+        >
+          {exercise.name[lang]}
+        </Text>
+        <Text
+          style={[typography.callout, styles.center, { color: colors.textSecondary }]}
+          testID="set-progress"
+        >
+          {t('workout.setProgress', { current: session.set, total: dosage.sets })}
+        </Text>
+        <SetDots total={dosage.sets} current={session.set - 1} />
+      </View>
+      {bigNumber}
+      {dosage.kind === 'time' || counting ? doneOutline : null}
+      {distance ? (
+        <BigButton
+          label={muted ? t('workout.unmuteVoice') : t('workout.muteVoice')}
+          variant="outline"
+          icon={muted ? 'volume-high' : 'volume-mute'}
+          onPress={() => onMute(!muted)}
+          testID="voice-mute"
+        />
+      ) : null}
+      <SwitchRow
+        label={t('workout.distanceMode')}
+        hint={t('workout.distanceModeHint')}
+        value={distance}
+        onChange={(on) => updateProfile({ distanceMode: on })}
+        testID="distance-switch"
+      />
+      {/* Less prominent than "Done" and "It hurts": a text button, not in the footer. */}
+      <BigButton
+        label={t('workout.tooEasy')}
+        variant="text"
+        icon="arrow-up"
+        accessibilityHint={t('workout.tooEasyHint')}
+        onPress={() => {
+          pauseTimer();
+          tooEasy();
+          router.push('/workout/harder');
+        }}
+        testID="too-easy"
+      />
+    </>
+  );
 
   return (
     <>
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={{ paddingHorizontal: spacing.screen, gap: spacing.md }}
+        contentContainerStyle={[
+          { paddingHorizontal: spacing.screen, gap: spacing.md },
+          landscape ? styles.row : null,
+        ]}
       >
-        <VideoBox key={exercise.id} exercise={exercise} lang={lang} />
-        <View style={{ gap: spacing.sm }}>
-          <Text
-            accessibilityRole="header"
-            style={[typography.title, styles.center, { color: colors.text }]}
-          >
-            {exercise.name[lang]}
-          </Text>
-          <Text
-            style={[typography.callout, styles.center, { color: colors.textSecondary }]}
-            testID="set-progress"
-          >
-            {t('workout.setProgress', { current: session.set, total: dosage.sets })}
-          </Text>
-          <SetDots total={dosage.sets} current={session.set - 1} />
-        </View>
-        {bigNumber}
-        {dosage.kind === 'time' ? (
-          <BigButton
-            label={t('workout.done')}
-            variant="outline"
-            icon="checkmark"
-            accessibilityHint={t('workout.doneHint')}
-            onPress={completeSet}
-            testID="set-done"
-          />
-        ) : null}
-        {/* Less prominent than "Done" and "It hurts": a text button, not in the footer. */}
-        <BigButton
-          label={t('workout.tooEasy')}
-          variant="text"
-          icon="arrow-up"
-          accessibilityHint={t('workout.tooEasyHint')}
-          onPress={() => {
-            pauseTimer();
-            tooEasy();
-            router.push('/workout/harder');
-          }}
-          testID="too-easy"
-        />
+        {landscape ? (
+          // Phone on its side, far away: video on the left, the giant counter on the right.
+          <>
+            <View style={styles.grow}>{video}</View>
+            <View style={[styles.grow, { gap: spacing.md }]}>{details}</View>
+          </>
+        ) : (
+          <>
+            {video}
+            {details}
+          </>
+        )}
       </ScrollView>
       <View
         style={[
@@ -336,6 +494,7 @@ function ExerciseView({
             gap: spacing.sm,
             borderTopColor: colors.border,
           },
+          landscape ? styles.row : null,
         ]}
       >
         {mainAction}
@@ -345,6 +504,7 @@ function ExerciseView({
           icon="hand-left"
           accessibilityHint={t('workout.hurtHint')}
           onPress={showHurt}
+          style={landscape ? styles.grow : undefined}
           testID="it-hurts"
         />
       </View>
@@ -542,6 +702,12 @@ const styles = StyleSheet.create({
   },
   center: {
     textAlign: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  grow: {
+    flex: 1,
   },
   footer: {
     borderTopWidth: StyleSheet.hairlineWidth,

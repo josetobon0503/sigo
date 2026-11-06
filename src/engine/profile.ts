@@ -5,6 +5,7 @@ import type {
   ActivityLevel,
   AgeBand,
   BodyArea,
+  CountSpeed,
   Equipment,
   Lang,
   Level,
@@ -118,7 +119,19 @@ export function createProfile(draft: ProfileDraft, completedAt: string): UserPro
     screening: null,
     weeklyGoal: draft.weeklyGoal,
     bodyFigure: 'female',
+    distanceMode: false,
+    countSpeed: 'normal',
   };
   // A "yes" in the screening wins over the activity level: level 1 and seated only.
-  return applyScreening(profile, draft.screeningAnswers, completedAt);
+  const screened = applyScreening(profile, draft.screeningAnswers, completedAt);
+  return { ...screened, countSpeed: defaultCountSpeed(screened) };
+}
+
+// The slow count (5 s per rep) for seated-only users and people 70 and over; editable in Profile.
+export function defaultCountSpeed(
+  profile: Pick<UserProfile, 'seatedOnly' | 'ageBand'>,
+): CountSpeed {
+  return profile.seatedOnly || profile.ageBand === '70-79' || profile.ageBand === '80+'
+    ? 'slow'
+    : 'normal';
 }

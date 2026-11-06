@@ -29,12 +29,13 @@ export const speechLanguage = (lang: Lang) => (lang === 'es' ? 'es-US' : 'en-US'
 export interface VideoBoxProps {
   exercise: Exercise;
   lang: Lang;
+  width?: number; // of the box, when it is not the full screen width (landscape distance mode)
 }
 
 // Three chapters: "What it's for" (text read aloud on request + muscle map), "How to do it" and "How NOT to
 // do it" (silent looping clips; their written text when there is no clip). Give it key={exercise.id} so a
 // new exercise opens on "How to do it" again.
-export function VideoBox({ exercise, lang }: VideoBoxProps) {
+export function VideoBox({ exercise, lang, width }: VideoBoxProps) {
   const { t } = useTranslation();
   const { colors, typography, spacing, radius, sizes } = useTheme();
   const window = useWindowDimensions();
@@ -79,7 +80,7 @@ export function VideoBox({ exercise, lang }: VideoBoxProps) {
   const tabsInRow = columnsFit(
     CHAPTERS.map((c) => t(`workout.chapter.${c}`)),
     {
-      width: window.width - spacing.screen * 2,
+      width: width ?? window.width - spacing.screen * 2,
       columns: CHAPTERS.length,
       gap: spacing.xs,
       cellPadding: spacing.xs * 2 + 4,

@@ -64,6 +64,8 @@ describe('createProfile', () => {
       screening: { completedAt: NOW, anyYes: false },
       weeklyGoal: 3,
       bodyFigure: 'female',
+      distanceMode: false,
+      countSpeed: 'normal',
     });
   });
 

@@ -317,6 +317,14 @@ describe('profile screen', () => {
     expect(useProfileStore.getState().profile?.bodyFigure).toBe('male');
   });
 
+  it('can change the counting speed of distance mode', async () => {
+    const user = userEvent.setup();
+    await render(<ProfileScreen />);
+    expect(screen.getByRole('button', { name: 'Normal (3 s)' })).toBeSelected();
+    await user.press(screen.getByRole('button', { name: 'Lenta (5 s)' }));
+    expect(useProfileStore.getState().profile?.countSpeed).toBe('slow');
+  });
+
   it('can change the age band to "Under 50"', async () => {
     const user = userEvent.setup();
     await render(<ProfileScreen />);

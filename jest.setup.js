@@ -47,3 +47,8 @@ jest.mock('expo-speech', () => ({
   speak: jest.fn(),
   stop: jest.fn(() => Promise.resolve()),
 }));
+jest.mock('expo-screen-orientation', () => ({
+  lockAsync: jest.fn(() => Promise.resolve()),
+  unlockAsync: jest.fn(() => Promise.resolve()),
+  OrientationLock: { PORTRAIT_UP: 'PORTRAIT_UP' },
+}));
