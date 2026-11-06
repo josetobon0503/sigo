@@ -148,7 +148,6 @@ export default function FinishScreen() {
           value={log.feeling ?? null}
           onChange={setFeeling}
           options={options}
-          layout="row"
           accessibilityLabel={t('finish.feelingQuestion')}
           testID="feeling-scale"
         />

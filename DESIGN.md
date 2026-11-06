@@ -89,7 +89,9 @@ Extend the existing contrast test so every text/background pair above passes 4.5
 - **SetDots**: 10 pt dots for "Serie 1 de 3".
 - **CountdownRing** (react-native-svg): 232 pt, stroke 16, track restTrack, progress onHero, time
   in the center (countdown style) + "segundos".
-- **FaceIcon** (react-native-svg): 56 pt, 5 variants above; selected = 3 pt primary ring + bold label.
+- **FaceIcon** (react-native-svg): 48 pt, 5 variants above, decorative (always next to its label).
+- **FacesScale**: vertical list of 5 big rows (FaceIcon 48 pt + label on the right, the whole row is the
+  button, 64 pt min); selected = primary 2 pt border + primarySoft bg + bold label + check.
 - **LevelBars**: label column (~132 pt) · 5 segments 12 pt tall · number. Segment raised this week = accent.
 - **ExerciseRow**: 48 pt thumbnail (primarySoft placeholder until videos exist) · name (headline 18 bold) ·
   meta line ("Piernas · 3 × 10") in textSecondary · divider.
@@ -119,7 +121,7 @@ inverse button "Saltar descanso →".
 
 **Final**: round primary check badge 88 pt → "¡Buen trabajo, {nombre}!" (title) → "Llevas 2 de 3
 entrenamientos esta semana" → 3 stat tiles (ejercicios · minutos · semanas seguidas, the last in
-accentSoft) → Card "¿Cómo te sientes?" with 5 FaceIcons in ONE row + neutral labels (Excelente, Bien,
+accentSoft) → Card "¿Cómo te sientes?" with FacesScale (5 rows) + neutral labels (Excelente, Bien,
 Regular, Con cansancio, Con molestias) → bottom primary "Volver a Hoy".
 
 **Progreso**: "Tu progreso" → 2 tiles: weekly goal ring "2/3" + "Te falta 1" | streak tile in accentSoft

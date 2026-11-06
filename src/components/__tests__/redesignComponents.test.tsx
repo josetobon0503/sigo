@@ -2,7 +2,6 @@ import { render, screen, userEvent } from '@testing-library/react-native';
 
 import { setLanguage } from '@/i18n';
 
-import { FacesScale } from '../FacesScale';
 import { LevelBars } from '../LevelBars';
 import { ProgressSegments } from '../ProgressSegments';
 import { WeekStrip } from '../WeekStrip';
@@ -70,20 +69,5 @@ describe('LevelBars', () => {
     expect(screen.getByTestId('level-squat-raised')).toBeTruthy();
     expect(screen.queryByTestId('level-core-raised')).toBeNull();
     expect(screen.getByLabelText('Piernas, 3')).toBeTruthy();
-  });
-});
-
-describe('FacesScale row layout', () => {
-  it('shows five drawn faces in a row and rings the selected one', async () => {
-    const onChange = jest.fn();
-    const user = userEvent.setup();
-    await render(
-      <FacesScale value={2} onChange={onChange} accessibilityLabel="Dolor" layout="row" />,
-    );
-
-    expect(screen.getAllByRole('radio')).toHaveLength(5);
-    expect(screen.getAllByTestId('face-selected', { includeHiddenElements: true })).toHaveLength(1);
-    await user.press(screen.getByRole('radio', { name: /^Fuerte/ }));
-    expect(onChange).toHaveBeenCalledWith(4);
   });
 });
