@@ -108,8 +108,10 @@ src/
   components/             # BigButton, Card, HeroCard, Chip, FacesScale, FaceIcon, BodyMap, VideoBox, etc.
 docs/
   biblioteca-ejercicios.md # generated: every exercise in a Spanish table (npm run export:library)
+  lista-videos.md         # generated: video recording list by batch and place (npm run export:videos)
 scripts/
   export-library.ts       # writes docs/biblioteca-ejercicios.md (plain Node 24+ runs the TypeScript)
+  export-video-list.ts    # writes docs/lista-videos.md
 assets/
   videos/                 # placeholders only; real videos are streamed later
 ```
@@ -414,8 +416,9 @@ screens; non-personalized ads only; no health data ever passed to an ad SDK; res
   saying you are done.
 - Engine code is pure TypeScript with tests for every rule in section 6 (including edge cases: no candidates,
   sharp pain, all areas blocked, seatedOnly).
-- After changing `src/data/exercises.ts`, run `npm run export:library`: a test fails if
-  `docs/biblioteca-ejercicios.md` does not match the data.
+- After changing `src/data/exercises.ts` or the generator, run `npm run export:library` and
+  `npm run export:videos`: a test fails if `docs/biblioteca-ejercicios.md` or `docs/lista-videos.md` does not
+  match the data.
 - Every new user-facing string goes in both `es.json` and `en.json`. Spanish should sound natural to a Latin
   American adult: warm "tú" form, short sentences, everyday words, no fitness jargon.
 - When you finish a phase: update the **Status** section below, and suggest a commit message
