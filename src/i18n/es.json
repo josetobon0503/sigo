@@ -442,7 +442,6 @@
     "empty": "Cuando termines tu primer entrenamiento, aquí vas a ver tu progreso.",
     "weekTitle": "Esta semana",
     "weekCount": "{{count}} de {{goal}} días",
-    "weekMet": "¡Llegaste a tu meta de esta semana!",
     "dayTrained": "{{day}}: entrenaste",
     "dayRest": "{{day}}: sin entrenamiento",
     "streakTitle": "Tu racha",
@@ -501,5 +500,12 @@
       "5": "Sábado",
       "6": "Domingo"
     }
+  },
+  "goal": {
+    "met": "¡Meta cumplida!",
+    "days_one": "{{count}} día esta semana",
+    "days_other": "{{count}} días esta semana",
+    "daysOver_one": "{{count}} día esta semana (meta: {{goal}})",
+    "daysOver_other": "{{count}} días esta semana (meta: {{goal}})"
   }
 }

@@ -40,6 +40,20 @@ export function joinList(t: TFunction, items: string[]): string {
   return t('list.and', { first: items.slice(0, -1).join(', '), last: items[items.length - 1] });
 }
 
+// Weekly goal reached ("¡Meta cumplida!" + "3 días esta semana (meta: 2)"), or null while it is not.
+// Never "3 de 2": past the goal we say the days and the goal apart.
+export function goalMetText(
+  t: TFunction,
+  count: number,
+  goal: number,
+): { title: string; detail: string } | null {
+  if (count < goal) return null;
+  return {
+    title: t('goal.met'),
+    detail: count === goal ? t('goal.days', { count }) : t('goal.daysOver', { count, goal }),
+  };
+}
+
 // "28 oct" for a 'YYYY-MM-DD' day.
 export function formatShortDay(day: string, lang: Lang): string {
   const [y, m, d] = day.split('-').map(Number);

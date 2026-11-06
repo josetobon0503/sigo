@@ -12,7 +12,7 @@ import SessionScreen from '../../app/workout/session';
 import { levelsAt, makeProfile, pain } from '@/engine/__fixtures__/profiles';
 import { currentItem } from '@/engine/session';
 import type { GeneratedWorkout, WorkoutLog } from '@/engine/types';
-import { formatDosage, spokenDosage } from '@/i18n/format';
+import { formatDosage, goalMetText, spokenDosage } from '@/i18n/format';
 import i18n, { setLanguage } from '@/i18n';
 import { useDevStore } from '@/store/devStore';
 import { useHistoryStore } from '@/store/historyStore';
@@ -112,6 +112,22 @@ describe('Today screen', () => {
     await user.press(screen.getByRole('button', { name: 'Empezar' }));
     expect(useSessionStore.getState().session?.date).toBe(TODAY);
     expect(mockRouter.push).toHaveBeenCalledWith('/workout/session');
+  });
+
+  it('past the weekly goal says "¡Meta cumplida!", never "3 de 2"', async () => {
+    const day = (date: string, id: string): WorkoutLog => ({
+      id,
+      date,
+      durationSec: 900,
+      items: [{ exerciseId: 'seated-marching', completed: true }],
+    });
+    useHistoryStore.setState({
+      logs: [day('2026-10-26', 'a'), day('2026-10-27', 'b'), day(TODAY, 'c')],
+    });
+    await render(<TodayScreen />);
+    expect(screen.getByTestId('week-goal')).toHaveTextContent('¡Meta cumplida!');
+    expect(screen.getByText('3 días esta semana (meta: 2)')).toBeOnTheScreen();
+    expect(screen.queryByText(/3 de 2/)).toBeNull();
   });
 
   it('says so when the user already trained today, with a way to repeat', async () => {
@@ -314,6 +330,42 @@ describe('workout session', () => {
     expect(screen.getByText('¡Gracias! Lo guardamos.')).toBeOnTheScreen();
     await user.press(screen.getByRole('button', { name: 'Volver a Hoy' }));
     expect(mockRouter.dismissTo).toHaveBeenCalledWith('/');
+  });
+
+  it('the finish screen says "¡Meta cumplida!" once the weekly goal is reached', async () => {
+    const monday: WorkoutLog = {
+      id: 'monday',
+      date: '2026-10-26',
+      durationSec: 900,
+      items: [{ exerciseId: 'seated-marching', completed: true }],
+    };
+    useHistoryStore.setState({ logs: [monday] });
+    useSessionStore.getState().completeSet();
+    useSessionStore.getState().skipRest();
+    useSessionStore.getState().completeSet();
+    await render(<FinishScreen />);
+    expect(screen.getByText('¡Meta cumplida!')).toBeOnTheScreen();
+    expect(screen.getByTestId('finish-week')).toHaveTextContent('2 días esta semana');
+    expect(screen.queryByText(/2 de 2/)).toBeNull();
+  });
+});
+
+describe('goalMetText', () => {
+  const t = () => i18n.t.bind(i18n);
+
+  it('is null while the goal is not reached', () => {
+    expect(goalMetText(t(), 1, 2)).toBeNull();
+  });
+
+  it('says the days at the goal and the goal apart past it', () => {
+    expect(goalMetText(t(), 2, 2)).toEqual({
+      title: '¡Meta cumplida!',
+      detail: '2 días esta semana',
+    });
+    expect(goalMetText(t(), 3, 2)).toEqual({
+      title: '¡Meta cumplida!',
+      detail: '3 días esta semana (meta: 2)',
+    });
   });
 });
 

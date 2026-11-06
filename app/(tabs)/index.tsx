@@ -20,7 +20,7 @@ import { generateWorkout } from '@/engine/generator';
 import { PROGRESS_PATTERNS, thisWeek, visibleLevelChanges, weekStreak } from '@/engine/stats';
 import { consideredAreas, equipmentNeeded, skipReasons, trainedOn } from '@/engine/today';
 import type { BodyArea, Pattern, WorkoutSection } from '@/engine/types';
-import { formatDay, formatDosage, joinList, spokenDosage } from '@/i18n/format';
+import { formatDay, formatDosage, goalMetText, joinList, spokenDosage } from '@/i18n/format';
 import { useToday } from '@/store/devStore';
 import { useHistoryStore } from '@/store/historyStore';
 import { useProfileStore } from '@/store/profileStore';
@@ -53,6 +53,7 @@ export default function TodayScreen() {
   const equipment = equipmentNeeded(workout.items, exercises, profile.equipment, profile.floorOk);
   const trained = trainedOn(logs, today);
   const week = thisWeek(logs, today, profile.weeklyGoal);
+  const goalMet = goalMetText(t, week.count, week.goal);
   const streak = weekStreak(logs, today, profile.weeklyGoal);
   const minutes = Math.round(workout.estimatedSec / 60);
   const hasItems = workout.items.length > 0;
@@ -129,9 +130,18 @@ export default function TodayScreen() {
 
       <Card style={{ gap: spacing.ms }} testID="today-week">
         <View style={[styles.row, styles.wrap, { gap: spacing.sm }]}>
-          <Text style={[typography.headline, styles.flex, { color: colors.text }]}>
-            {t('today.weekCount', { count: week.count, goal: week.goal })}
-          </Text>
+          <View style={[styles.flex, { gap: spacing.xs }]}>
+            <Text style={[typography.headline, { color: colors.text }]} testID="week-goal">
+              {goalMet
+                ? goalMet.title
+                : t('today.weekCount', { count: week.count, goal: week.goal })}
+            </Text>
+            {goalMet ? (
+              <Text style={[typography.callout, { color: colors.textSecondary }]}>
+                {goalMet.detail}
+              </Text>
+            ) : null}
+          </View>
           {streak.weeks > 0 ? <StreakBadge weeks={streak.weeks} /> : null}
         </View>
         <WeekStrip days={week.days} today={today} />

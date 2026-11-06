@@ -18,7 +18,7 @@ import {
 } from '@/engine/stats';
 import { dayOf } from '@/engine/rules';
 import type { PainIntensity, UserProfile, WorkoutLog } from '@/engine/types';
-import { formatShortDay } from '@/i18n/format';
+import { formatShortDay, goalMetText } from '@/i18n/format';
 import { useToday } from '@/store/devStore';
 import { useHistoryStore } from '@/store/historyStore';
 import { usePainHistoryStore } from '@/store/painHistoryStore';
@@ -66,6 +66,7 @@ export default function ProgressScreen() {
   const raised = raisedThisWeek(logs, today, profile.levels);
   const hasHistory = mins.total > 0 || week.count > 0 || felt.length > 0;
   const left = Math.max(0, week.goal - week.count);
+  const goalMet = goalMetText(t, week.count, week.goal);
 
   const streakText =
     streak.currentWeek === 'missed'
@@ -95,10 +96,12 @@ export default function ProgressScreen() {
         >
           <GoalRing count={week.count} goal={week.goal} />
           <Text style={[typography.calloutBold, { color: colors.text }]}>
-            {t('progress.weekCount', { count: week.count, goal: week.goal })}
+            {goalMet
+              ? goalMet.title
+              : t('progress.weekCount', { count: week.count, goal: week.goal })}
           </Text>
           <Text style={[typography.callout, { color: colors.textSecondary }]}>
-            {week.met ? t('progress.weekMet') : t('progress.remaining', { count: left })}
+            {goalMet ? goalMet.detail : t('progress.remaining', { count: left })}
           </Text>
         </View>
 
@@ -212,7 +215,8 @@ export default function ProgressScreen() {
 const RING = 88;
 const RING_STROKE = 10;
 
-// Weekly goal as a ring with "2/3" in the middle. Decorative: the tile says the same in words.
+// Weekly goal as a ring with "2/3" in the middle, full with a check once met (never "3/2").
+// Decorative: the tile says the same in words.
 function GoalRing({ count, goal }: { count: number; goal: number }) {
   const { colors, typography } = useTheme();
   const c = RING / 2;
@@ -251,12 +255,18 @@ function GoalRing({ count, goal }: { count: number; goal: number }) {
         ) : null}
       </Svg>
       <View style={styles.ringCenter}>
-        <Text
-          style={[typography.headline, { color: colors.text }]}
-          maxFontSizeMultiplier={BIG_NUMBER_MAX_SCALE}
-        >
-          {`${count}/${goal}`}
-        </Text>
+        {count >= goal ? (
+          <View testID="goal-ring-met">
+            <Ionicons name="checkmark" size={40} color={colors.primary} />
+          </View>
+        ) : (
+          <Text
+            style={[typography.headline, { color: colors.text }]}
+            maxFontSizeMultiplier={BIG_NUMBER_MAX_SCALE}
+          >
+            {`${count}/${goal}`}
+          </Text>
+        )}
       </View>
     </View>
   );

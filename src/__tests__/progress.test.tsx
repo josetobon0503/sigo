@@ -69,12 +69,23 @@ describe('Progress tab', () => {
     useHistoryStore.setState({ logs: [log('2026-10-26'), log('2026-10-27')] });
     await render(<ProgressScreen />);
     expect(screen.getByTestId('progress-week')).toHaveTextContent(
-      /2 de 2 días.*¡Llegaste a tu meta de esta semana!/,
+      /¡Meta cumplida!2 días esta semana/,
     );
     expect(screen.getByLabelText('Lunes: entrenaste')).toBeOnTheScreen();
     expect(screen.getByLabelText('Martes: entrenaste')).toBeOnTheScreen();
     expect(screen.getByLabelText('Miércoles: sin entrenamiento. Hoy')).toBeOnTheScreen();
     expect(screen.queryByTestId('progress-empty')).toBeNull();
+  });
+
+  it('past the goal, shows a full ring and never "3 de 2" or "3/2"', async () => {
+    useHistoryStore.setState({
+      logs: [log('2026-10-26'), log('2026-10-27'), log('2026-10-28')],
+    });
+    await render(<ProgressScreen />);
+    const week = screen.getByTestId('progress-week');
+    expect(week).toHaveTextContent(/¡Meta cumplida!3 días esta semana \(meta: 2\)/);
+    expect(week).not.toHaveTextContent(/3 de 2|3\/2/);
+    expect(screen.getByTestId('goal-ring-met', { includeHiddenElements: true })).toBeTruthy();
   });
 
   it('shows the streak of weeks and the best one', async () => {

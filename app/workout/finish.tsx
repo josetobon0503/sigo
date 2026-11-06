@@ -8,6 +8,7 @@ import { BigButton, Card, FacesScale, ScreenContainer, type FaceOption } from '@
 import { completedExercises } from '@/engine/session';
 import { FEELINGS, thisWeek, weekStreak } from '@/engine/stats';
 import type { Feeling } from '@/engine/types';
+import { goalMetText } from '@/i18n/format';
 import { useToday } from '@/store/devStore';
 import { useHistoryStore } from '@/store/historyStore';
 import { useProfileStore } from '@/store/profileStore';
@@ -48,6 +49,7 @@ export default function FinishScreen() {
   const goal = profile?.weeklyGoal ?? log.weeklyGoal ?? 2;
   const week = thisWeek(logs, today, goal);
   const streak = weekStreak(logs, today, goal);
+  const goalMet = goalMetText(t, week.count, week.goal);
   const options: FaceOption<Feeling>[] = FEELINGS.map((f) => ({
     value: f,
     label: t(`feeling.${f}`),
@@ -106,8 +108,16 @@ export default function FinishScreen() {
         >
           {title}
         </Text>
-        <Text style={[typography.body, styles.center, { color: colors.textSecondary }]}>
-          {t('finish.weekCount', { count: week.count, goal: week.goal })}
+        {goalMet ? (
+          <Text style={[typography.headline, styles.center, { color: colors.primary }]}>
+            {goalMet.title}
+          </Text>
+        ) : null}
+        <Text
+          style={[typography.body, styles.center, { color: colors.textSecondary }]}
+          testID="finish-week"
+        >
+          {goalMet ? goalMet.detail : t('finish.weekCount', { count: week.count, goal: week.goal })}
         </Text>
       </View>
 
