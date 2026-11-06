@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Text,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -45,6 +46,7 @@ import type { ItemRating, Lang } from '@/engine/types';
 import { formatDosage } from '@/i18n/format';
 import { useProfileStore } from '@/store/profileStore';
 import { useSessionStore } from '@/store/sessionStore';
+import { columnsFit } from '@/theme/textFit';
 import { useTheme } from '@/theme/useTheme';
 
 const TICK_MS = 250;
@@ -376,6 +378,18 @@ function RestView({ session, now, lang }: { session: Session; now: number; lang:
   const { colors, typography, spacing, radius, sizes } = useTheme();
   const skipRest = useSessionStore((s) => s.skipRest);
   const rate = useSessionStore((s) => s.rate);
+  const window = useWindowDimensions();
+  const choicesInRow = columnsFit(
+    RATINGS.map((r) => t(`rating.${r}`)),
+    {
+      width: window.width - spacing.screen * 2,
+      columns: RATINGS.length,
+      gap: spacing.sm,
+      cellPadding: spacing.xs * 2 + 4,
+      fontSize: typography.bodyBold.fontSize,
+      fontScale: window.fontScale,
+    },
+  );
   const remainingMs = restRemainingMs(session, now);
   const seconds = displaySeconds(remainingMs);
   const current = session.items[session.index];
@@ -426,7 +440,7 @@ function RestView({ session, now, lang }: { session: Session; now: number; lang:
                 {currentExercise.name[lang]}
               </Text>
             ) : null}
-            <View style={[styles.choices, { gap: spacing.sm }]}>
+            <View style={[choicesInRow && styles.choices, { gap: spacing.sm }]} testID="choices">
               {RATINGS.map((rating) => {
                 const selected = rated === rating;
                 return (
@@ -557,7 +571,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   choice: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: 0,
     borderWidth: 2,
     justifyContent: 'center',
   },

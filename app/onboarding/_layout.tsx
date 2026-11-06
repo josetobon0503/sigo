@@ -6,8 +6,6 @@ export default function OnboardingLayout() {
   const { colors } = useTheme();
 
   return (
-    <Stack
-      screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}
-    />
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />
   );
 }

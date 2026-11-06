@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 
@@ -23,6 +23,7 @@ import { useToday } from '@/store/devStore';
 import { useHistoryStore } from '@/store/historyStore';
 import { usePainHistoryStore } from '@/store/painHistoryStore';
 import { useProfileStore } from '@/store/profileStore';
+import { columnsFit } from '@/theme/textFit';
 import { BIG_NUMBER_MAX_SCALE, faceScale } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
 
@@ -53,6 +54,7 @@ export default function ProgressScreen() {
   const logs = useHistoryStore((s) => s.logs);
   const painEntries = usePainHistoryStore((s) => s.entries);
   const today = useToday();
+  const window = useWindowDimensions();
 
   if (!profile) return null;
 
@@ -79,7 +81,33 @@ export default function ProgressScreen() {
       {text}
     </Text>
   );
-  const tileStyle = { flex: 1, borderRadius: radius.card, padding: spacing.md, gap: spacing.sm };
+  const weekTexts = goalMet
+    ? [goalMet.title, goalMet.detail]
+    : [
+        t('progress.weekCount', { count: week.count, goal: week.goal }),
+        t('progress.remaining', { count: left }),
+      ];
+  const streakTexts = [
+    streakText,
+    t('progress.streakOpen'),
+    ...(streak.best > 0 ? [t('progress.best', { count: streak.best })] : []),
+  ];
+  // Two tiles side by side only when no word would split; else one under the other.
+  const tilesInRow = columnsFit([...weekTexts, ...streakTexts], {
+    width: window.width - spacing.screen * 2,
+    columns: 2,
+    gap: spacing.ms,
+    cellPadding: spacing.md * 2,
+    fontSize: typography.calloutBold.fontSize,
+    fontScale: window.fontScale,
+  });
+  const tileStyle = {
+    flexGrow: 1,
+    flexBasis: tilesInRow ? 0 : ('auto' as const),
+    borderRadius: radius.card,
+    padding: spacing.md,
+    gap: spacing.sm,
+  };
 
   return (
     <ScreenContainer title={t('progress.title')}>
@@ -89,20 +117,14 @@ export default function ProgressScreen() {
         </Card>
       ) : null}
 
-      <View style={[styles.tiles, { gap: spacing.ms }]}>
+      <View style={[tilesInRow && styles.tiles, { gap: spacing.ms }]} testID="progress-tiles">
         <View
           style={[tileStyle, { backgroundColor: colors.surface, borderColor: colors.border }]}
           testID="progress-week"
         >
           <GoalRing count={week.count} goal={week.goal} />
-          <Text style={[typography.calloutBold, { color: colors.text }]}>
-            {goalMet
-              ? goalMet.title
-              : t('progress.weekCount', { count: week.count, goal: week.goal })}
-          </Text>
-          <Text style={[typography.callout, { color: colors.textSecondary }]}>
-            {goalMet ? goalMet.detail : t('progress.remaining', { count: left })}
-          </Text>
+          <Text style={[typography.calloutBold, { color: colors.text }]}>{weekTexts[0]}</Text>
+          <Text style={[typography.callout, { color: colors.textSecondary }]}>{weekTexts[1]}</Text>
         </View>
 
         <View style={[tileStyle, { backgroundColor: colors.accentSoft }]} testID="progress-streak">
@@ -160,33 +182,22 @@ export default function ProgressScreen() {
             {t('progress.feelingsEmpty')}
           </Text>
         ) : (
-          <>
-            <View style={[styles.faces, { rowGap: spacing.ms }]}>
-              {felt.map(({ id, day, feeling }) => (
-                <View
-                  key={id}
-                  accessible
-                  accessibilityLabel={`${formatShortDay(day, lang)}: ${t(`feeling.${feeling}`)}`}
-                  style={[styles.face, { gap: spacing.xs }]}
-                >
-                  <FaceIcon index={FEELINGS.indexOf(feeling)} size={32} />
-                  <Text
-                    style={[typography.caption, styles.centerText, { color: colors.textSecondary }]}
-                  >
-                    {t(`feeling.${feeling}`)}
-                  </Text>
-                </View>
-              ))}
-            </View>
-            <View style={[styles.row, styles.between]}>
-              <Text style={[typography.caption, { color: colors.textSecondary }]}>
-                {formatShortDay(felt[0].day, lang)}
+          felt.map(({ id, day, feeling }) => (
+            <View
+              key={id}
+              accessible
+              accessibilityLabel={`${formatShortDay(day, lang)}: ${t(`feeling.${feeling}`)}`}
+              style={[styles.row, { gap: spacing.ms }]}
+            >
+              <FaceIcon index={FEELINGS.indexOf(feeling)} size={32} />
+              <Text style={[typography.callout, styles.flex, { color: colors.text }]}>
+                {t(`feeling.${feeling}`)}
               </Text>
               <Text style={[typography.caption, { color: colors.textSecondary }]}>
-                {formatShortDay(felt[felt.length - 1].day, lang)}
+                {formatShortDay(day, lang)}
               </Text>
             </View>
-          </>
+          ))
         )}
       </Card>
 
@@ -343,17 +354,6 @@ const styles = StyleSheet.create({
   },
   flex: {
     flex: 1,
-  },
-  faces: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  face: {
-    width: '20%',
-    alignItems: 'center',
-  },
-  centerText: {
-    textAlign: 'center',
   },
   legendDot: {
     width: 12,

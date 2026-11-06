@@ -124,11 +124,23 @@ entrenamientos esta semana" → 3 stat tiles (ejercicios · minutos · semanas s
 accentSoft) → Card "¿Cómo te sientes?" with FacesScale (5 rows) + neutral labels (Excelente, Bien,
 Regular, Con cansancio, Con molestias) → bottom primary "Volver a Hoy".
 
-**Progreso**: "Tu progreso" → 2 tiles: weekly goal ring "2/3" + "Te falta 1" | streak tile in accentSoft
+**Progreso**: "Tu progreso" → 2 tiles: weekly goal ring "2/3" + "Te falta 1" (goal reached: full ring with a
+check, "¡Meta cumplida!" + "2 días esta semana", or "3 días esta semana (meta: 2)" past it; never "3 de 2") | streak tile in accentSoft
 (+ "Tu mejor racha" when the current week can no longer be met) → Card "Tus niveles" (LevelBars, legend
-"Naranja = subiste esta semana") → Card "Cómo te has sentido" (last 10 as small face dots, "Hace 3
-semanas … Hoy") → Card "Tu dolor por zona" (keep the current content, restyled).
+"Naranja = subiste esta semana") → Card "Cómo te has sentido" (last 10, one row each: small face + word +
+day) → Card "Tu dolor por zona" (keep the current content, restyled).
 
 **All other screens** (onboarding, Dolor, Perfil, Me duele, Seguridad, Preview, Safety Tips): apply the
 same tokens, typography and components; no layout redesign needed now. The body map keeps its current
 layout with new colors; a proper body-map redesign is a later task.
+
+## 7. Text never splits a word
+
+- A word must never break in the middle, at the default text size or with large system text. Never shrink
+  text below 15 pt to make it fit: change the layout instead.
+- Side-by-side columns (Final tiles, rest choices, chapter tabs, Progreso tiles, LevelBars labels) use
+  `columnsFit` (`src/theme/textFit.ts`): it estimates the longest word at the current `fontScale` and screen
+  width. When it does not fit, the columns stack (one per row). Lists of words (feelings, faces) are always
+  full-width rows.
+- Tab bar labels are one word in a quarter of the screen: their font scale is capped so they never split.
+- "Meta cumplida" (Hoy, Progreso, Final) as soon as the days trained reach the weekly goal.

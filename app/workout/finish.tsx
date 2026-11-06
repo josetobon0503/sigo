@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { BigButton, Card, FacesScale, ScreenContainer, type FaceOption } from '@/components';
@@ -13,6 +13,7 @@ import { useToday } from '@/store/devStore';
 import { useHistoryStore } from '@/store/historyStore';
 import { useProfileStore } from '@/store/profileStore';
 import { useSessionStore } from '@/store/sessionStore';
+import { columnsFit } from '@/theme/textFit';
 import { BIG_NUMBER_MAX_SCALE } from '@/theme/tokens';
 import { useTheme } from '@/theme/useTheme';
 
@@ -32,6 +33,7 @@ export default function FinishScreen() {
   const setFeeling = useSessionStore((s) => s.setFeeling);
   const clear = useSessionStore((s) => s.clear);
   const applyProgression = useSessionStore((s) => s.applyProgression);
+  const window = useWindowDimensions();
 
   useEffect(
     () => () => {
@@ -60,14 +62,29 @@ export default function FinishScreen() {
       : t('finish.title')
     : t('finish.titlePartial');
 
+  const tileLabels = [
+    t('finish.statExercises', { count: done }),
+    t('finish.statMinutes', { count: minutes }),
+    t('finish.statWeeks', { count: streak.weeks }),
+  ];
+  const tilesInRow = columnsFit(tileLabels, {
+    width: window.width - spacing.screen * 2,
+    columns: 3,
+    gap: spacing.sm,
+    cellPadding: spacing.sm * 2 + 2,
+    fontSize: typography.caption.fontSize,
+    fontScale: window.fontScale,
+  });
+
   const tile = (value: number, label: string, spoken: string, accent = false) => (
     <View
       accessible
       accessibilityLabel={spoken}
       style={[
-        styles.tile,
+        tilesInRow ? styles.tile : styles.tileWide,
         {
-          padding: spacing.ms,
+          gap: spacing.ms,
+          padding: spacing.sm,
           borderRadius: radius.card,
           backgroundColor: accent ? colors.accentSoft : colors.surface,
           borderColor: accent ? colors.accentSoft : colors.border,
@@ -83,7 +100,7 @@ export default function FinishScreen() {
       <Text
         style={[
           typography.caption,
-          styles.center,
+          tilesInRow ? styles.center : styles.flex,
           { color: accent ? colors.onAccentSoft : colors.textSecondary },
         ]}
       >
@@ -121,23 +138,10 @@ export default function FinishScreen() {
         </Text>
       </View>
 
-      <View style={[styles.tiles, { gap: spacing.sm }]} testID="finish-summary">
-        {tile(
-          done,
-          t('finish.statExercises', { count: done }),
-          t('finish.exercises', { count: done }),
-        )}
-        {tile(
-          minutes,
-          t('finish.statMinutes', { count: minutes }),
-          t('finish.minutes', { count: minutes }),
-        )}
-        {tile(
-          streak.weeks,
-          t('finish.statWeeks', { count: streak.weeks }),
-          t('progress.streak', { count: streak.weeks }),
-          true,
-        )}
+      <View style={[tilesInRow && styles.tiles, { gap: spacing.sm }]} testID="finish-summary">
+        {tile(done, tileLabels[0], t('finish.exercises', { count: done }))}
+        {tile(minutes, tileLabels[1], t('finish.minutes', { count: minutes }))}
+        {tile(streak.weeks, tileLabels[2], t('progress.streak', { count: streak.weeks }), true)}
       </View>
 
       <Card style={{ gap: spacing.ms }}>
@@ -189,8 +193,16 @@ const styles = StyleSheet.create({
   tiles: {
     flexDirection: 'row',
   },
+  flex: {
+    flex: 1,
+  },
   tile: {
     flex: 1,
+    alignItems: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  tileWide: {
+    flexDirection: 'row',
     alignItems: 'center',
     borderWidth: StyleSheet.hairlineWidth,
   },

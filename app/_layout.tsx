@@ -1,8 +1,4 @@
-import {
-  Lexend_400Regular,
-  Lexend_700Bold,
-  useFonts,
-} from '@expo-google-fonts/lexend';
+import { Lexend_400Regular, Lexend_700Bold, useFonts } from '@expo-google-fonts/lexend';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -42,9 +38,7 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="auto" />
-      <Stack
-        screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}
-      >
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
         <Stack.Protected guard={onboarded}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="safety-tips" options={{ presentation: 'modal' }} />

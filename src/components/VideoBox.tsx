@@ -1,7 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { columnsFit } from '@/theme/textFit';
 import { useTheme } from '@/theme/useTheme';
 
 export type VideoChapter = 'purpose' | 'howTo' | 'mistakes';
@@ -17,6 +18,18 @@ export interface VideoBoxProps {
 export function VideoBox({ chapter, onChapter }: VideoBoxProps) {
   const { t } = useTranslation();
   const { colors, typography, spacing, radius, sizes } = useTheme();
+  const window = useWindowDimensions();
+  const tabsInRow = columnsFit(
+    CHAPTERS.map((c) => t(`workout.chapter.${c}`)),
+    {
+      width: window.width - spacing.screen * 2,
+      columns: CHAPTERS.length,
+      gap: spacing.xs,
+      cellPadding: spacing.xs * 2 + 4,
+      fontSize: typography.captionBold.fontSize,
+      fontScale: window.fontScale,
+    },
+  );
 
   return (
     <View style={{ gap: spacing.sm }}>
@@ -45,7 +58,11 @@ export function VideoBox({ chapter, onChapter }: VideoBoxProps) {
           <Ionicons name="play" size={32} color={colors.onHero} />
         </View>
       </View>
-      <View accessibilityRole="tablist" style={{ flexDirection: 'row', gap: spacing.xs }}>
+      <View
+        accessibilityRole="tablist"
+        testID="chapter-tabs"
+        style={{ flexDirection: tabsInRow ? 'row' : 'column', gap: spacing.xs }}
+      >
         {CHAPTERS.map((c) => {
           const selected = c === chapter;
           return (
@@ -56,7 +73,8 @@ export function VideoBox({ chapter, onChapter }: VideoBoxProps) {
               accessibilityState={{ selected }}
               testID={`chapter-${c}`}
               style={({ pressed }) => ({
-                flex: 1,
+                flexGrow: 1,
+                flexBasis: tabsInRow ? 0 : 'auto',
                 minHeight: sizes.minTapTarget,
                 justifyContent: 'center',
                 paddingHorizontal: spacing.xs,
