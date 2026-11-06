@@ -358,7 +358,7 @@ An area is **caution** if intensity = 2 (allowed, but prefer seated / supported 
 
 ## 7. Design system
 
-**DESIGN.md is the source of truth** for typography (Atkinson Hyperlegible), color tokens (light and dark),
+**DESIGN.md is the source of truth** for typography (Lexend), color tokens (light and dark),
 spacing, radii, components and the redesigned screens. Tokens live in `src/theme/tokens.ts`; screens never use hex
 values. Personality: calm, clear, encouraging. The brand teal `#0B6E7A` and the alert red `#D70015` (ONLY "It hurts"
 and safety) stay. Icons: `@expo/vector-icons` (Ionicons). Feeling and pain faces are drawn with react-native-svg

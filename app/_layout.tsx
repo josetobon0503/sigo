@@ -1,8 +1,8 @@
 import {
-  AtkinsonHyperlegible_400Regular,
-  AtkinsonHyperlegible_700Bold,
+  Lexend_400Regular,
+  Lexend_700Bold,
   useFonts,
-} from '@expo-google-fonts/atkinson-hyperlegible';
+} from '@expo-google-fonts/lexend';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -22,8 +22,8 @@ export default function RootLayout() {
   const historyHydrated = useHistoryStore((s) => s.hydrated);
   // A font error falls back to the system font instead of blocking the app.
   const [fontsLoaded, fontError] = useFonts({
-    AtkinsonHyperlegible_400Regular,
-    AtkinsonHyperlegible_700Bold,
+    Lexend_400Regular,
+    Lexend_700Bold,
   });
   const hydrated = profileHydrated && historyHydrated && (fontsLoaded || fontError !== null);
   const onboarded = useProfileStore((s) => s.profile !== null);

@@ -17,9 +17,10 @@
 
 ## 2. Typography
 
-- Typeface: **Atkinson Hyperlegible** (designed for low vision), regular 400 and bold 700, via
-  `@expo-google-fonts/atkinson-hyperlegible` + `expo-font` (works in Expo Go). Keep the splash screen until
-  fonts load. Fallback: system font.
+- Typeface: **Lexend** (designed for reading ease), regular 400 and bold 700, via
+  `@expo-google-fonts/lexend` + `expo-font` (works in Expo Go). Keep the splash screen until fonts load.
+  Fallback: system font. Replaced Atkinson Hyperlegible, whose slashed zero confused users. Lexend is a bit
+  wider: layouts must never split a word (see section 7).
 - Scale (pt): `display` 104 bold (reps counter) · `countdown` 68 bold · `largeTitle` 32 bold ·
   `title` 28 bold · `title2` 26 bold · `headline` 20 bold · `body` 18 · `callout` 17 · `caption` 15 (minimum).
 - Big numbers use `maxFontSizeMultiplier` so they don't break layout; all other text scales freely.

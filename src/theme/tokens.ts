@@ -94,8 +94,8 @@ export const faceScale = ['#3E9B48', '#8CC152', '#F6C343', '#F08A3C', '#E5574F']
 export const faceInk = '#13201F'; // eyes and mouth
 
 export const fonts = {
-  regular: 'AtkinsonHyperlegible_400Regular',
-  bold: 'AtkinsonHyperlegible_700Bold',
+  regular: 'Lexend_400Regular',
+  bold: 'Lexend_700Bold',
 } as const;
 
 // With a custom font the weight comes from the font family, not from fontWeight.
