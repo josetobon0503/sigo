@@ -44,7 +44,7 @@ export const exercises: Exercise[] = [
       es: ['Hacerlo rápido o con tirones.', 'Encorvar la espalda.'],
       en: ['Going fast or jerky.', 'Slouching your back.'],
     },
-    video: {},
+    muscles: { primary: ['shoulders', 'upper_back'], secondary: ['neck'] },
     reviewedByProfessional: false,
   },
   {
@@ -87,7 +87,7 @@ export const exercises: Exercise[] = [
         'Lifting your shoulders.',
       ],
     },
-    video: {},
+    muscles: { primary: ['neck'], secondary: ['upper_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -122,7 +122,7 @@ export const exercises: Exercise[] = [
       es: ['Echarte hacia atrás en la silla.', 'Dejar caer el pie con fuerza.'],
       en: ['Leaning back in the chair.', 'Letting your foot drop hard.'],
     },
-    video: {},
+    muscles: { primary: ['quads'], secondary: ['abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -157,7 +157,7 @@ export const exercises: Exercise[] = [
       es: ['Mover toda la pierna en vez del tobillo.', 'Hacer los círculos muy rápido.'],
       en: ['Moving your whole leg instead of your ankle.', 'Making the circles too fast.'],
     },
-    video: {},
+    muscles: { primary: ['calves'], secondary: [] },
     reviewedByProfessional: false,
   },
   {
@@ -192,7 +192,7 @@ export const exercises: Exercise[] = [
       es: ['Girar con impulso o de golpe.', 'Mover las rodillas junto con el tronco.'],
       en: ['Twisting with a swing or a jerk.', 'Letting your knees turn with your body.'],
     },
-    video: {},
+    muscles: { primary: ['obliques'], secondary: ['upper_back', 'lower_back'] },
     reviewedByProfessional: false,
   },
 
@@ -228,7 +228,7 @@ export const exercises: Exercise[] = [
       es: ['Jalar con fuerza.', 'Levantar la cabeza.'],
       en: ['Pulling hard.', 'Lifting your head.'],
     },
-    video: {},
+    muscles: { primary: ['lower_back', 'glutes'], secondary: ['hamstrings'] },
     reviewedByProfessional: false,
   },
 
@@ -265,7 +265,7 @@ export const exercises: Exercise[] = [
       es: ['Patear rápido en vez de subir con control.', 'Echarte hacia atrás.'],
       en: ['Kicking fast instead of lifting with control.', 'Leaning back.'],
     },
-    video: {},
+    muscles: { primary: ['quads'], secondary: [] },
     reviewedByProfessional: false,
   },
   {
@@ -300,7 +300,7 @@ export const exercises: Exercise[] = [
       es: ['Dejarte caer en la silla.', 'Juntar las rodillas al subir.'],
       en: ['Dropping into the chair.', 'Letting your knees cave in as you stand.'],
     },
-    video: {},
+    muscles: { primary: ['quads', 'glutes'], secondary: ['hamstrings', 'triceps'] },
     reviewedByProfessional: false,
   },
   {
@@ -339,7 +339,7 @@ export const exercises: Exercise[] = [
         'Letting your knees cave in.',
       ],
     },
-    video: {},
+    muscles: { primary: ['quads', 'glutes'], secondary: ['calves'] },
     reviewedByProfessional: false,
   },
   {
@@ -374,7 +374,7 @@ export const exercises: Exercise[] = [
       es: ['Usar impulso con los brazos.', 'Dejarte caer al sentarte.'],
       en: ['Swinging your arms for momentum.', 'Dropping into the chair.'],
     },
-    video: {},
+    muscles: { primary: ['quads', 'glutes'], secondary: ['hamstrings', 'abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -409,7 +409,7 @@ export const exercises: Exercise[] = [
       es: ['Bajar tanto que las rodillas pasan los dedos de los pies.', 'Aguantar la respiración.'],
       en: ['Going so low that your knees pass your toes.', 'Holding your breath.'],
     },
-    video: {},
+    muscles: { primary: ['quads'], secondary: ['glutes'] },
     reviewedByProfessional: false,
   },
 
@@ -448,7 +448,7 @@ export const exercises: Exercise[] = [
       ],
       en: ['Letting your front knee drop inward.', 'Going so low that your knee hurts.'],
     },
-    video: {},
+    muscles: { primary: ['quads', 'glutes'], secondary: ['hamstrings', 'adductors'] },
     reviewedByProfessional: false,
   },
   {
@@ -483,7 +483,7 @@ export const exercises: Exercise[] = [
       es: ['Dejarte caer en la silla.', 'Juntar las rodillas al subir.'],
       en: ['Dropping onto the chair.', 'Letting your knees come together as you stand.'],
     },
-    video: {},
+    muscles: { primary: ['quads', 'glutes'], secondary: ['hamstrings', 'abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -518,7 +518,7 @@ export const exercises: Exercise[] = [
       es: ['Usar tanto peso que se te curve la espalda.', 'Levantar los talones del piso.'],
       en: ['Using so much weight that your back rounds.', 'Lifting your heels off the floor.'],
     },
-    video: {},
+    muscles: { primary: ['quads', 'glutes'], secondary: ['hamstrings', 'lower_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -556,7 +556,7 @@ export const exercises: Exercise[] = [
       ],
       en: ['Letting your front knee go far past your toes.', 'Leaning forward.'],
     },
-    video: {},
+    muscles: { primary: ['quads', 'glutes'], secondary: ['hamstrings', 'adductors'] },
     reviewedByProfessional: false,
   },
   {
@@ -594,7 +594,7 @@ export const exercises: Exercise[] = [
       ],
       en: ['Putting only your toes on the step.', 'Using a step that is too high or wobbly.'],
     },
-    video: {},
+    muscles: { primary: ['quads', 'glutes'], secondary: ['hamstrings', 'calves'] },
     reviewedByProfessional: false,
   },
   {
@@ -629,7 +629,7 @@ export const exercises: Exercise[] = [
       es: ['Bajar rápido o dejarte caer.', 'Usar tanto peso que pierdas el equilibrio.'],
       en: ['Dropping down fast.', 'Using so much weight that you lose your balance.'],
     },
-    video: {},
+    muscles: { primary: ['quads', 'glutes'], secondary: ['hamstrings', 'adductors', 'abs'] },
     reviewedByProfessional: false,
   },
 
@@ -665,7 +665,7 @@ export const exercises: Exercise[] = [
       es: ['Doblar la rodilla hasta que duela.', 'Levantar el pie de la cama.'],
       en: ['Bending your knee until it hurts.', 'Lifting your foot off the bed.'],
     },
-    video: {},
+    muscles: { primary: ['quads', 'hamstrings'], secondary: [] },
     reviewedByProfessional: false,
   },
   {
@@ -700,7 +700,7 @@ export const exercises: Exercise[] = [
       es: ['Doblar la rodilla al subir.', 'Arquear la espalda.'],
       en: ['Bending your knee as you lift.', 'Arching your back.'],
     },
-    video: {},
+    muscles: { primary: ['quads'], secondary: ['abs'] },
     reviewedByProfessional: false,
   },
 
@@ -737,7 +737,7 @@ export const exercises: Exercise[] = [
       es: ['Redondear la espalda.', 'Bajar la cabeza hacia las rodillas.'],
       en: ['Rounding your back.', 'Dropping your head toward your knees.'],
     },
-    video: {},
+    muscles: { primary: ['hamstrings', 'lower_back'], secondary: ['glutes'] },
     reviewedByProfessional: false,
   },
   {
@@ -772,7 +772,7 @@ export const exercises: Exercise[] = [
       es: ['Aguantar la respiración.', 'Empujar con los pies o levantarte de la silla.'],
       en: ['Holding your breath.', 'Pushing with your feet or lifting off the chair.'],
     },
-    video: {},
+    muscles: { primary: ['glutes'], secondary: [] },
     reviewedByProfessional: false,
   },
   {
@@ -807,7 +807,7 @@ export const exercises: Exercise[] = [
       es: ['No arquees la espalda para subir más la pierna.', 'Inclinarte hacia adelante.'],
       en: ["Don't arch your back to lift the leg higher.", 'Leaning forward.'],
     },
-    video: {},
+    muscles: { primary: ['glutes'], secondary: ['hamstrings', 'lower_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -842,7 +842,7 @@ export const exercises: Exercise[] = [
       es: ['Inclinar el cuerpo hacia el otro lado.', 'Girar el pie hacia afuera.'],
       en: ['Leaning your body to the other side.', 'Turning your foot out.'],
     },
-    video: {},
+    muscles: { primary: ['abductors'], secondary: ['glutes'] },
     reviewedByProfessional: false,
   },
   {
@@ -877,7 +877,7 @@ export const exercises: Exercise[] = [
       es: ['Redondear la espalda.', 'Doblar mucho las rodillas, como en una sentadilla.'],
       en: ['Rounding your back.', 'Bending your knees a lot, like a squat.'],
     },
-    video: {},
+    muscles: { primary: ['hamstrings', 'glutes'], secondary: ['lower_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -912,7 +912,7 @@ export const exercises: Exercise[] = [
       es: ['Redondear la espalda.', 'Jalar el cuello con la toalla.', 'Bajar demasiado.'],
       en: ['Rounding your back.', 'Pulling on your neck with the towel.', 'Going down too far.'],
     },
-    video: {},
+    muscles: { primary: ['hamstrings', 'lower_back'], secondary: ['glutes', 'upper_back'] },
     reviewedByProfessional: false,
   },
 
@@ -948,7 +948,7 @@ export const exercises: Exercise[] = [
       es: ['Curvar la espalda.', 'Girar la cadera hacia un lado.'],
       en: ['Rounding your back.', 'Twisting your hips open.'],
     },
-    video: {},
+    muscles: { primary: ['glutes', 'hamstrings'], secondary: ['lower_back', 'calves'] },
     reviewedByProfessional: false,
   },
   {
@@ -983,7 +983,7 @@ export const exercises: Exercise[] = [
       es: ['Arquear la espalda al subir.', 'Empujar con el cuello o la cabeza.'],
       en: ['Arching your back at the top.', 'Pushing with your neck or head.'],
     },
-    video: {},
+    muscles: { primary: ['glutes'], secondary: ['hamstrings', 'lower_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -1021,7 +1021,7 @@ export const exercises: Exercise[] = [
       ],
       en: ['Rounding your back to reach lower.', 'Bending your knees a lot, like a squat.'],
     },
-    video: {},
+    muscles: { primary: ['glutes', 'hamstrings'], secondary: ['lower_back', 'upper_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -1058,7 +1058,7 @@ export const exercises: Exercise[] = [
       es: ['Dejar caer la cadera de un lado.', 'Arquear la espalda al subir.'],
       en: ['Letting one side of your hips drop.', 'Arching your back at the top.'],
     },
-    video: {},
+    muscles: { primary: ['glutes'], secondary: ['hamstrings', 'abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -1093,7 +1093,7 @@ export const exercises: Exercise[] = [
       es: ['Curvar la espalda.', 'Ir rápido y perder el equilibrio.'],
       en: ['Rounding your back.', 'Going fast and losing your balance.'],
     },
-    video: {},
+    muscles: { primary: ['glutes', 'hamstrings'], secondary: ['lower_back', 'calves'] },
     reviewedByProfessional: false,
   },
 
@@ -1129,7 +1129,7 @@ export const exercises: Exercise[] = [
       es: ['Abrir tanto que tire la ingle.', 'Despegar la espalda baja.'],
       en: ['Opening so far that it pulls in your groin.', 'Letting your lower back lift.'],
     },
-    video: {},
+    muscles: { primary: ['abductors', 'adductors'], secondary: ['abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -1164,7 +1164,7 @@ export const exercises: Exercise[] = [
       es: ['Girar la cadera hacia atrás.', 'Ir rápido.'],
       en: ['Rolling your hips back.', 'Going fast.'],
     },
-    video: {},
+    muscles: { primary: ['abductors'], secondary: ['glutes'] },
     reviewedByProfessional: false,
   },
   {
@@ -1199,7 +1199,7 @@ export const exercises: Exercise[] = [
       es: ['Llevar la pierna hacia adelante.', 'Subirla tan alto que la cadera gire.'],
       en: ['Moving your leg forward.', 'Lifting so high that your hips roll.'],
     },
-    video: {},
+    muscles: { primary: ['abductors'], secondary: ['obliques'] },
     reviewedByProfessional: false,
   },
   {
@@ -1236,7 +1236,7 @@ export const exercises: Exercise[] = [
       es: ['Dejar caer la cadera al levantar el pie.', 'Arquear la espalda.'],
       en: ['Letting your hips drop as you lift a foot.', 'Arching your back.'],
     },
-    video: {},
+    muscles: { primary: ['glutes', 'abs'], secondary: ['hamstrings', 'obliques'] },
     reviewedByProfessional: false,
   },
   {
@@ -1273,7 +1273,7 @@ export const exercises: Exercise[] = [
       es: ['Usar tanto peso que se te arquee la espalda.', 'Dejar que la mochila se resbale.'],
       en: ['Using so much weight that your back arches.', 'Letting the backpack slide.'],
     },
-    video: {},
+    muscles: { primary: ['glutes'], secondary: ['hamstrings', 'lower_back'] },
     reviewedByProfessional: false,
   },
 
@@ -1308,7 +1308,7 @@ export const exercises: Exercise[] = [
       es: ['Subir los hombros hacia las orejas.', 'Trabar los codos al estirar.'],
       en: ['Shrugging your shoulders up to your ears.', 'Locking your elbows.'],
     },
-    video: {},
+    muscles: { primary: ['chest', 'triceps'], secondary: ['shoulders'] },
     reviewedByProfessional: false,
   },
   {
@@ -1343,7 +1343,7 @@ export const exercises: Exercise[] = [
       es: ['Sacar la cadera hacia atrás.', 'Abrir mucho los codos hacia los lados.'],
       en: ['Sticking your hips out.', 'Flaring your elbows out wide.'],
     },
-    video: {},
+    muscles: { primary: ['chest', 'shoulders', 'triceps'], secondary: ['abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -1376,7 +1376,7 @@ export const exercises: Exercise[] = [
       es: ['Arquear la espalda.', 'Subir los brazos si el hombro duele.'],
       en: ['Arching your back.', 'Lifting your arms if your shoulder hurts.'],
     },
-    video: {},
+    muscles: { primary: ['shoulders'], secondary: ['triceps', 'upper_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -1411,7 +1411,7 @@ export const exercises: Exercise[] = [
       es: ['Dejar caer la cadera.', 'Pararte tan lejos que te resbales.'],
       en: ['Letting your hips sag.', 'Standing so far away that you slip.'],
     },
-    video: {},
+    muscles: { primary: ['chest', 'triceps'], secondary: ['shoulders', 'abs'] },
     reviewedByProfessional: false,
   },
 
@@ -1447,7 +1447,7 @@ export const exercises: Exercise[] = [
       es: ['Dejar caer la cadera.', 'Usar una mesa que se mueva.'],
       en: ['Letting your hips sag.', 'Using a table that moves.'],
     },
-    video: {},
+    muscles: { primary: ['chest', 'triceps'], secondary: ['shoulders', 'abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -1482,7 +1482,7 @@ export const exercises: Exercise[] = [
       es: ['Usar una silla con ruedas o que se resbale.', 'Dejar caer la cadera.'],
       en: ['Using a chair with wheels or one that slides.', 'Letting your hips sag.'],
     },
-    video: {},
+    muscles: { primary: ['chest', 'triceps'], secondary: ['shoulders', 'abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -1517,7 +1517,7 @@ export const exercises: Exercise[] = [
       es: ['Subir la cadera o doblarla.', 'Abrir mucho los codos hacia los lados.'],
       en: ['Lifting or bending at the hips.', 'Flaring your elbows out wide.'],
     },
-    video: {},
+    muscles: { primary: ['chest', 'triceps', 'shoulders'], secondary: ['abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -1552,7 +1552,7 @@ export const exercises: Exercise[] = [
       es: ['Arquear la espalda para subirla.', 'Usar una mochila tan pesada que no la controles.'],
       en: ['Arching your back to lift it.', "Using a backpack so heavy you can't control it."],
     },
-    video: {},
+    muscles: { primary: ['shoulders', 'triceps'], secondary: ['abs', 'upper_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -1590,7 +1590,7 @@ export const exercises: Exercise[] = [
       es: ['Contar rápido y no hacer la pausa.', 'Dejar caer la cadera.'],
       en: ['Counting fast and skipping the pause.', 'Letting your hips sag.'],
     },
-    video: {},
+    muscles: { primary: ['chest', 'triceps'], secondary: ['shoulders', 'abs'] },
     reviewedByProfessional: false,
   },
 
@@ -1626,7 +1626,7 @@ export const exercises: Exercise[] = [
       es: ['Dejar caer las botellas.', 'Abrir mucho los codos.'],
       en: ['Letting the bottles drop.', 'Flaring your elbows out wide.'],
     },
-    video: {},
+    muscles: { primary: ['chest', 'triceps'], secondary: ['shoulders'] },
     reviewedByProfessional: false,
   },
 
@@ -1663,7 +1663,7 @@ export const exercises: Exercise[] = [
       es: ['Encorvarte hacia adelante.', 'Subir los hombros.'],
       en: ['Hunching forward.', 'Shrugging your shoulders.'],
     },
-    video: {},
+    muscles: { primary: ['upper_back'], secondary: ['biceps', 'shoulders'] },
     reviewedByProfessional: false,
   },
   {
@@ -1698,7 +1698,7 @@ export const exercises: Exercise[] = [
       es: ['Doblar los codos.', 'Aguantar la respiración.'],
       en: ['Bending your elbows.', 'Holding your breath.'],
     },
-    video: {},
+    muscles: { primary: ['upper_back'], secondary: ['shoulders'] },
     reviewedByProfessional: false,
   },
   {
@@ -1733,7 +1733,7 @@ export const exercises: Exercise[] = [
       es: ['Redondear la espalda.', 'Subir los hombros hacia las orejas.'],
       en: ['Rounding your back.', 'Shrugging your shoulders up to your ears.'],
     },
-    video: {},
+    muscles: { primary: ['upper_back', 'biceps'], secondary: ['shoulders'] },
     reviewedByProfessional: false,
   },
   {
@@ -1768,7 +1768,7 @@ export const exercises: Exercise[] = [
       es: ['Empujar la cabeza hacia adelante.', 'Soltar la tensión de la toalla.'],
       en: ['Pushing your head forward.', 'Letting the towel go slack.'],
     },
-    video: {},
+    muscles: { primary: ['upper_back'], secondary: ['biceps'] },
     reviewedByProfessional: false,
   },
   {
@@ -1803,7 +1803,7 @@ export const exercises: Exercise[] = [
       es: ['Redondear la espalda.', 'Girar el tronco para subir la botella.'],
       en: ['Rounding your back.', 'Twisting your body to lift the bottle.'],
     },
-    video: {},
+    muscles: { primary: ['upper_back', 'biceps'], secondary: ['shoulders'] },
     reviewedByProfessional: false,
   },
 
@@ -1839,7 +1839,7 @@ export const exercises: Exercise[] = [
       es: ['Curvar la espalda.', 'Subir los hombros hacia las orejas.'],
       en: ['Rounding your back.', 'Shrugging your shoulders up to your ears.'],
     },
-    video: {},
+    muscles: { primary: ['upper_back'], secondary: ['biceps', 'lower_back', 'hamstrings'] },
     reviewedByProfessional: false,
   },
   {
@@ -1874,7 +1874,7 @@ export const exercises: Exercise[] = [
       es: ['Atar la banda a algo que se pueda mover o abrir.', 'Soltar la banda de golpe.'],
       en: ['Tying the band to something that can move or open.', 'Letting the band snap back.'],
     },
-    video: {},
+    muscles: { primary: ['upper_back', 'biceps'], secondary: ['shoulders'] },
     reviewedByProfessional: false,
   },
   {
@@ -1909,7 +1909,7 @@ export const exercises: Exercise[] = [
       es: ['Curvar la espalda.', 'Jalar con impulso del cuerpo.'],
       en: ['Rounding your back.', 'Swinging your body to pull.'],
     },
-    video: {},
+    muscles: { primary: ['upper_back', 'biceps'], secondary: ['lower_back', 'hamstrings'] },
     reviewedByProfessional: false,
   },
   {
@@ -1947,7 +1947,7 @@ export const exercises: Exercise[] = [
       es: ['Girar el tronco para subir la mochila.', 'Curvar la espalda.'],
       en: ['Twisting your trunk to lift the backpack.', 'Rounding your back.'],
     },
-    video: {},
+    muscles: { primary: ['upper_back', 'biceps'], secondary: ['shoulders', 'obliques'] },
     reviewedByProfessional: false,
   },
   {
@@ -1982,7 +1982,7 @@ export const exercises: Exercise[] = [
       es: ['Bajarla rápido.', 'Curvar la espalda.'],
       en: ['Lowering it fast.', 'Rounding your back.'],
     },
-    video: {},
+    muscles: { primary: ['upper_back', 'biceps'], secondary: ['lower_back', 'hamstrings'] },
     reviewedByProfessional: false,
   },
 
@@ -2021,7 +2021,7 @@ export const exercises: Exercise[] = [
         'Shrugging your shoulders up to your ears.',
       ],
     },
-    video: {},
+    muscles: { primary: ['upper_back', 'shoulders'], secondary: ['lower_back'] },
     reviewedByProfessional: false,
   },
 
@@ -2058,7 +2058,7 @@ export const exercises: Exercise[] = [
       es: ['Aguantar la respiración.', 'Encorvar la espalda.'],
       en: ['Holding your breath.', 'Slouching your back.'],
     },
-    video: {},
+    muscles: { primary: ['abs'], secondary: ['obliques'] },
     reviewedByProfessional: false,
   },
   {
@@ -2093,7 +2093,7 @@ export const exercises: Exercise[] = [
       es: ['Redondear la espalda.', 'Echarte tan atrás que pierdas el control.'],
       en: ['Rounding your back.', 'Leaning back so far that you lose control.'],
     },
-    video: {},
+    muscles: { primary: ['abs'], secondary: ['obliques'] },
     reviewedByProfessional: false,
   },
   {
@@ -2128,7 +2128,7 @@ export const exercises: Exercise[] = [
       es: ['Echarte hacia atrás al subir la rodilla.', 'Soltar la silla.'],
       en: ['Leaning back as you lift your knee.', 'Letting go of the chair.'],
     },
-    video: {},
+    muscles: { primary: ['abs'], secondary: ['quads', 'glutes'] },
     reviewedByProfessional: false,
   },
   {
@@ -2163,7 +2163,7 @@ export const exercises: Exercise[] = [
       es: ['Dejar caer la cadera.', 'Aguantar la respiración.'],
       en: ['Letting your hips sag.', 'Holding your breath.'],
     },
-    video: {},
+    muscles: { primary: ['abs'], secondary: ['shoulders', 'glutes'] },
     reviewedByProfessional: false,
   },
 
@@ -2199,7 +2199,7 @@ export const exercises: Exercise[] = [
       es: ['Aguantar la respiración.', 'Dejar caer la cadera.'],
       en: ['Holding your breath.', 'Letting your hips sag.'],
     },
-    video: {},
+    muscles: { primary: ['abs'], secondary: ['shoulders', 'lower_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -2234,7 +2234,7 @@ export const exercises: Exercise[] = [
       es: ['Subir la pierna más alto que la cadera.', 'Arquear la espalda.'],
       en: ['Lifting your leg higher than your hips.', 'Arching your back.'],
     },
-    video: {},
+    muscles: { primary: ['abs', 'lower_back'], secondary: ['glutes', 'shoulders'] },
     reviewedByProfessional: false,
   },
   {
@@ -2269,7 +2269,7 @@ export const exercises: Exercise[] = [
       es: ['Despegar la espalda baja.', 'Ir rápido.'],
       en: ['Letting your lower back lift.', 'Going fast.'],
     },
-    video: {},
+    muscles: { primary: ['abs'], secondary: ['obliques'] },
     reviewedByProfessional: false,
   },
   {
@@ -2304,7 +2304,7 @@ export const exercises: Exercise[] = [
       es: ['Dejar caer la cadera.', 'Aguantar la respiración.'],
       en: ['Letting your hips sag.', 'Holding your breath.'],
     },
-    video: {},
+    muscles: { primary: ['abs'], secondary: ['obliques', 'shoulders', 'lower_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -2345,7 +2345,7 @@ export const exercises: Exercise[] = [
         'Walking where there are loose rugs or things on the floor.',
       ],
     },
-    video: {},
+    muscles: { primary: ['obliques'], secondary: ['abs', 'upper_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -2380,7 +2380,7 @@ export const exercises: Exercise[] = [
       es: ['Girar la cadera al levantar el pie.', 'Arquear la espalda.'],
       en: ['Twisting your hips as you lift your foot.', 'Arching your back.'],
     },
-    video: {},
+    muscles: { primary: ['abs', 'obliques'], secondary: ['glutes', 'shoulders'] },
     reviewedByProfessional: false,
   },
 
@@ -2416,7 +2416,7 @@ export const exercises: Exercise[] = [
       es: ['Empujar con los pies o levantar la cadera.', 'Aguantar la respiración.'],
       en: ['Pushing with your feet or lifting your hips.', 'Holding your breath.'],
     },
-    video: {},
+    muscles: { primary: ['abs'], secondary: ['lower_back'] },
     reviewedByProfessional: false,
   },
   {
@@ -2451,7 +2451,7 @@ export const exercises: Exercise[] = [
       es: ['Despegar la espalda baja.', 'Aguantar la respiración.'],
       en: ['Letting your lower back lift.', 'Holding your breath.'],
     },
-    video: {},
+    muscles: { primary: ['abs'], secondary: ['quads'] },
     reviewedByProfessional: false,
   },
 
@@ -2488,7 +2488,7 @@ export const exercises: Exercise[] = [
       es: ['Inclinarte tanto que te sales de la silla.', 'Hacerlo rápido.'],
       en: ['Leaning so far you slide off the chair.', 'Going fast.'],
     },
-    video: {},
+    muscles: { primary: ['abs', 'obliques'], secondary: [] },
     reviewedByProfessional: false,
   },
   {
@@ -2523,7 +2523,7 @@ export const exercises: Exercise[] = [
       es: ['Echarte hacia atrás para subir el pie.', 'Aguantar la respiración.'],
       en: ['Leaning back to lift your foot.', 'Holding your breath.'],
     },
-    video: {},
+    muscles: { primary: ['abs'], secondary: ['obliques', 'quads'] },
     reviewedByProfessional: false,
   },
   {
@@ -2558,7 +2558,7 @@ export const exercises: Exercise[] = [
       es: ['Mirar al piso.', 'Soltar la silla demasiado pronto.'],
       en: ['Looking down at the floor.', 'Letting go of the chair too soon.'],
     },
-    video: {},
+    muscles: { primary: ['calves'], secondary: ['abductors', 'abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -2593,7 +2593,7 @@ export const exercises: Exercise[] = [
       es: ['Mirar al piso.', 'Aguantar la respiración.'],
       en: ['Looking down at the floor.', 'Holding your breath.'],
     },
-    video: {},
+    muscles: { primary: ['calves', 'abductors'], secondary: ['abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -2628,7 +2628,7 @@ export const exercises: Exercise[] = [
       es: ['Inclinar el cuerpo hacia un lado.', 'Trabar la rodilla de apoyo.'],
       en: ['Leaning your body to one side.', 'Locking the knee you stand on.'],
     },
-    video: {},
+    muscles: { primary: ['abductors', 'calves'], secondary: ['glutes', 'abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -2663,7 +2663,7 @@ export const exercises: Exercise[] = [
       es: ['Mirar los pies todo el tiempo.', 'Ir rápido.'],
       en: ['Looking at your feet the whole time.', 'Going fast.'],
     },
-    video: {},
+    muscles: { primary: ['calves', 'abductors'], secondary: ['abs'] },
     reviewedByProfessional: false,
   },
 
@@ -2699,7 +2699,7 @@ export const exercises: Exercise[] = [
       es: ['Mirar hacia los pies.', 'Alejarte de la silla.'],
       en: ['Looking down at your feet.', 'Moving away from the chair.'],
     },
-    video: {},
+    muscles: { primary: ['calves', 'abductors'], secondary: ['abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -2734,7 +2734,7 @@ export const exercises: Exercise[] = [
       es: ['Apoyar la pierna levantada en la otra.', 'Alejarte de la silla.'],
       en: ['Resting the lifted leg on the other one.', 'Moving away from the chair.'],
     },
-    video: {},
+    muscles: { primary: ['abductors', 'calves'], secondary: ['glutes', 'abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -2772,7 +2772,7 @@ export const exercises: Exercise[] = [
       es: ['Estirarte tan lejos que pierdas el equilibrio.', 'Alejarte de la silla.'],
       en: ['Reaching so far that you lose your balance.', 'Moving away from the chair.'],
     },
-    video: {},
+    muscles: { primary: ['glutes', 'abductors'], secondary: ['calves', 'abs', 'quads'] },
     reviewedByProfessional: false,
   },
 
@@ -2809,7 +2809,7 @@ export const exercises: Exercise[] = [
       es: ['Hacerlo rápido.', 'Dejar caer los talones de golpe.'],
       en: ['Going fast.', 'Letting your heels drop hard.'],
     },
-    video: {},
+    muscles: { primary: ['calves'], secondary: [] },
     reviewedByProfessional: false,
   },
   {
@@ -2844,7 +2844,7 @@ export const exercises: Exercise[] = [
       es: ['Echarte hacia adelante sobre la silla.', 'Doblar las rodillas.'],
       en: ['Leaning forward onto the chair.', 'Bending your knees.'],
     },
-    video: {},
+    muscles: { primary: ['calves'], secondary: [] },
     reviewedByProfessional: false,
   },
   {
@@ -2882,7 +2882,7 @@ export const exercises: Exercise[] = [
       es: ['Empujarte con los brazos.', 'Dejar caer el talón de golpe.'],
       en: ['Pushing yourself up with your arms.', 'Letting your heel drop hard.'],
     },
-    video: {},
+    muscles: { primary: ['calves'], secondary: ['abductors'] },
     reviewedByProfessional: false,
   },
   {
@@ -2917,7 +2917,7 @@ export const exercises: Exercise[] = [
       es: ['Dejar caer los talones de golpe.', 'Inclinarte hacia adelante.'],
       en: ['Dropping your heels hard.', 'Leaning forward.'],
     },
-    video: {},
+    muscles: { primary: ['calves'], secondary: ['abs'] },
     reviewedByProfessional: false,
   },
   {
@@ -2952,7 +2952,7 @@ export const exercises: Exercise[] = [
       es: ['Soltar el pasamanos.', 'Bajar tanto los talones que tire o duela.'],
       en: ['Letting go of the handrail.', 'Dropping your heels so low that it pulls or hurts.'],
     },
-    video: {},
+    muscles: { primary: ['calves'], secondary: [] },
     reviewedByProfessional: false,
   },
   {
@@ -2987,7 +2987,7 @@ export const exercises: Exercise[] = [
       es: ['Rebotar.', 'Alejarte de la silla.'],
       en: ['Bouncing.', 'Moving away from the chair.'],
     },
-    video: {},
+    muscles: { primary: ['calves'], secondary: ['abductors'] },
     reviewedByProfessional: false,
   },
   {
@@ -3025,7 +3025,7 @@ export const exercises: Exercise[] = [
       es: ['Bajar rápido.', 'Usar tanto peso que pierdas el equilibrio.'],
       en: ['Lowering fast.', 'Using so much weight that you lose your balance.'],
     },
-    video: {},
+    muscles: { primary: ['calves'], secondary: ['abductors', 'abs'] },
     reviewedByProfessional: false,
   },
 ];

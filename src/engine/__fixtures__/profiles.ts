@@ -76,6 +76,7 @@ export function makeProfile(overrides: Partial<UserProfile> = {}): UserProfile {
     reminder: { enabled: false, hour: 9, minute: 0, days: [] },
     screening: null,
     weeklyGoal: 2,
+    bodyFigure: 'female',
     ...overrides,
   };
 }
@@ -124,7 +125,7 @@ export function fakeExercise(overrides: Partial<Exercise> & Pick<Exercise, 'id'>
     purpose: { es: 'x', en: 'x' },
     steps: { es: ['a', 'b', 'c'], en: ['a', 'b', 'c'] },
     mistakes: { es: ['a', 'b'], en: ['a', 'b'] },
-    video: {},
+    muscles: { primary: ['quads'], secondary: [] },
     reviewedByProfessional: false,
     ...overrides,
   };

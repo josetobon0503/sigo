@@ -11,6 +11,7 @@ export { FacesScale, type FaceOption, type FacesScaleProps } from './FacesScale'
 export { HeroCard, type HeroCardProps } from './HeroCard';
 export { LevelBars, type LevelBarRow } from './LevelBars';
 export { LevelUpBanner, type LevelUpBannerProps } from './LevelUpBanner';
+export { MuscleMap, type MuscleMapProps } from './MuscleMap';
 export { Notice, type NoticeProps } from './Notice';
 export { ONBOARDING_TOTAL_STEPS, OnboardingStep, type OnboardingStepProps } from './OnboardingStep';
 export { Pill, type PillProps } from './Pill';

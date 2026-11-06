@@ -53,7 +53,9 @@
 | alertText | #D70015 | #FF6B6B | red text / icons on bg or surface, e.g. the chest-pain link (#D70015 is 3.1:1 on dark surface) |
 | restBg | #0B6E7A | #0B5560 | full-screen rest background |
 | restTrack | #2B8893 | #2B7A84 | countdown ring track |
-| videoBg | #0E3B40 | #0A2A2E | video box placeholder |
+| videoBg | #0E3B40 | #0A2A2E | video area behind the clip |
+| bodyFill | #E6EBE9 | #2E3D3B | MuscleMap: muscles not worked |
+| muscleSecondary | #F5B98A | #8A5A36 | MuscleMap: muscles that help (accentSoft disappears against bodyFill) |
 | restCard | #FFFFFF | #08434B | "A continuación" card on restBg (dark: darker teal than restBg) |
 | onRestCard | #13201F | #FFFFFF | text on restCard |
 | onRestCardMuted | #4A5856 | #B9DDE1 | secondary text on restCard |
@@ -95,8 +97,19 @@ Extend the existing contrast test so every text/background pair above passes 4.5
 - **LevelBars**: label column (~132 pt) · 5 segments 12 pt tall · number. Segment raised this week = accent.
 - **ExerciseRow**: 48 pt thumbnail (primarySoft placeholder until videos exist) · name (headline 18 bold) ·
   meta line ("Piernas · 3 × 10") in textSecondary · divider.
-- **VideoBox**: 16:9-ish area (≈ 196 pt tall), dark teal (#0E3B40 light / #0A2A2E dark) with a round play
-  button; under it 3 equal chapter tabs (Para qué sirve / Cómo hacerlo / Cómo NO hacerlo).
+- **VideoBox**: 3 equal chapter tabs on top (Para qué sirve / Cómo hacerlo / Cómo NO hacerlo), "Cómo hacerlo"
+  open first. Below, a 196 pt videoBg area with the silent clip in a loop (expo-video, starts by itself); on
+  "Cómo NO hacerlo" an "Evita esto" badge (accent bg, onAccent text, never red) top left; a 72 pt MuscleMap on
+  a surface chip bottom right, tappable to open it big in a modal. No clip: a Card with the numbered steps or
+  the bulleted mistakes (plus the badge). "Para qué sirve" has no clip: purpose text, outline "Escuchar"
+  button (expo-speech, user's language; "Parar" while speaking), MuscleMap 200 pt, "Trabaja: glúteos y
+  abdomen" in bodyBold. Used on the exercise screen and the swap preview.
+- **MuscleMap**: front and back figures side by side (react-native-body-highlighter on react-native-svg).
+  Primary muscles accent, helpers muscleSecondary, the rest bodyFill, outline borderStrong; never red. Woman
+  or man figure from Profile ("Figura del cuerpo", visual only). The drawing is hidden from screen readers;
+  the label says the muscles ("Músculos que trabaja: glúteos, isquiotibiales y espalda baja"). The 3 tones
+  differ by hue and lightness (an orange can't reach 3:1 against a gray on both sides), and the muscles are
+  always also written. Built to be reused in phase 8 as the Pain tab map (the library has onBodyPartPress).
 - **TabBar**: 4 tabs Hoy · Progreso · Dolor · Perfil, icon 26 pt + label 15 pt; active = primary + bold.
 
 ## 6. Screens
@@ -108,8 +121,8 @@ nivel 3", Pill with considered areas ("Atentos a tu rodilla izquierda"), inverse
 play icon → "Ejercicios de hoy" list of ExerciseRows grouped (Para calentar / Ejercicios / Ahora a la cama /
 Para terminar). "¡Ya entrenaste hoy!" replaces the hero content with the same card shape + "Repetir la rutina".
 
-**Ejercicio**: top row = outline "Salir" (with ×) + ProgressSegments + "Ejercicio 3 de 7" → VideoBox +
-chapter tabs → name (title, centered) + "Serie 1 de 3" + SetDots → giant reps number (display) +
+**Ejercicio**: top row = outline "Salir" (with ×) + ProgressSegments + "Ejercicio 3 de 7" → chapter tabs +
+VideoBox → name (title, centered) + "Serie 1 de 3" + SetDots → giant reps number (display) +
 "repeticiones" (or a timer for timed sets) → text button "Está muy fácil" (arrow-up icon) → bottom,
 fixed: primary "Hecho" (check) and alert "Me duele" (hand). The header must be opaque and never overlap
 content when scrolling (current bug: the big number scrolls under the header).

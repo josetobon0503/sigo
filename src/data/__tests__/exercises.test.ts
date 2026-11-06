@@ -2,6 +2,8 @@ import { ALL_AREAS, ALL_PATTERNS } from '../../engine/__fixtures__/profiles';
 import type { BodyArea, Dosage, Exercise, Pattern } from '../../engine/types';
 import { FORBIDDEN_WORDS } from '../../i18n/forbiddenWords';
 import { exercises } from '../exercises';
+import enJson from '../../i18n/en.json';
+import esJson from '../../i18n/es.json';
 
 // Pattern -> areas that EVERY exercise of that pattern honestly loads. For these, the generator
 // skips the slot when the area is blocked, which is the right call. Never drop an area from
@@ -286,5 +288,25 @@ describe('library coverage', () => {
     ),
   )('exception %s -> %s is still needed', (pattern, area) => {
     expect(exercises.some((e) => e.pattern === pattern && !e.loads.includes(area))).toBe(false);
+  });
+});
+
+describe('muscles', () => {
+  const MUSCLES = Object.keys(esJson.muscleName);
+
+  it.each(exercises.map((e) => [e.id, e]))('%s works at least one primary muscle', (_id, e) => {
+    expect(e.muscles.primary.length).toBeGreaterThan(0);
+    for (const m of [...e.muscles.primary, ...e.muscles.secondary]) expect(MUSCLES).toContain(m);
+    const all = [...e.muscles.primary, ...e.muscles.secondary];
+    expect(new Set(all).size).toBe(all.length); // a muscle is primary or secondary, never both
+  });
+
+  it('every muscle has a name in Spanish and English', () => {
+    expect(MUSCLES).toHaveLength(15);
+    expect(Object.keys(enJson.muscleName).sort()).toEqual([...MUSCLES].sort());
+    for (const m of MUSCLES) {
+      expect(esJson.muscleName[m as keyof typeof esJson.muscleName]).toBeTruthy();
+      expect(enJson.muscleName[m as keyof typeof enJson.muscleName]).toBeTruthy();
+    }
   });
 });

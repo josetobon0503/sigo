@@ -2,7 +2,15 @@
 // Pure and with type-only imports, so the export script can run it with plain Node and the test can
 // check that the file is up to date.
 
-import type { BodyArea, Dosage, Equipment, Exercise, Pattern, Position } from '../engine/types';
+import type {
+  BodyArea,
+  Dosage,
+  Equipment,
+  Exercise,
+  Muscle,
+  Pattern,
+  Position,
+} from '../engine/types';
 
 // The 37 exercises of the first library, before the difficulty recalibration ("v1 de revisión").
 export const V1_IDS: readonly string[] = [
@@ -69,12 +77,20 @@ export interface DocLabels {
   pattern: Record<Pattern, string>;
   equipmentName: Record<Equipment, string>;
   bodyArea: Record<BodyArea, string>;
+  muscleName: Record<Muscle, string>;
 }
 
 function dosage(d: Dosage, perSide: boolean): string {
   const side = perSide ? ' por lado' : '';
   if (d.kind === 'time') return `${d.sets} × ${d.seconds} s${side}`;
   return `${d.sets} × ${d.reps}${side}${d.slow ? ', lento (3 s al bajar)' : ''}`;
+}
+
+// Primary muscles, then the secondary ones in parentheses: "glúteos, cuádriceps (abdomen)".
+function muscles(e: Exercise, labels: DocLabels): string {
+  const name = (m: Muscle) => labels.muscleName[m].toLocaleLowerCase('es');
+  const secondary = e.muscles.secondary.map(name).join(', ');
+  return e.muscles.primary.map(name).join(', ') + (secondary ? ` (${secondary})` : '');
 }
 
 const HEADER = `# Biblioteca de ejercicios de Sigo
@@ -95,6 +111,8 @@ en la cama, o en el piso sobre una toalla si la persona puede bajar y levantarse
 ejercicios sentados», va al final de la rutina (máximo 3) y siempre termina con cómo levantarse. *Piso*
 (planchas, cuatro apoyos) solo se ofrece a quien puede bajar al piso y levantarse sin ayuda, y desde el nivel 3.
 Los ejercicios de equilibrio sin apoyo (nivel 3 o más) se hacen junto a una silla firme por seguridad.
+
+**Músculos.** Primero los que más trabajan; entre paréntesis, los que ayudan.
 `;
 
 export function renderLibraryDoc(exercises: readonly Exercise[], labels: DocLabels): string {
@@ -115,13 +133,14 @@ export function renderLibraryDoc(exercises: readonly Exercise[], labels: DocLabe
       e.equipment.map((eq) => labels.equipmentName[eq]).join(', ') || '—',
       dosage(e.dosage, e.perSide),
       e.loads.map((a) => labels.bodyArea[a].toLocaleLowerCase('es')).join(', ') || '—',
+      muscles(e, labels),
       e.perSide ? 'Sí' : 'No',
       v1.has(e.id) ? 'No' : 'Sí',
     ].join(' | '),
   );
   const table = [
-    '| # | Ejercicio | Patrón | Posición | Nivel | Equipo | Dosis | Zonas que carga | Un solo lado | Nuevo desde la v1 de revisión |',
-    '|---|---|---|---|---|---|---|---|---|---|',
+    '| # | Ejercicio | Patrón | Posición | Nivel | Equipo | Dosis | Zonas que carga | Músculos | Un solo lado | Nuevo desde la v1 de revisión |',
+    '|---|---|---|---|---|---|---|---|---|---|---|',
     ...rows.map((r) => `| ${r} |`),
   ];
   const newCount = exercises.filter((e) => !v1.has(e.id)).length;

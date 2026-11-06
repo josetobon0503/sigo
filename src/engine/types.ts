@@ -46,6 +46,26 @@ export type Equipment =
 
 export type Level = 1 | 2 | 3 | 4 | 5;
 
+export type Muscle =
+  | 'glutes'
+  | 'quads'
+  | 'hamstrings'
+  | 'calves'
+  | 'abs'
+  | 'obliques'
+  | 'lower_back'
+  | 'upper_back'
+  | 'chest'
+  | 'shoulders'
+  | 'biceps'
+  | 'triceps'
+  | 'neck'
+  | 'adductors'
+  | 'abductors';
+
+// A clip: a bundled asset (require, development only) or a remote URL (CDN, before publishing).
+export type VideoRef = number | { uri: string };
+
 export type Dosage =
   | { kind: 'reps'; sets: number; reps: number; slow?: true } // slow: 3 s on the way down (level 5)
   | { kind: 'time'; sets: number; seconds: number };
@@ -63,7 +83,7 @@ export interface Exercise {
   purpose: Localized; // "what it is for", one or two plain sentences
   steps: LocalizedList; // "how to do it", 3-5 short steps
   mistakes: LocalizedList; // "how NOT to do it", 2-3 common mistakes
-  video: { purpose?: string; howTo?: string; mistakes?: string }; // asset ids / URLs, optional for now
+  muscles: { primary: Muscle[]; secondary: Muscle[] }; // shown on the MuscleMap
   reviewedByProfessional: boolean; // false until a licensed physical therapist approves it
 }
 
@@ -102,7 +122,10 @@ export interface UserProfile {
   reminder: { enabled: boolean; hour: number; minute: number; days: number[] };
   screening: { completedAt: string; anyYes: boolean } | null;
   weeklyGoal: WeeklyGoal;
+  bodyFigure: BodyFigure; // MuscleMap drawing only (profile v6)
 }
+
+export type BodyFigure = 'female' | 'male';
 
 // What the user reports from the "It hurts" flow.
 export interface PainReport {

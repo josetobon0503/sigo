@@ -81,7 +81,13 @@
     "floorOk": "Ejercicios en el piso",
     "floorOkHint": "Solo si puedes bajar al piso y levantarte sin ayuda.",
     "goalLabel": "Mi meta semanal",
-    "goalHint": "Tu racha cuenta las semanas en que llegas a tu meta."
+    "goalHint": "Tu racha cuenta las semanas en que llegas a tu meta.",
+    "bodyFigureLabel": "Figura del cuerpo",
+    "bodyFigureHint": "Solo cambia el dibujo de los músculos.",
+    "bodyFigure": {
+      "female": "Mujer",
+      "male": "Hombre"
+    }
   },
   "swap": {
     "reason": {
@@ -507,5 +513,33 @@
     "days_other": "{{count}} días esta semana",
     "daysOver_one": "{{count}} día esta semana (meta: {{goal}})",
     "daysOver_other": "{{count}} días esta semana (meta: {{goal}})"
+  },
+  "muscleName": {
+    "glutes": "Glúteos",
+    "quads": "Cuádriceps",
+    "hamstrings": "Isquiotibiales",
+    "calves": "Pantorrillas",
+    "abs": "Abdomen",
+    "obliques": "Oblicuos",
+    "lower_back": "Espalda baja",
+    "upper_back": "Espalda alta",
+    "chest": "Pecho",
+    "shoulders": "Hombros",
+    "biceps": "Bíceps",
+    "triceps": "Tríceps",
+    "neck": "Cuello",
+    "adductors": "Aductores",
+    "abductors": "Abductores"
+  },
+  "video": {
+    "avoidThis": "Evita esto",
+    "listen": "Escuchar",
+    "stopListening": "Parar",
+    "listenHint": "Lee en voz alta para qué sirve",
+    "works": "Trabaja: {{list}}",
+    "muscles": "Músculos que trabaja: {{list}}",
+    "musclesHint": "Muestra el mapa de músculos más grande",
+    "close": "Cerrar",
+    "musclesTitle": "Músculos que trabaja"
   }
 }

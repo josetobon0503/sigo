@@ -48,3 +48,6 @@ yarn-error.*
 
 # graphify (generated knowledge graph)
 graphify-out/
+
+# Original video clips (compressed copies go to assets/videos/)
+videos-originales/

@@ -29,7 +29,8 @@
       "expo-asset",
       "expo-font",
       "expo-splash-screen",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-video"
     ],
     "scheme": "sigo",
     "experiments": {

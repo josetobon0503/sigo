@@ -6,6 +6,7 @@ import { StyleSheet } from 'react-native';
 import ProgressScreen from '../../app/(tabs)/progress';
 import { LevelBars } from '@/components/LevelBars';
 import { VideoBox } from '@/components/VideoBox';
+import { exercises } from '@/data/exercises';
 import { makeProfile } from '@/engine/__fixtures__/profiles';
 import { setLanguage } from '@/i18n';
 import { useProfileStore } from '@/store/profileStore';
@@ -50,10 +51,10 @@ describe('columnsFit', () => {
 
 describe('layouts with columns', () => {
   it('video chapter tabs sit side by side, and stack with large text', async () => {
-    const { rerender } = await render(<VideoBox chapter={null} onChapter={jest.fn()} />);
+    const { rerender } = await render(<VideoBox exercise={exercises[0]} lang="es" />);
     expect(direction('chapter-tabs')).toBe('row');
     mockWindow.fontScale = 2;
-    await rerender(<VideoBox chapter={null} onChapter={jest.fn()} />);
+    await rerender(<VideoBox exercise={exercises[0]} lang="es" />);
     expect(direction('chapter-tabs')).toBe('column');
   });
 

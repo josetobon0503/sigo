@@ -5,3 +5,5 @@ package-lock.json
 CLAUDE.md
 PROMPTS.md
 docs/biblioteca-ejercicios.md
+docs/lista-videos.md
+src/data/videos.ts

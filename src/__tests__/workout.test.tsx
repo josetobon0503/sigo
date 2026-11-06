@@ -219,13 +219,11 @@ describe('workout session', () => {
     useSessionStore.getState().start(SHORT, false);
   });
 
-  it('opens and closes the written text of a video chapter', async () => {
+  it('opens "How to do it" first, and again on the next exercise', async () => {
     await render(<SessionScreen />);
-    expect(screen.queryByTestId('chapter-text')).toBeNull();
+    expect(screen.getByRole('tab', { name: 'Cómo hacerlo' })).toBeSelected();
     await user.press(screen.getByRole('tab', { name: 'Cómo NO hacerlo' }));
-    expect(screen.getByTestId('chapter-text')).toBeOnTheScreen();
-    await user.press(screen.getByRole('tab', { name: 'Cómo NO hacerlo' }));
-    expect(screen.queryByTestId('chapter-text')).toBeNull();
+    expect(screen.getByTestId('avoid-badge')).toBeOnTheScreen();
   });
 
   it('runs a whole workout and saves the log', async () => {

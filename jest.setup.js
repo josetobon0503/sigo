@@ -26,3 +26,24 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy' },
 }));
 jest.mock('expo-keep-awake', () => ({ useKeepAwake: jest.fn() }));
+
+// Video player: a plain view; the player records what the component asked for.
+jest.mock('expo-video', () => {
+  const { View } = require('react-native');
+  const React = require('react');
+  const mock = {
+    lastPlayer: null,
+    useVideoPlayer: (source, setup) => {
+      const player = { source, loop: false, muted: false, play: jest.fn(), pause: jest.fn() };
+      if (setup) setup(player);
+      mock.lastPlayer = player;
+      return player;
+    },
+    VideoView: (props) => React.createElement(View, { testID: props.testID }),
+  };
+  return mock;
+});
+jest.mock('expo-speech', () => ({
+  speak: jest.fn(),
+  stop: jest.fn(() => Promise.resolve()),
+}));

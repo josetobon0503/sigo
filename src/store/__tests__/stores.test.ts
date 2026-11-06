@@ -99,6 +99,13 @@ describe('profile migration', () => {
     );
   });
 
+  it('version 5 profiles get the female body figure, and keep one they have', () => {
+    const { bodyFigure: _b, ...old } = makeProfile();
+    expect(migrateProfile({ profile: old }, 5).profile?.bodyFigure).toBe('female');
+    const male = makeProfile({ bodyFigure: 'male' });
+    expect(migrateProfile({ profile: male }, 5).profile?.bodyFigure).toBe('male');
+  });
+
   it('keeps an empty profile', () => {
     expect(migrateProfile({ profile: null }, 1)).toEqual({ profile: null });
   });

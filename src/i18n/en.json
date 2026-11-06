@@ -81,7 +81,13 @@
     "floorOk": "Floor exercises",
     "floorOkHint": "Only if you can get down to the floor and back up without help.",
     "goalLabel": "My weekly goal",
-    "goalHint": "Your streak counts the weeks you reach your goal."
+    "goalHint": "Your streak counts the weeks you reach your goal.",
+    "bodyFigureLabel": "Body figure",
+    "bodyFigureHint": "Only changes the muscle drawing.",
+    "bodyFigure": {
+      "female": "Woman",
+      "male": "Man"
+    }
   },
   "swap": {
     "reason": {
@@ -507,5 +513,33 @@
     "days_other": "{{count}} days this week",
     "daysOver_one": "{{count}} day this week (goal: {{goal}})",
     "daysOver_other": "{{count}} days this week (goal: {{goal}})"
+  },
+  "muscleName": {
+    "glutes": "Glutes",
+    "quads": "Quads",
+    "hamstrings": "Hamstrings",
+    "calves": "Calves",
+    "abs": "Abs",
+    "obliques": "Obliques",
+    "lower_back": "Lower back",
+    "upper_back": "Upper back",
+    "chest": "Chest",
+    "shoulders": "Shoulders",
+    "biceps": "Biceps",
+    "triceps": "Triceps",
+    "neck": "Neck",
+    "adductors": "Inner thighs",
+    "abductors": "Outer hips"
+  },
+  "video": {
+    "avoidThis": "Avoid this",
+    "listen": "Listen",
+    "stopListening": "Stop",
+    "listenHint": "Reads what it is for out loud",
+    "works": "Works: {{list}}",
+    "muscles": "Muscles it works: {{list}}",
+    "musclesHint": "Shows the muscle map bigger",
+    "close": "Close",
+    "musclesTitle": "Muscles it works"
   }
 }

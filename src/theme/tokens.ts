@@ -33,6 +33,8 @@ export interface ColorTokens {
   onRestCardMuted: string;
   restCardAccent: string; // highlighted text and icons on restCard
   videoBg: string; // video box placeholder
+  bodyFill: string; // MuscleMap: muscles not worked
+  muscleSecondary: string; // MuscleMap: helper muscles (accentSoft disappears against bodyFill)
 }
 
 export const colors: Record<ColorScheme, ColorTokens> = {
@@ -66,6 +68,8 @@ export const colors: Record<ColorScheme, ColorTokens> = {
     onRestCardMuted: '#4A5856',
     restCardAccent: '#0B6E7A',
     videoBg: '#0E3B40',
+    bodyFill: '#E6EBE9',
+    muscleSecondary: '#F5B98A',
   },
   dark: {
     bg: '#0E1514',
@@ -97,6 +101,8 @@ export const colors: Record<ColorScheme, ColorTokens> = {
     onRestCardMuted: '#B9DDE1',
     restCardAccent: '#6BC9D3',
     videoBg: '#0A2A2E',
+    bodyFill: '#2E3D3B',
+    muscleSecondary: '#8A5A36',
   },
 };
 

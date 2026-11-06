@@ -309,6 +309,14 @@ describe('profile screen', () => {
     expect(useProfileStore.getState().profile?.weeklyGoal).toBe(4);
   });
 
+  it('can change the body figure of the muscle map (woman by default)', async () => {
+    const user = userEvent.setup();
+    await render(<ProfileScreen />);
+    expect(screen.getByRole('button', { name: 'Mujer' })).toBeSelected();
+    await user.press(screen.getByRole('button', { name: 'Hombre' }));
+    expect(useProfileStore.getState().profile?.bodyFigure).toBe('male');
+  });
+
   it('can change the age band to "Under 50"', async () => {
     const user = userEvent.setup();
     await render(<ProfileScreen />);

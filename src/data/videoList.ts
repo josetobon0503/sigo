@@ -5,6 +5,7 @@
 import { maria, mamaActiva, roberto } from '../engine/__fixtures__/profiles';
 import { generateWorkout } from '../engine/generator';
 import type { Equipment, Exercise, WorkoutLog } from '../engine/types';
+import type { ClipChapter, ReadyClips } from './videoFiles';
 
 export const SIM_START = '2026-11-02'; // a Monday
 export const SIM_DAYS = 28;
@@ -77,7 +78,11 @@ export function cameraOf(e: Exercise): string {
 export function renderVideoList(
   library: Exercise[],
   equipmentName: Record<Equipment, string>,
+  ready: ReadyClips,
 ): string {
+  const has = (id: string, c: ClipChapter) => ready.get(id)?.has(c) ?? false;
+  const status = (id: string, c: ClipChapter) => (has(id, c) ? 'listo' : 'falta');
+  const readyCount = library.reduce((n, e) => n + +has(e.id, 'howTo') + +has(e.id, 'mistakes'), 0);
   const batch = batchOf(library, countUses(library));
   const sorted = [...library].sort(
     (a, b) =>
@@ -110,15 +115,15 @@ export function renderVideoList(
     if (/counter/.test(e.id)) objects.push('encimera de la cocina');
     if (/table/.test(e.id)) objects.push('mesa firme');
     blocks.push(
-      `### [ ] ${e.name.es}  (tanda ${b})`,
+      `### [${has(e.id, 'howTo') && has(e.id, 'mistakes') ? 'x' : ' '}] ${e.name.es}  (tanda ${b})`,
       '',
       `- Código para el archivo: \`${e.id}__como\` y \`${e.id}__no\``,
       `- Lugar y objetos: ${placeOf(e)}; ${objects.join(', ') || 'ningún objeto'}`,
       `- Ángulo de la cámara: ${cameraOf(e)}`,
       `- Un solo lado: ${e.perSide ? 'sí, graba solo el lado derecho' : 'no'}`,
-      '- Cómo hacerlo (clip 1):',
+      `- Cómo hacerlo (clip 1, ${status(e.id, 'howTo')}):`,
       ...e.steps.es.map((s, i) => `  ${i + 1}. ${s}`),
-      '- Cómo NO hacerlo (clip 2):',
+      `- Cómo NO hacerlo (clip 2, ${status(e.id, 'mistakes')}):`,
       ...e.mistakes.es.map((m) => `  - ${m}`),
       `- Repeticiones a mostrar: ${e.dosage.kind === 'time' ? 'aguanta 10 s' : '3 lentas'}`,
       '',
@@ -128,12 +133,15 @@ export function renderVideoList(
   return `# Lista de grabación de videos
 
 > Archivo generado con \`npm run export:videos\` a partir de \`src/data/exercises.ts\`. No lo edites a mano:
-> un test falla si no coincide con los datos. Marca \`[x]\` en tu copia cuando grabes un ejercicio.
+> un test falla si no coincide con los datos. \`npm run videos:compress\` lo regenera y marca \`[x]\` cada ejercicio
+> con sus 2 clips en \`assets/videos/\`.
 
 Cada ejercicio son 2 clips sin voz: **cómo hacerlo** (\`<código>__como\`) y **cómo NO hacerlo** (\`<código>__no\`).
 Las tandas salen de simular ${SIM_DAYS} días seguidos de rutinas para María, Roberto y Mamá activa: la tanda 1
 son los ${BATCH_1_SIZE} ejercicios que más salen, la tanda 2 el resto de los niveles 1-3 y la tanda 3 los niveles
 4-5. Dentro de cada tanda van por lugar de grabación, para mover la cámara lo menos posible.
+
+**Listos:** ${readyCount} de ${2 * sorted.length} clips.
 
 **Clips por tanda y lugar** (${sorted.length} ejercicios, ${2 * sorted.length} clips):
 

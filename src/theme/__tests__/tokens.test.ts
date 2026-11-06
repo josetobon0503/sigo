@@ -68,6 +68,14 @@ describe('theme tokens', () => {
       expect(contrastRatio(palette[fg], palette[bg])).toBeGreaterThanOrEqual(LARGE_OR_ICON);
     });
 
+    // An orange can't reach 3:1 against a gray on both sides, so the muscle map tells the 3 tones apart by
+    // hue plus lightness, and the muscle names are always written next to it (and in its label).
+    it('muscle map: worked, helper and resting muscles look different', () => {
+      expect(contrastRatio(palette.accent, palette.bodyFill)).toBeGreaterThanOrEqual(2);
+      expect(contrastRatio(palette.muscleSecondary, palette.bodyFill)).toBeGreaterThanOrEqual(1.4);
+      expect(contrastRatio(palette.accent, palette.muscleSecondary)).toBeGreaterThanOrEqual(1.7);
+    });
+
     it('inverse button: heroBg text on white', () => {
       expect(contrastRatio(palette.heroBg, palette.inverseBg)).toBeGreaterThanOrEqual(TEXT);
     });

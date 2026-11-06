@@ -121,6 +121,23 @@ export default function ProfileScreen() {
         </Text>
       </Card>
 
+      <Card style={{ gap: spacing.sm }}>
+        <ChipGroup label={t('profile.bodyFigureLabel')}>
+          {(['female', 'male'] as const).map((figure) => (
+            <Chip
+              key={figure}
+              label={t(`profile.bodyFigure.${figure}`)}
+              selected={profile.bodyFigure === figure}
+              onPress={() => updateProfile({ bodyFigure: figure })}
+              testID={`figure-${figure}`}
+            />
+          ))}
+        </ChipGroup>
+        <Text style={[typography.caption, { color: colors.textSecondary }]}>
+          {t('profile.bodyFigureHint')}
+        </Text>
+      </Card>
+
       <Card>
         <ChipGroup label={t('language.label')}>
           {SUPPORTED_LANGUAGES.map((lang) => (

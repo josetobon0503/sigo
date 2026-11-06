@@ -27,7 +27,6 @@ import {
   ProgressSegments,
   SetDots,
   VideoBox,
-  type VideoChapter,
 } from '@/components';
 import { exercises } from '@/data/exercises';
 import {
@@ -206,7 +205,6 @@ function ExerciseView({
   const router = useRouter();
   const { colors, typography, spacing } = useTheme();
   const { completeSet, startTimer, pauseTimer, tooEasy } = useSessionStore.getState();
-  const [chapter, setChapter] = useState<VideoChapter | null>(null);
   const exercise = byId.get(item.exerciseId);
   if (!exercise) return null;
 
@@ -287,26 +285,7 @@ function ExerciseView({
         style={styles.scroll}
         contentContainerStyle={{ paddingHorizontal: spacing.screen, gap: spacing.md }}
       >
-        <VideoBox
-          chapter={chapter}
-          onChapter={(c) => setChapter((current) => (current === c ? null : c))}
-        />
-        {/* Until the videos arrive (phase 7), a chapter tab shows its written text. */}
-        {chapter ? (
-          <Card style={{ gap: spacing.sm }} testID="chapter-text">
-            {chapter === 'purpose' ? (
-              <Text style={[typography.body, { color: colors.text }]}>
-                {exercise.purpose[lang]}
-              </Text>
-            ) : (
-              (chapter === 'howTo' ? exercise.steps : exercise.mistakes)[lang].map((line, i) => (
-                <Text key={line} style={[typography.body, { color: colors.text }]}>
-                  {chapter === 'howTo' ? `${i + 1}. ${line}` : `• ${line}`}
-                </Text>
-              ))
-            )}
-          </Card>
-        ) : null}
+        <VideoBox key={exercise.id} exercise={exercise} lang={lang} />
         <View style={{ gap: spacing.sm }}>
           <Text
             accessibilityRole="header"

@@ -1,23 +1,42 @@
 /// <reference types="node" />
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import es from '../../i18n/es.json';
 import { exercises } from '../exercises';
+import { readyClips, renderVideosModule } from '../videoFiles';
 import { BATCH_1_SIZE, batchOf, cameraOf, countUses, placeOf, renderVideoList } from '../videoList';
 
 const DOC = join(__dirname, '../../../docs/lista-videos.md');
 const byId = new Map(exercises.map((e) => [e.id, e]));
+const ids = new Set(exercises.map((e) => e.id));
+const ready = readyClips(readdirSync(join(__dirname, '../../../assets/videos')), ids);
 
 describe('docs/lista-videos.md', () => {
   it('matches the exercise library (run `npm run export:videos` after changing it)', () => {
     const onDisk = readFileSync(DOC, 'utf8').replace(/\r\n/g, '\n');
-    expect(onDisk).toBe(renderVideoList(exercises, es.equipmentName));
+    expect(onDisk).toBe(renderVideoList(exercises, es.equipmentName, ready));
   });
 
   it('lists every exercise once', () => {
-    const blocks = renderVideoList(exercises, es.equipmentName).match(/^### \[ \] /gm);
+    const blocks = renderVideoList(exercises, es.equipmentName, ready).match(/^### \[[ x]\] /gm);
     expect(blocks).toHaveLength(exercises.length);
+  });
+
+  it('marks an exercise [x] only with both clips, and says which clip is missing', () => {
+    const one = new Map([['sit-to-stand', new Set(['howTo'] as const)]]);
+    const both = new Map([['sit-to-stand', new Set(['howTo', 'mistakes'] as const)]]);
+    const doc1 = renderVideoList(exercises, es.equipmentName, one);
+    expect(doc1).toContain('**Listos:** 1 de 168 clips.');
+    expect(doc1).not.toMatch(/^### \[x\]/m);
+    expect(doc1).toMatch(/clip 1, listo[\s\S]*?clip 2, falta/);
+    const doc2 = renderVideoList(exercises, es.equipmentName, both);
+    expect(doc2.match(/^### \[x\] /gm)).toHaveLength(1);
+  });
+
+  it('src/data/videos.ts matches assets/videos (run `npm run videos:compress`)', () => {
+    const onDisk = readFileSync(join(__dirname, '../videos.ts'), 'utf8').replace(/\r\n/g, '\n');
+    expect(onDisk).toBe(renderVideosModule(ready));
   });
 });
 

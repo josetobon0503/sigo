@@ -117,6 +117,7 @@ export function createProfile(draft: ProfileDraft, completedAt: string): UserPro
     reminder: { ...draft.reminder, days: [...draft.reminder.days] },
     screening: null,
     weeklyGoal: draft.weeklyGoal,
+    bodyFigure: 'female',
   };
   // A "yes" in the screening wins over the activity level: level 1 and seated only.
   return applyScreening(profile, draft.screeningAnswers, completedAt);

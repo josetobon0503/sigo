@@ -2,7 +2,7 @@
 
 import type { TFunction } from 'i18next';
 
-import type { Dosage, Lang } from '@/engine/types';
+import type { Dosage, Lang, Muscle } from '@/engine/types';
 
 // "2 × 10", "2 × 30 s por lado".
 export function formatDosage(t: TFunction, dosage: Dosage, perSide: boolean): string {
@@ -69,4 +69,12 @@ export function formatDay(day: string, lang: Lang): string {
     month: 'long',
   });
   return text.charAt(0).toLocaleUpperCase(lang) + text.slice(1);
+}
+
+// "glúteos y abdomen": the primary muscles of an exercise, in a sentence.
+export function muscleList(t: TFunction, muscles: Muscle[], lang: Lang): string {
+  return joinList(
+    t,
+    muscles.map((m) => t(`muscleName.${m}`).toLocaleLowerCase(lang)),
+  );
 }
