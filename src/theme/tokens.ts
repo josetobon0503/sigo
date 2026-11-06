@@ -28,6 +28,10 @@ export interface ColorTokens {
   alertText: string; // alert-colored text or icons on bg / surface (the plain alert red is too dark in dark mode)
   restBg: string; // full-screen rest background
   restTrack: string; // countdown ring track
+  restCard: string; // "Up next" card on restBg
+  onRestCard: string;
+  onRestCardMuted: string;
+  restCardAccent: string; // highlighted text and icons on restCard
   videoBg: string; // video box placeholder
 }
 
@@ -57,6 +61,10 @@ export const colors: Record<ColorScheme, ColorTokens> = {
     alertText: '#D70015',
     restBg: '#0B6E7A',
     restTrack: '#2B8893',
+    restCard: '#FFFFFF',
+    onRestCard: '#13201F',
+    onRestCardMuted: '#4A5856',
+    restCardAccent: '#0B6E7A',
     videoBg: '#0E3B40',
   },
   dark: {
@@ -84,6 +92,10 @@ export const colors: Record<ColorScheme, ColorTokens> = {
     alertText: '#FF6B6B',
     restBg: '#0B5560',
     restTrack: '#2B7A84',
+    restCard: '#08434B',
+    onRestCard: '#FFFFFF',
+    onRestCardMuted: '#B9DDE1',
+    restCardAccent: '#6BC9D3',
     videoBg: '#0A2A2E',
   },
 };

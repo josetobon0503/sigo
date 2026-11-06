@@ -38,6 +38,9 @@ const textPairs: [Token, Token][] = [
   ['alertText', 'bg'],
   ['alertText', 'surface'],
   ['onHero', 'videoBg'],
+  ['onRestCard', 'restCard'],
+  ['onRestCardMuted', 'restCard'],
+  ['restCardAccent', 'restCard'],
 ];
 
 // Icons and graphics: 3:1 against what is behind them.

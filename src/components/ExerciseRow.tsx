@@ -8,6 +8,7 @@ export interface ExerciseRowProps {
   meta: string; // "Piernas · 3 × 10"
   divider?: boolean;
   accessibilityLabel?: string; // defaults to "name, meta"
+  tone?: 'default' | 'rest'; // rest = on the restCard
   testID?: string;
 }
 
@@ -17,9 +18,11 @@ export function ExerciseRow({
   meta,
   divider = true,
   accessibilityLabel,
+  tone = 'default',
   testID,
 }: ExerciseRowProps) {
   const { colors, typography, spacing, radius } = useTheme();
+  const rest = tone === 'rest';
 
   return (
     <View
@@ -45,11 +48,24 @@ export function ExerciseRow({
           justifyContent: 'center',
         }}
       >
-        <Ionicons name="body-outline" size={24} color={colors.primary} />
+        <Ionicons
+          name="body-outline"
+          size={24}
+          color={rest ? colors.restCardAccent : colors.primary}
+        />
       </View>
       <View style={{ flex: 1, gap: 2 }}>
-        <Text style={[typography.bodyBold, { color: colors.text }]}>{name}</Text>
-        <Text style={[typography.caption, { color: colors.textSecondary }]}>{meta}</Text>
+        <Text style={[typography.bodyBold, { color: rest ? colors.onRestCard : colors.text }]}>
+          {name}
+        </Text>
+        <Text
+          style={[
+            typography.caption,
+            { color: rest ? colors.onRestCardMuted : colors.textSecondary },
+          ]}
+        >
+          {meta}
+        </Text>
       </View>
     </View>
   );

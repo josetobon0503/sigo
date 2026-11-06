@@ -469,12 +469,22 @@ function RestView({ session, now, lang }: { session: Session; now: number; lang:
           </View>
         ) : null}
         {nextItem && nextExercise ? (
-          <Card style={{ gap: spacing.sm }} testID="up-next">
-            <Text style={[typography.calloutBold, { color: colors.textSecondary }]}>
+          <Card
+            style={{
+              gap: spacing.sm,
+              backgroundColor: colors.restCard,
+              borderColor: colors.restCard,
+            }}
+            testID="up-next"
+          >
+            <Text style={[typography.calloutBold, { color: colors.onRestCardMuted }]}>
               {`${t('rest.upNext')} \u00b7 ${t('rest.position', { current: next.index + 1, total: session.items.length })}`}
             </Text>
             {toBed ? (
-              <Text style={[typography.bodyBold, { color: colors.primary }]} testID="lying-notice">
+              <Text
+                style={[typography.bodyBold, { color: colors.restCardAccent }]}
+                testID="lying-notice"
+              >
                 {t(floorOk ? 'today.lyingNotice' : 'today.lyingNoticeBed')}
               </Text>
             ) : null}
@@ -482,6 +492,7 @@ function RestView({ session, now, lang }: { session: Session; now: number; lang:
               name={nextExercise.name[lang]}
               meta={`${t('workout.setProgress', { current: next.set, total: nextItem.dosage.sets })} \u00b7 ${formatDosage(t, nextItem.dosage, nextItem.perSide)}`}
               divider={false}
+              tone="rest"
             />
           </Card>
         ) : null}

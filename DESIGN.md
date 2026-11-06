@@ -54,6 +54,10 @@
 | restBg | #0B6E7A | #0B5560 | full-screen rest background |
 | restTrack | #2B8893 | #2B7A84 | countdown ring track |
 | videoBg | #0E3B40 | #0A2A2E | video box placeholder |
+| restCard | #FFFFFF | #08434B | "A continuación" card on restBg (dark: darker teal than restBg) |
+| onRestCard | #13201F | #FFFFFF | text on restCard |
+| onRestCardMuted | #4A5856 | #B9DDE1 | secondary text on restCard |
+| restCardAccent | #0B6E7A | #6BC9D3 | highlighted text / icons on restCard (dark primary #3FB5C2 is 4.49:1) |
 
 Faces (both modes): excelente #3E9B48 · bien #8CC152 · regular #F6C343 · cansancio #F08A3C · molestias #E5574F;
 eyes and mouth #13201F.
@@ -110,7 +114,7 @@ content when scrolling (current bug: the big number scrolls under the header).
 
 **Descanso**: whole screen restBg, onHero text (onHeroMuted for secondary): "Descansa" (title) + "Respira con calma y toma
 agua" → CountdownRing → "¿Cómo estuvo {ejercicio}?" with 3 equal choices (Muy fácil / Bien / Difícil;
-selected = inverse fill) → surface card "A continuación · 4 de 7" with thumbnail, name, dosage → bottom
+selected = inverse fill) → restCard "A continuación · 4 de 7" with thumbnail, name, dosage → bottom
 inverse button "Saltar descanso →".
 
 **Final**: round primary check badge 88 pt → "¡Buen trabajo, {nombre}!" (title) → "Llevas 2 de 3
